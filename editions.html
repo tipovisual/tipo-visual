@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Ediciones - TipoVisual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #e2e8f0; transition: .4s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #d97706; }
+        input:checked + .slider:before { transform: translateX(20px); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-950 font-sans">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-amber-500 flex items-center">
+                    <i data-lucide="layout-dashboard" class="mr-2 h-6 w-6"></i> TipoVisual Admin
+                </h1>
+            </div>
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg">
+                    <i data-lucide="bar-chart-3" class="mr-3 h-5 w-5"></i> Dashboard
+                </a>
+                <a href="editions.html" class="flex items-center px-4 py-3 bg-slate-800 text-white rounded-lg font-bold">
+                    <i data-lucide="layers" class="mr-3 h-5 w-5"></i> Ediciones
+                </a>
+                <div class="pt-4 pb-2 border-t border-slate-800 mt-4">
+                    <span class="px-4 text-xs font-semibold text-slate-500 uppercase">Vista Pública</span>
+                </div>
+                <a href="index.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg">
+                    <i data-lucide="home" class="mr-3 h-5 w-5"></i> Inicio
+                </a>
+                <a href="game.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg">
+                    <i data-lucide="play-circle" class="mr-3 h-5 w-5"></i> Probar Juego
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 pt-6">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 text-slate-900">Ediciones Disponibles</h2>
+                    <p class="text-slate-500 text-sm">Gestiona las colecciones de cartas para el juego.</p>
+                </div>
+                <button class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center hover:bg-slate-800 transition">
+                    <i data-lucide="plus" class="mr-2 h-4 w-4"></i> Crear Nueva Edición
+                </button>
+            </div>
+
+            <div id="editions-grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-4xl">
+                </div>
+        </main>
+    </div>
+
+<script>
+    // 1. Datos iniciales por defecto (solo se usan si la memoria está vacía)
+    const initialEditions = [
+        {
+            id: "panama",
+            name: "Edición Panamá 🇵🇦",
+            description: "Colección con elementos culturales, flora y fauna panameña.",
+            cardCount: 24,
+            active: true,
+            image: "assets/cartas/BANDERA PANAMÁ.png"
+        },
+        {
+            id: "venezuela",
+            name: "Edición Venezuela 🇻🇪",
+            description: "Colección con monumentos, comida y símbolos venezolanos.",
+            cardCount: 12,
+            active: false,
+            image: "assets/cartas/venezuela/salto_angel.png"
+        }
+    ];
+
+    // 2. Intentamos recuperar los datos guardados en el navegador
+    // Si no existen (es la primera vez), usamos los datos iniciales
+    let editions = JSON.parse(localStorage.getItem('tipoVisual_editions')) || initialEditions;
+
+    function renderEditions() {
+        const grid = document.getElementById('editions-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        editions.forEach(edition => {
+            const card = document.createElement('div');
+            card.className = "rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col transition-all hover:shadow-md";
+            card.innerHTML = `
+                <div class="p-6 flex-1">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="h-16 w-12 rounded-lg bg-slate-100 border overflow-hidden shadow-inner">
+                            <img src="${edition.image}" class="h-full w-full object-cover" onerror="this.src='https://via.placeholder.com/100?text=Card'">
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${edition.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">
+                            ${edition.active ? 'Activa' : 'Inactiva'}
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-1">${edition.name}</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-4">${edition.description}</p>
+                    
+                    <div class="flex items-center text-slate-600 space-x-4">
+                        <div class="flex items-center">
+                            <i data-lucide="copy" class="h-4 w-4 mr-1.5 opacity-50"></i>
+                            <span class="text-sm font-medium">${edition.cardCount} Cartas</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="px-6 py-4 bg-slate-50 border-t flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <label class="switch">
+                            <input type="checkbox" ${edition.active ? 'checked' : ''} onchange="toggleActive('${edition.id}')">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="text-xs font-bold text-slate-700 uppercase">${edition.active ? 'Visible' : 'Oculta'}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <a href="edit-edition.html?id=${edition.id}" class="p-2 bg-white border rounded-lg hover:text-amber-600 transition shadow-sm">
+                            <i data-lucide="edit-3" class="h-4 w-4"></i>
+                        </a>
+                        <button class="p-2 bg-white border rounded-lg hover:text-red-600 transition shadow-sm">
+                            <i data-lucide="trash-2" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        lucide.createIcons();
+    }
+
+    function toggleActive(id) {
+        // Mapeamos el array para cambiar el estado de la edición seleccionada
+        editions = editions.map(e => e.id === id ? {...e, active: !e.active} : e);
+        
+        // GUARDADO PERSISTENTE: Guardamos el array actualizado en localStorage
+        localStorage.setItem('tipoVisual_editions', JSON.stringify(editions));
+        
+        console.log(`Estado de ${id} actualizado y guardado en memoria.`);
+        renderEditions();
+    }
+
+    // Ejecutar render al cargar la página
+    renderEditions();
+</script>
+</body>
+</html>

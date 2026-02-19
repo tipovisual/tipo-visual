@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+    // Bloque de seguridad: verificar sesión antes de cargar el resto
+    if (sessionStorage.getItem('isAdmin') !== 'true') {
+        window.location.href = 'index.html';
+    }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Ediciones - TipoVisual</title>
+    <script src="data.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-amber-500 flex items-center">
+                    <i data-lucide="layout-dashboard" class="mr-2 h-6 w-6"></i> TipoVisual Admin
+                </h1>
+            </div>
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition">
+                    <i data-lucide="bar-chart-3" class="mr-3 h-5 w-5"></i> Dashboard
+                </a>
+                <a href="editions.html" class="flex items-center px-4 py-3 bg-slate-800 text-white rounded-lg">
+                    <i data-lucide="layers" class="mr-3 h-5 w-5"></i> Ediciones
+                </a>
+                <div class="pt-4 pb-2 border-t border-slate-800 mt-4">
+                    <span class="px-4 text-xs font-semibold text-slate-500 uppercase">Vista Pública</span>
+                </div>
+                <a href="index.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition">
+                    <i data-lucide="home" class="mr-3 h-5 w-5"></i> Inicio
+                </a>
+                <a href="game.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition">
+                    <i data-lucide="play-circle" class="mr-3 h-5 w-5"></i> Probar Juego
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+                    <div>
+                        <a href="editions.html" class="text-sm text-amber-600 font-bold hover:underline flex items-center mb-2">
+                            <i data-lucide="chevron-left" class="h-4 w-4 mr-1"></i> VOLVER A EDICIONES
+                        </a>
+                        <h2 id="edition-display-name" class="text-4xl font-black tracking-tighter text-slate-900 uppercase">Edición Panamá</h2>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="version-selector" onchange="changeVersion()" class="bg-white border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold focus:border-amber-500 outline-none shadow-sm">
+                            <option value="panama">🇵🇦 Panamá</option>
+                            <option value="venezuela">🇻🇪 Venezuela</option>
+                        </select>
+                        <button onclick="saveChanges()" class="bg-amber-600 text-white px-8 py-2.5 rounded-xl font-black hover:bg-amber-700 shadow-lg shadow-amber-200 transition-all uppercase tracking-wider text-sm">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                            <h3 class="font-black text-slate-400 text-xs uppercase tracking-[0.2em] mb-4">Información General</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Nombre Público</label>
+                                    <input type="text" id="edit-title" class="w-full p-3 bg-slate-50 border-2 border-transparent focus:border-amber-500 focus:bg-white rounded-xl outline-none transition-all font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Estado de la Edición</label>
+                                    <div class="flex items-center p-3 bg-slate-50 rounded-xl">
+                                        <div class="h-3 w-3 rounded-full bg-green-500 mr-3 animate-pulse"></div>
+                                        <span class="text-sm font-bold">Activa en el Juego</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 p-6 rounded-3xl border-2 border-amber-100 border-dashed text-center">
+                            <i data-lucide="plus-circle" class="h-8 w-8 text-amber-400 mx-auto mb-2"></i>
+                            <p class="text-xs font-bold text-amber-700 uppercase">Añadir nueva carta</p>
+                            <p class="text-[10px] text-amber-600 mt-1 uppercase">Sube el archivo a tu carpeta assets/cartas/</p>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-3">
+                        <div id="cards-editor-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Datos para el editor
+        const data = {
+            panama: {
+                name: "Cultura Panamá",
+                cards: [
+                    { name: "Afroantillana", img: "assets/cartas/AFROANTILLANA.png", desc: "Representa el legado de los trabajadores antillanos que llegaron a Panamá." },
+                    { name: "Águila Harpía", img: "assets/cartas/AGUILA HARPIA.png", desc: "Es el Ave Nacional de Panamá, una de las rapaces más poderosas del mundo." },
+                    { name: "Bandera", img: "assets/cartas/BANDERA PANAMÁ.png", desc: "Símbolo patrio de Panamá. Sus colores representan la paz y la unión." },
+                    { name: "Diablico Sucio", img: "assets/cartas/DIABLICO SUCIO.png", desc: "Personaje icónico del Corpus Christi panameño con su tradicional máscara." },
+                    { name: "La Pollera", img: "assets/cartas/POLLERA.png", desc: "Considerado uno de los trajes típicos más bellos del mundo, hecho a mano." }
+                ]
+            },
+            venezuela: {
+                name: "Cultura Venezuela",
+                cards: [
+                    { name: "Salto Ángel", img: "assets/cartas/venezuela/salto_angel.png", desc: "La caída de agua más alta del mundo, ubicada en el estado Bolívar." },
+                    { name: "Arepa", img: "assets/cartas/venezuela/arepa.png", desc: "El pan de cada día del venezolano, hecho a base de maíz precocido." }
+                ]
+            }
+        };
+
+        let currentVersion = 'panama';
+
+        function renderEditor() {
+            const version = gameData[currentVersion]; // Ya no usamos 'data', sino 'gameData'
+            document.getElementById('edition-display-name').innerText = "Editando: " + version.title;
+            document.getElementById('edit-title').value = version.name;
+
+            const grid = document.getElementById('cards-editor-grid');
+            grid.innerHTML = '';
+
+            version.cards.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = "bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300";
+                
+                cardDiv.innerHTML = `
+                    <div class="aspect-[4/3] bg-slate-100 p-6 flex items-center justify-center relative overflow-hidden">
+                        <img src="${card.img}" class="max-h-full max-w-full object-contain drop-shadow-lg group-hover:scale-110 transition-transform duration-500">
+                        <button class="absolute top-4 right-4 bg-white/90 p-2 rounded-full text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                            <i data-lucide="trash-2" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Nombre Visual</label>
+                            <input type="text" value="${card.name}" class="w-full bg-slate-50 border-transparent focus:border-amber-500 focus:bg-white border-2 p-2 rounded-lg text-sm font-bold outline-none transition-all uppercase">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Descripción del Modal</label>
+                            <textarea class="w-full bg-slate-50 border-transparent focus:border-amber-500 focus:bg-white border-2 p-3 rounded-xl text-xs leading-relaxed text-slate-600 h-28 resize-none outline-none transition-all custom-scrollbar" placeholder="Escribe aquí los datos curiosos o históricos...">${card.desc}</textarea>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(cardDiv);
+            });
+            lucide.createIcons();
+        }
+
+        function changeVersion() {
+            currentVersion = document.getElementById('version-selector').value;
+            renderEditor();
+        }
+
+        function saveChanges() {
+            alert("¡Cambios guardados! Los datos se han actualizado en el sistema local.");
+        }
+
+        // Carga inicial
+        window.onload = () => {
+            renderEditor();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>

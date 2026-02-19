@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+    // Bloque de seguridad: verificar sesión antes de cargar el resto
+    if (sessionStorage.getItem('isAdmin') !== 'true') {
+        window.location.href = 'index.html';
+    }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Real - TipoVisual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-950 font-sans">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-amber-500 flex items-center">
+                    <i data-lucide="layout-dashboard" class="mr-2 h-6 w-6"></i> TipoVisual Admin
+                </h1>
+            </div>
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center px-4 py-3 bg-slate-800 text-white rounded-lg">
+                    <i data-lucide="bar-chart-3" class="mr-3 h-5 w-5"></i> Dashboard
+                </a>
+                <a href="editions.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition">
+                    <i data-lucide="layers" class="mr-3 h-5 w-5"></i> Ediciones
+                </a>
+                <div class="pt-4 pb-2 border-t border-slate-800 mt-4">
+                    <span class="px-4 text-xs font-semibold text-slate-500 uppercase">Vista Pública</span>
+                </div>
+                <a href="index.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition">
+                    <i data-lucide="home" class="mr-3 h-5 w-5"></i> Inicio
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 pt-6">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Vista General del Sistema</h2>
+                <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-full border shadow-sm">
+                    Estado: <span class="text-green-600">En Línea</span>
+                </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex flex-row items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Ediciones</h3>
+                        <i data-lucide="layers" class="h-4 w-4 text-amber-600"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-editions">2</div>
+                    <p class="text-xs text-slate-400">Panamá y Venezuela</p>
+                </div>
+
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex flex-row items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Cartas Únicas</h3>
+                        <i data-lucide="image" class="h-4 w-4 text-amber-600"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-cards">0</div>
+                    <p class="text-xs text-slate-400">En todas las carpetas</p>
+                </div>
+
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex flex-row items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Activa Actualmente</h3>
+                        <i data-lucide="check-circle" class="h-4 w-4 text-green-600"></i>
+                    </div>
+                    <div class="text-xl font-bold text-slate-800" id="stat-active">Panamá 🇵🇦</div>
+                    <p class="text-xs text-slate-400">Visible para usuarios</p>
+                </div>
+
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex flex-row items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Parejas Totales</h3>
+                        <i data-lucide="zap" class="h-4 w-4 text-amber-600"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-pairs">0</div>
+                    <p class="text-xs text-slate-400">Listas para jugar</p>
+                </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div class="col-span-4 rounded-xl border bg-white shadow-sm p-6">
+                    <h3 class="font-bold text-lg mb-4">Distribución de Contenido</h3>
+                    <div class="space-y-4" id="distribucion-content">
+                        </div>
+                </div>
+
+                <div class="col-span-3 rounded-xl border bg-white shadow-sm p-6">
+                    <h3 class="font-bold text-lg mb-4">Registro de Ediciones</h3>
+                    <div class="space-y-4" id="log-ediciones">
+                        </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // DATOS REALES DEL PROYECTO
+        const projectData = {
+            editions: [
+                { name: "Panamá", cards: 12, active: true, emoji: "🇵🇦" },
+                { name: "Venezuela", cards: 6, active: false, emoji: "🇻🇪" }
+            ]
+        };
+
+        function initDashboard() {
+            // Calcular totales
+            let totalCards = 0;
+            projectData.editions.forEach(ed => totalCards += ed.cards);
+
+            // Actualizar Tarjetas Superiores
+            document.getElementById('stat-editions').innerText = projectData.editions.length;
+            document.getElementById('stat-cards').innerText = totalCards;
+            document.getElementById('stat-pairs').innerText = totalCards; // Porque son parejas
+
+            // Renderizar Distribución
+            const distContainer = document.getElementById('distribucion-content');
+            distContainer.innerHTML = '';
+            
+            projectData.editions.forEach(ed => {
+                const percentage = (ed.cards / totalCards) * 100;
+                distContainer.innerHTML += `
+                    <div>
+                        <div class="flex justify-between text-sm font-medium mb-1">
+                            <span>Edición ${ed.name} ${ed.emoji}</span>
+                            <span>${ed.cards} cartas</span>
+                        </div>
+                        <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-amber-500 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Renderizar Log
+            const logContainer = document.getElementById('log-ediciones');
+            logContainer.innerHTML = '';
+            projectData.editions.forEach(ed => {
+                logContainer.innerHTML += `
+                    <div class="flex items-center p-3 border rounded-lg bg-slate-50">
+                        <div class="h-8 w-8 rounded bg-white flex items-center justify-center border mr-3 text-lg">
+                            ${ed.emoji}
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold">${ed.name}</p>
+                            <p class="text-[10px] text-slate-500 uppercase">${ed.cards * 2} cartas totales en tablero</p>
+                        </div>
+                        <span class="h-2 w-2 rounded-full ${ed.active ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}"></span>
+                    </div>
+                `;
+            });
+
+            lucide.createIcons();
+        }
+
+        window.onload = initDashboard;
+    </script>
+
+    <script>
+        function logout() {
+            sessionStorage.removeItem('isAdmin');
+            window.location.href = 'index.html';
+        }
+    </script>
+    <button onclick="logout()" class="flex items-center w-full px-4 py-3 text-red-400 hover:bg-slate-800 rounded-lg transition">
+        <i data-lucide="log-out" class="mr-3 h-5 w-5"></i> Cerrar Sesión
+    </button>
+</body>
+</html>

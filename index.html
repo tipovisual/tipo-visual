@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TipoVisual - Memoria Latinoamericana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-white to-orange-50 min-h-screen flex flex-col font-sans">
+
+    <header class="p-6 flex justify-between items-center container mx-auto">
+        <div class="flex items-center space-x-2">
+            <div class="bg-amber-600 p-2 rounded-lg text-white">
+                <i data-lucide="brain-circuit" class="h-6 w-6"></i>
+            </div>
+            <span class="text-xl font-black tracking-tighter uppercase text-slate-800">TipoVisual</span>
+        </div>
+        <button onclick="checkAdminAccess()" class="text-slate-400 hover:text-amber-600 transition">
+            <i data-lucide="settings" class="h-5 w-5"></i>
+        </button>
+    </header>
+
+    <main class="flex-1 container mx-auto px-6 flex flex-col items-center justify-center text-center">
+        
+        <div class="mb-12">
+            <span class="bg-amber-100 text-amber-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Edición Coleccionable</span>
+            <h1 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-6">
+                DESCUBRE TU <br> <span class="text-amber-600">IDENTIDAD</span>
+            </h1>
+            <p class="text-slate-600 text-lg md:text-xl max-w-xl mx-auto font-medium">
+                Un juego de memoria para aprender sobre los personajes y símbolos que nos hacen únicos.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl px-4">
+            
+            <button onclick="play('panama')" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
+                <div class="relative z-10">
+                    <span class="text-6xl mb-6 block float-animation">🇵🇦</span>
+                    <h3 class="text-3xl font-black text-slate-900 uppercase">Panamá</h3>
+                    <p class="text-slate-500 font-medium">12 Cartas Coleccionables</p>
+                    <div class="mt-8 flex items-center text-amber-600 font-bold uppercase text-sm tracking-widest">
+                        Explorar ahora <i data-lucide="arrow-right" class="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform"></i>
+                    </div>
+                </div>
+                <div class="absolute -bottom-10 -right-10 text-slate-50 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i data-lucide="map" class="h-40 w-40"></i>
+                </div>
+            </button>
+
+            <button onclick="play('venezuela')" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
+                <div class="relative z-10">
+                    <span class="text-6xl mb-6 block float-animation" style="animation-delay: 0.5s;">🇻🇪</span>
+                    <h3 class="text-3xl font-black text-slate-900 uppercase">Venezuela</h3>
+                    <p class="text-slate-500 font-medium">Próximamente más cartas</p>
+                    <div class="mt-8 flex items-center text-amber-600 font-bold uppercase text-sm tracking-widest">
+                        Explorar ahora <i data-lucide="arrow-right" class="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform"></i>
+                    </div>
+                </div>
+                <div class="absolute -bottom-10 -right-10 text-slate-50 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i data-lucide="map" class="h-40 w-40"></i>
+                </div>
+            </button>
+
+        </div>
+    </main>
+
+    <footer class="p-8 text-center">
+        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">© 2026 TipoVisual • Raíces que conectan</p>
+    </footer>
+
+    <script>
+    lucide.createIcons();
+
+    // 1. Obtenemos el estado de las ediciones desde el localStorage
+    // (El mismo que usa el panel de administrador)
+    const savedEditions = JSON.parse(localStorage.getItem('tipoVisual_editions'));
+
+    function play(editionId) {
+        // 2. Si no hay datos guardados (primera vez), permitimos pasar por defecto 
+        // o si los hay, verificamos que la edición esté activa
+        let canPlay = true;
+
+        if (savedEditions) {
+            const edition = savedEditions.find(e => e.id === editionId);
+            if (edition && !edition.active) {
+                alert("Esta edición está temporalmente fuera de servicio.");
+                canPlay = false;
+            }
+        }
+
+        if (canPlay) {
+            // Guardamos la elección para el game.html
+            localStorage.setItem('selectedEdition', editionId);
+            window.location.href = 'game.html';
+        }
+    }
+
+    function checkAdminAccess() {
+        const accessKey = "admin2026"; // Tu clave
+        const userInput = prompt("Clave de acceso administrativo:");
+
+        if (userInput === accessKey) {
+            sessionStorage.setItem('isAdmin', 'true');
+            window.location.href = 'dashboard.html';
+        } else if (userInput !== null) {
+            alert("Acceso denegado.");
+        }
+    }
+    // Ocultar o atenuar botones si la edición está desactivada
+    if (savedEditions) {
+        savedEditions.forEach(edition => {
+        if (!edition.active) {
+            // Buscamos el botón que tenga el onclick con ese ID
+            const btn = document.querySelector(`button[onclick="play('${edition.id}')"]`);
+            if (btn) {
+                btn.style.opacity = "0.5";
+                btn.style.cursor = "not-allowed";
+                // Cambiamos el texto para avisar
+                const p = btn.querySelector('p');
+                if (p) p.innerText = "Edición no disponible";
+            }
+        }
+    });
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenida - Memoria Latinoamericana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gradient-to-b from-amber-50 to-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+        <div class="p-6">
+            <div class="flex flex-col items-center space-y-4 text-center">
+                
+                <div class="relative h-64 w-full bg-slate-50 rounded-lg flex items-center justify-center border border-dashed border-slate-200">
+                    <i id="step-icon" data-lucide="book-open" class="h-24 w-24 text-amber-200"></i>
+                    </div>
+
+                <div class="space-y-2">
+                    <h1 id="step-title" class="text-2xl font-bold text-slate-900">Bienvenido</h1>
+                    <p id="step-description" class="text-gray-500 text-sm">Cargando...</p>
+                </div>
+
+                <div id="step-dots" class="flex space-x-1 pt-4">
+                    </div>
+
+                <div class="flex w-full justify-between pt-4">
+                    <button onclick="handlePrevious()" class="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-100">
+                        <i data-lucide="arrow-left" class="mr-2 h-4 w-4"></i> Atrás
+                    </button>
+                    
+                    <button onclick="handleNext()" id="next-btn" class="inline-flex items-center justify-center rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 transition-colors">
+                        Siguiente <i data-lucide="arrow-right" class="ml-2 h-4 w-4"></i>
+                    </button>
+                </div>
+
+                <button onclick="handleSkip()" class="text-sm text-slate-400 hover:text-amber-600 underline transition-colors">
+                    Saltar introducción
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de los pasos (extraídos de tu código original)
+        const steps = [
+            {
+                title: "Bienvenido a Memoria Latinoamericana",
+                description: "Un juego educativo para aprender sobre la cultura de América Latina mientras te diviertes.",
+                icon: "globe-2"
+            },
+            {
+                title: "Cómo jugar",
+                description: "Encuentra pares de cartas que coincidan. Cada par te enseñará algo nuevo sobre la cultura latinoamericana.",
+                icon: "layers"
+            },
+            {
+                title: "Progreso local",
+                description: "Tus victorias se guardarán directamente en este navegador para que sigas mejorando tus tiempos.",
+                icon: "trophy"
+            }
+        ];
+
+        let currentStep = 0;
+
+        function updateUI() {
+            // Actualizar textos
+            document.getElementById('step-title').innerText = steps[currentStep].title;
+            document.getElementById('step-description').innerText = steps[currentStep].description;
+            
+            // Actualizar Icono
+            const iconEl = document.getElementById('step-icon');
+            iconEl.setAttribute('data-lucide', steps[currentStep].icon);
+            lucide.createIcons();
+
+            // Actualizar Botón Siguiente
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.innerHTML = currentStep === steps.length - 1 
+                ? 'Comenzar <i data-lucide="play" class="ml-2 h-4 w-4"></i>' 
+                : 'Siguiente <i data-lucide="arrow-right" class="ml-2 h-4 w-4"></i>';
+            lucide.createIcons();
+
+            // Actualizar Puntos
+            const dotsContainer = document.getElementById('step-dots');
+            dotsContainer.innerHTML = '';
+            steps.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = `h-2 w-2 rounded-full ${i === currentStep ? 'bg-amber-600' : 'bg-gray-300'}`;
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function handleNext() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateUI();
+            } else {
+                window.location.href = 'game.html';
+            }
+        }
+
+        function handlePrevious() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function handleSkip() {
+            window.location.href = 'game.html';
+        }
+
+        // Inicializar
+        updateUI();
+    </script>
+</body>
+</html>
