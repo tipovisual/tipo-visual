@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TipoVisual - Memoria Latinoamericana</title>
+    <!-- ✅ FASE 1: Supabase integrado -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -24,9 +27,11 @@
             </div>
             <span class="text-xl font-black tracking-tighter uppercase text-slate-800">TipoVisual</span>
         </div>
-        <button onclick="checkAdminAccess()" class="text-slate-400 hover:text-amber-600 transition">
-            <i data-lucide="settings" class="h-5 w-5"></i>
-        </button>
+
+        <!-- Nav de usuario (dinámico según sesión) -->
+        <div id="user-nav" class="flex items-center gap-3">
+            <!-- Se rellena con JS según si hay sesión o no -->
+        </div>
     </header>
 
     <main class="flex-1 container mx-auto px-6 flex flex-col items-center justify-center text-center">
@@ -43,7 +48,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl px-4">
             
-            <button onclick="play('panama')" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
+            <button onclick="play('panama')" id="btn-panama" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
                 <div class="relative z-10">
                     <span class="text-6xl mb-6 block float-animation">🇵🇦</span>
                     <h3 class="text-3xl font-black text-slate-900 uppercase">Panamá</h3>
@@ -57,7 +62,7 @@
                 </div>
             </button>
 
-            <button onclick="play('venezuela')" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
+            <button onclick="play('venezuela')" id="btn-venezuela" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
                 <div class="relative z-10">
                     <span class="text-6xl mb-6 block float-animation" style="animation-delay: 0.5s;">🇻🇪</span>
                     <h3 class="text-3xl font-black text-slate-900 uppercase">Venezuela</h3>
@@ -81,15 +86,25 @@
     <script>
     lucide.createIcons();
 
-    // 1. Obtenemos el estado de las ediciones desde el localStorage
-    // (El mismo que usa el panel de administrador)
+    // ── Lógica de ediciones activas (localStorage igual que antes) ──
     const savedEditions = JSON.parse(localStorage.getItem('tipoVisual_editions'));
 
-    function play(editionId) {
-        // 2. Si no hay datos guardados (primera vez), permitimos pasar por defecto 
-        // o si los hay, verificamos que la edición esté activa
-        let canPlay = true;
+    if (savedEditions) {
+        savedEditions.forEach(edition => {
+            if (!edition.active) {
+                const btn = document.getElementById(`btn-${edition.id}`);
+                if (btn) {
+                    btn.style.opacity = "0.5";
+                    btn.style.cursor = "not-allowed";
+                    const p = btn.querySelector('p');
+                    if (p) p.innerText = "Edición no disponible";
+                }
+            }
+        });
+    }
 
+    function play(editionId) {
+        let canPlay = true;
         if (savedEditions) {
             const edition = savedEditions.find(e => e.id === editionId);
             if (edition && !edition.active) {
@@ -97,41 +112,60 @@
                 canPlay = false;
             }
         }
-
         if (canPlay) {
-            // Guardamos la elección para el game.html
             localStorage.setItem('selectedEdition', editionId);
             window.location.href = 'game.html';
         }
     }
 
-    function checkAdminAccess() {
-        const accessKey = "admin2026"; // Tu clave
-        const userInput = prompt("Clave de acceso administrativo:");
+    // ── Nav dinámico según sesión Supabase ──────────────────────────
+    async function initNav() {
+        const session = await getSession();
+        const navEl = document.getElementById('user-nav');
 
-        if (userInput === accessKey) {
-            sessionStorage.setItem('isAdmin', 'true');
-            window.location.href = 'dashboard.html';
-        } else if (userInput !== null) {
-            alert("Acceso denegado.");
+        if (session) {
+            // Usuario logueado: mostrar su nombre y acceso a perfil
+            const profile = await getUserProfile();
+            const displayName = profile?.name || session.user.email;
+            const isAdmin = profile?.role === 'admin';
+
+            navEl.innerHTML = `
+                ${isAdmin ? `<a href="dashboard.html" class="text-xs font-bold text-slate-500 hover:text-amber-600 uppercase tracking-wider transition flex items-center gap-1"><i data-lucide="settings" class="h-4 w-4"></i> Admin</a>` : ''}
+                <a href="profile.html" class="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm hover:border-amber-300 transition">
+                    <div class="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center text-white text-[10px] font-black">
+                        ${displayName.slice(0,1).toUpperCase()}
+                    </div>
+                    <span class="text-sm font-medium text-slate-700">${displayName.split(' ')[0]}</span>
+                </a>
+            `;
+        } else {
+            // Sin sesión: botón de ingreso + ícono de admin oculto
+            navEl.innerHTML = `
+                <a href="login.html" class="bg-slate-900 text-white text-sm font-bold px-4 py-2 rounded-xl hover:bg-slate-800 transition uppercase tracking-wide">
+                    Ingresar
+                </a>
+                <button onclick="checkAdminAccess()" class="text-slate-400 hover:text-amber-600 transition" title="Acceso admin">
+                    <i data-lucide="settings" class="h-5 w-5"></i>
+                </button>
+            `;
         }
+        lucide.createIcons();
     }
-    // Ocultar o atenuar botones si la edición está desactivada
-    if (savedEditions) {
-        savedEditions.forEach(edition => {
-        if (!edition.active) {
-            // Buscamos el botón que tenga el onclick con ese ID
-            const btn = document.querySelector(`button[onclick="play('${edition.id}')"]`);
-            if (btn) {
-                btn.style.opacity = "0.5";
-                btn.style.cursor = "not-allowed";
-                // Cambiamos el texto para avisar
-                const p = btn.querySelector('p');
-                if (p) p.innerText = "Edición no disponible";
-            }
+
+    // ── Acceso admin legacy (contraseña) → ahora redirige a login ──
+    // Mantener por compatibilidad pero el admin usa Supabase Auth
+    async function checkAdminAccess() {
+        // Si ya hay sesión de admin, ir directo al dashboard
+        const profile = await getUserProfile();
+        if (profile?.role === 'admin') {
+            window.location.href = 'dashboard.html';
+            return;
         }
-    });
-}
+        // Si no, llevar al login
+        window.location.href = 'login.html?reason=admin';
+    }
+
+    initNav();
     </script>
 </body>
 </html>

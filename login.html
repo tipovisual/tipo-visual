@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso — TipoVisual</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        .syne { font-family: 'Syne', sans-serif; }
+
+        /* Panel derecho — imagen decorativa */
+        .deco-panel {
+            background: #0F0F0F;
+            position: relative;
+            overflow: hidden;
+        }
+        .deco-panel::before {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(217,119,6,0.25) 0%, transparent 70%);
+            top: -100px; right: -100px;
+        }
+        .deco-panel::after {
+            content: '';
+            position: absolute;
+            width: 350px; height: 350px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(217,119,6,0.12) 0%, transparent 70%);
+            bottom: -80px; left: -80px;
+        }
+
+        /* Cards flotantes decorativas */
+        .floating-card {
+            position: absolute;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.06);
+        }
+        .fc-1 { width: 110px; top: 18%; left: 15%; transform: rotate(-8deg); z-index: 2; }
+        .fc-2 { width: 110px; top: 14%; left: 38%; transform: rotate(5deg); z-index: 3; }
+        .fc-3 { width: 110px; top: 38%; left: 26%; transform: rotate(-3deg); z-index: 2; }
+        .fc-front {
+            background: linear-gradient(145deg, #1E293B, #0F172A);
+            padding: 10px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 6px;
+        }
+        .fc-emoji { font-size: 36px; }
+        .fc-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 8px; font-weight: 700;
+            color: #F59E0B;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+        }
+        .fc-back {
+            background: #D97706;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .fc-back-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px; font-weight: 800;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: -0.05em;
+        }
+
+        /* Tabs */
+        .tab-underline {
+            position: absolute; bottom: 0; left: 0;
+            height: 2px;
+            background: #D97706;
+            transition: all 0.3s ease;
+        }
+
+        /* Input styles */
+        .field-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #E7E5E4;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.2s;
+            outline: none;
+            background: #FAFAF9;
+        }
+        .field-input:focus { border-color: #D97706; background: white; }
+        .field-input.error { border-color: #EF4444; }
+
+        /* Button */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #0F0F0F;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            text-transform: uppercase;
+        }
+        .btn-primary:hover { background: #1E293B; }
+        .btn-primary:active { transform: scale(0.99); }
+        .btn-primary:disabled { background: #94A3B8; cursor: not-allowed; }
+
+        /* Alert */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+        }
+        .alert.error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; display: block; }
+        .alert.success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; display: block; }
+
+        /* Spinner */
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Float animation for cards */
+        @keyframes floatA {
+            0%, 100% { transform: rotate(-8deg) translateY(0); }
+            50% { transform: rotate(-8deg) translateY(-12px); }
+        }
+        @keyframes floatB {
+            0%, 100% { transform: rotate(5deg) translateY(0); }
+            50% { transform: rotate(5deg) translateY(-8px); }
+        }
+        @keyframes floatC {
+            0%, 100% { transform: rotate(-3deg) translateY(0); }
+            50% { transform: rotate(-3deg) translateY(-10px); }
+        }
+        .fc-1 { animation: floatA 4s ease-in-out infinite; }
+        .fc-2 { animation: floatB 5s ease-in-out infinite 0.5s; }
+        .fc-3 { animation: floatC 4.5s ease-in-out infinite 1s; }
+    </style>
+</head>
+<body class="min-h-screen flex">
+
+    <!-- ── Panel izquierdo: Formulario ───────────────────── -->
+    <div class="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 bg-white max-w-lg">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2 mb-12">
+            <div class="bg-amber-600 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2a10 10 0 0 0-10 10"/><path d="M12 22a10 10 0 0 0 10-10"/><path d="M12 22a10 10 0 0 1-10-10"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <span class="syne text-lg font-800 tracking-tight text-slate-900 font-bold uppercase">TipoVisual</span>
+        </a>
+
+        <!-- Reason notice (si viene de redirect) -->
+        <div id="reason-notice" class="hidden mb-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 font-medium"></div>
+
+        <!-- Tabs -->
+        <div class="relative border-b border-slate-200 mb-8 flex">
+            <button id="tab-login" onclick="switchTab('login')" class="px-0 pb-3 mr-8 text-sm font-bold syne uppercase tracking-wider text-slate-900 transition-colors">
+                Iniciar sesión
+            </button>
+            <button id="tab-register" onclick="switchTab('register')" class="px-0 pb-3 text-sm font-bold syne uppercase tracking-wider text-slate-400 transition-colors">
+                Registrarse
+            </button>
+            <div id="tab-indicator" class="tab-underline w-28"></div>
+        </div>
+
+        <!-- Alert global -->
+        <div id="global-alert" class="alert mb-4"></div>
+
+        <!-- ── FORM LOGIN ─────────────────────────────── -->
+        <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email</label>
+                <input id="login-email" type="email" placeholder="tu@email.com" class="field-input" required>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Contraseña</label>
+                    <button type="button" onclick="showForgotPassword()" class="text-xs text-amber-600 hover:underline font-medium">¿Olvidaste tu clave?</button>
+                </div>
+                <div class="relative">
+                    <input id="login-password" type="password" placeholder="••••••••" class="field-input pr-10" required>
+                    <button type="button" onclick="togglePassword('login-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                        <svg id="eye-login" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" id="btn-login" class="btn-primary mt-2 flex items-center justify-center gap-2">
+                <span>Entrar</span>
+                <div class="spinner" id="spinner-login"></div>
+            </button>
+        </form>
+
+        <!-- ── FORM REGISTER ──────────────────────────── -->
+        <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tu nombre</label>
+                <input id="reg-name" type="text" placeholder="¿Cómo te llamamos?" class="field-input" required minlength="2">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email</label>
+                <input id="reg-email" type="email" placeholder="tu@email.com" class="field-input" required>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Contraseña</label>
+                <div class="relative">
+                    <input id="reg-password" type="password" placeholder="Mínimo 6 caracteres" class="field-input pr-10" required minlength="6">
+                    <button type="button" onclick="togglePassword('reg-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Confirmar contraseña</label>
+                <input id="reg-confirm" type="password" placeholder="Repite tu contraseña" class="field-input" required minlength="6">
+            </div>
+            <button type="submit" id="btn-register" class="btn-primary mt-2 flex items-center justify-center gap-2">
+                <span>Crear mi cuenta</span>
+                <div class="spinner" id="spinner-register"></div>
+            </button>
+        </form>
+
+        <!-- ── FORM FORGOT PASSWORD ───────────────────── -->
+        <div id="form-forgot" class="hidden space-y-4">
+            <div class="mb-2">
+                <p class="text-sm text-slate-500 leading-relaxed">Ingresa tu email y te enviaremos un link para restablecer tu contraseña.</p>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email</label>
+                <input id="forgot-email" type="email" placeholder="tu@email.com" class="field-input">
+            </div>
+            <button onclick="handleForgotPassword()" class="btn-primary flex items-center justify-center gap-2">
+                <span>Enviar link</span>
+                <div class="spinner" id="spinner-forgot"></div>
+            </button>
+            <button onclick="switchTab('login')" class="w-full text-sm text-slate-400 hover:text-amber-600 transition-colors mt-2">← Volver al login</button>
+        </div>
+
+        <!-- Footer del form -->
+        <p class="text-center text-xs text-slate-400 mt-8 font-medium">
+            Al registrarte aceptas nuestros términos de uso y política de privacidad.
+        </p>
+    </div>
+
+    <!-- ── Panel derecho: Decorativo ──────────────────────── -->
+    <div class="hidden lg:flex flex-1 deco-panel items-center justify-center relative">
+
+        <!-- Cartas flotantes -->
+        <div class="floating-card fc-1" style="aspect-ratio: 2/3; width:120px;">
+            <div class="fc-front" style="height:100%;">
+                <div class="fc-emoji">🇵🇦</div>
+                <div class="fc-name">La Pollera</div>
+            </div>
+        </div>
+        <div class="floating-card fc-2" style="aspect-ratio: 2/3; width:120px;">
+            <div class="fc-front" style="height:100%;">
+                <div class="fc-emoji">🦅</div>
+                <div class="fc-name">Águila Harpía</div>
+            </div>
+        </div>
+        <div class="floating-card fc-3" style="aspect-ratio: 2/3; width:120px;">
+            <div class="fc-front" style="height:100%;">
+                <div class="fc-emoji">🇻🇪</div>
+                <div class="fc-name">Salto Ángel</div>
+            </div>
+        </div>
+
+        <!-- Texto central -->
+        <div class="absolute bottom-0 left-0 right-0 p-12 z-10">
+            <div class="syne text-5xl font-extrabold text-white leading-none tracking-tighter mb-3">
+                DESCUBRE<br><span class="text-amber-500">TU RAÍZ</span>
+            </div>
+            <p class="text-slate-400 text-sm font-light max-w-xs leading-relaxed">
+                Juega, aprende y colecciona la cultura que nos hace únicos como latinoamericanos.
+            </p>
+            <div class="flex gap-3 mt-6">
+                <div class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs text-slate-300 font-medium">🇵🇦 Panamá</div>
+                <div class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs text-slate-300 font-medium">🇻🇪 Venezuela</div>
+                <div class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs text-slate-400 font-medium">+ más</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─────────────────────────────────────────
+        // ESTADO DE TABS
+        // ─────────────────────────────────────────
+        let currentTab = 'login';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            clearAlert();
+
+            const indicator = document.getElementById('tab-indicator');
+            const loginTab = document.getElementById('tab-login');
+            const registerTab = document.getElementById('tab-register');
+
+            document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+            document.getElementById('form-forgot').classList.add('hidden');
+
+            if (tab === 'login') {
+                loginTab.classList.replace('text-slate-400', 'text-slate-900');
+                registerTab.classList.replace('text-slate-900', 'text-slate-400');
+                indicator.style.width = '112px';
+                indicator.style.left = '0';
+            } else {
+                registerTab.classList.replace('text-slate-400', 'text-slate-900');
+                loginTab.classList.replace('text-slate-900', 'text-slate-400');
+                indicator.style.width = '96px';
+                indicator.style.left = '140px';
+            }
+        }
+
+        function showForgotPassword() {
+            document.getElementById('form-login').classList.add('hidden');
+            document.getElementById('form-register').classList.add('hidden');
+            document.getElementById('form-forgot').classList.remove('hidden');
+            clearAlert();
+        }
+
+        // ─────────────────────────────────────────
+        // HELPERS UI
+        // ─────────────────────────────────────────
+        function showAlert(message, type = 'error') {
+            const el = document.getElementById('global-alert');
+            el.className = `alert ${type}`;
+            el.textContent = message;
+        }
+
+        function clearAlert() {
+            const el = document.getElementById('global-alert');
+            el.className = 'alert';
+            el.textContent = '';
+        }
+
+        function setLoading(btnId, spinnerId, loading) {
+            const btn = document.getElementById(btnId);
+            const spinner = document.getElementById(spinnerId);
+            btn.disabled = loading;
+            spinner.style.display = loading ? 'block' : 'none';
+        }
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // ─────────────────────────────────────────
+        // MOSTRAR RAZÓN DE REDIRECT
+        // ─────────────────────────────────────────
+        const params = new URLSearchParams(window.location.search);
+        const reason = params.get('reason');
+        if (reason === 'admin') {
+            document.getElementById('reason-notice').classList.remove('hidden');
+            document.getElementById('reason-notice').textContent = '🔒 Necesitas acceso de administrador para continuar.';
+        } else if (reason === 'auth') {
+            document.getElementById('reason-notice').classList.remove('hidden');
+            document.getElementById('reason-notice').textContent = '👋 Inicia sesión para acceder a esta área.';
+        }
+
+        // ─────────────────────────────────────────
+        // REDIRECT SI YA HAY SESIÓN ACTIVA
+        // ─────────────────────────────────────────
+        (async () => {
+            const session = await getSession();
+            if (session) {
+                const profile = await getUserProfile();
+                if (profile?.role === 'admin') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'profile.html';
+                }
+            }
+        })();
+
+        // ─────────────────────────────────────────
+        // LOGIN
+        // ─────────────────────────────────────────
+        async function handleLogin(e) {
+            e.preventDefault();
+            clearAlert();
+
+            const email    = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            setLoading('btn-login', 'spinner-login', true);
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                const msg = error.message.includes('Invalid login')
+                    ? 'Email o contraseña incorrectos.'
+                    : error.message.includes('Email not confirmed')
+                    ? 'Revisa tu correo y confirma tu cuenta antes de entrar.'
+                    : 'Error al iniciar sesión. Intenta nuevamente.';
+                showAlert(msg);
+                setLoading('btn-login', 'spinner-login', false);
+                return;
+            }
+
+            // Obtenemos el rol para redirigir correctamente
+            const profile = await getUserProfile();
+            if (profile?.role === 'admin') {
+                window.location.href = 'dashboard.html';
+            } else {
+                window.location.href = 'profile.html';
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // REGISTER
+        // ─────────────────────────────────────────
+        async function handleRegister(e) {
+            e.preventDefault();
+            clearAlert();
+
+            const name     = document.getElementById('reg-name').value.trim();
+            const email    = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirm  = document.getElementById('reg-confirm').value;
+
+            if (password !== confirm) {
+                showAlert('Las contraseñas no coinciden.');
+                return;
+            }
+            if (password.length < 6) {
+                showAlert('La contraseña debe tener al menos 6 caracteres.');
+                return;
+            }
+
+            setLoading('btn-register', 'spinner-register', true);
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { name }  // Se usará en el trigger para crear el perfil
+                }
+            });
+
+            if (error) {
+                showAlert(error.message.includes('already registered')
+                    ? 'Este email ya está registrado. ¿Quieres iniciar sesión?'
+                    : 'Error al crear la cuenta. Intenta nuevamente.');
+                setLoading('btn-register', 'spinner-register', false);
+                return;
+            }
+
+            showAlert('✅ ¡Cuenta creada! Revisa tu correo para confirmar tu registro.', 'success');
+            setLoading('btn-register', 'spinner-register', false);
+        }
+
+        // ─────────────────────────────────────────
+        // FORGOT PASSWORD
+        // ─────────────────────────────────────────
+        async function handleForgotPassword() {
+            clearAlert();
+            const email = document.getElementById('forgot-email').value.trim();
+            if (!email) { showAlert('Ingresa tu email.'); return; }
+
+            setLoading('btn-login', 'spinner-forgot', true);
+
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + '/login.html?tab=reset'
+            });
+
+            if (error) {
+                showAlert('Error al enviar el correo. Intenta nuevamente.');
+            } else {
+                showAlert('✅ Te enviamos un link de recuperación. Revisa tu correo.', 'success');
+            }
+
+            document.getElementById('spinner-forgot').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

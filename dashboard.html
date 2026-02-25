@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>
-    // Bloque de seguridad: verificar sesión antes de cargar el resto
-    if (sessionStorage.getItem('isAdmin') !== 'true') {
-        window.location.href = 'index.html';
-    }
-    </script>
+    <!-- ✅ FASE 1: Auth migrada a Supabase. Ya no usa sessionStorage. -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Real - TipoVisual</title>
+    <title>Dashboard — TipoVisual</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -19,8 +16,13 @@
         <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
             <div class="p-6">
                 <h1 class="text-xl font-bold text-amber-500 flex items-center">
-                    <i data-lucide="layout-dashboard" class="mr-2 h-6 w-6"></i> TipoVisual Admin
+                    <i data-lucide="layout-dashboard" class="mr-2 h-6 w-6"></i> PUNTICO Admin
                 </h1>
+                <!-- Badge de admin -->
+                <div class="mt-2 flex items-center gap-2">
+                    <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
+                    <span id="admin-name-sidebar" class="text-xs text-slate-400">Cargando...</span>
+                </div>
             </div>
             <nav class="flex-1 px-4 space-y-2">
                 <a href="dashboard.html" class="flex items-center px-4 py-3 bg-slate-800 text-white rounded-lg">
@@ -36,11 +38,20 @@
                     <i data-lucide="home" class="mr-3 h-5 w-5"></i> Inicio
                 </a>
             </nav>
+            <!-- Botón logout conectado a Supabase -->
+            <div class="p-4 border-t border-slate-800">
+                <button onclick="logout()" class="flex items-center w-full px-4 py-3 text-red-400 hover:bg-slate-800 rounded-lg transition text-sm font-medium">
+                    <i data-lucide="log-out" class="mr-3 h-5 w-5"></i> Cerrar Sesión
+                </button>
+            </div>
         </aside>
 
         <main class="flex-1 p-4 md:p-8 pt-6">
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Vista General del Sistema</h2>
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Vista General</h2>
+                    <p id="welcome-msg" class="text-sm text-slate-400 mt-1">Cargando sesión...</p>
+                </div>
                 <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-full border shadow-sm">
                     Estado: <span class="text-green-600">En Línea</span>
                 </div>
@@ -62,46 +73,43 @@
                         <i data-lucide="image" class="h-4 w-4 text-amber-600"></i>
                     </div>
                     <div class="text-2xl font-bold" id="stat-cards">0</div>
-                    <p class="text-xs text-slate-400">En todas las carpetas</p>
+                    <p class="text-xs text-slate-400">En todas las ediciones</p>
                 </div>
 
                 <div class="rounded-xl border bg-white shadow-sm p-6">
                     <div class="flex flex-row items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">Activa Actualmente</h3>
-                        <i data-lucide="check-circle" class="h-4 w-4 text-green-600"></i>
+                        <h3 class="text-sm font-medium text-slate-500">Usuarios Registrados</h3>
+                        <i data-lucide="users" class="h-4 w-4 text-green-600"></i>
                     </div>
-                    <div class="text-xl font-bold text-slate-800" id="stat-active">Panamá 🇵🇦</div>
-                    <p class="text-xs text-slate-400">Visible para usuarios</p>
+                    <div class="text-2xl font-bold text-slate-800" id="stat-users">—</div>
+                    <p class="text-xs text-slate-400">En Supabase Auth</p>
                 </div>
 
                 <div class="rounded-xl border bg-white shadow-sm p-6">
                     <div class="flex flex-row items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">Parejas Totales</h3>
+                        <h3 class="text-sm font-medium text-slate-500">Partidas Jugadas</h3>
                         <i data-lucide="zap" class="h-4 w-4 text-amber-600"></i>
                     </div>
-                    <div class="text-2xl font-bold" id="stat-pairs">0</div>
-                    <p class="text-xs text-slate-400">Listas para jugar</p>
+                    <div class="text-2xl font-bold" id="stat-sessions">—</div>
+                    <p class="text-xs text-slate-400">Total histórico</p>
                 </div>
             </div>
 
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <div class="col-span-4 rounded-xl border bg-white shadow-sm p-6">
                     <h3 class="font-bold text-lg mb-4">Distribución de Contenido</h3>
-                    <div class="space-y-4" id="distribucion-content">
-                        </div>
+                    <div class="space-y-4" id="distribucion-content"></div>
                 </div>
 
                 <div class="col-span-3 rounded-xl border bg-white shadow-sm p-6">
                     <h3 class="font-bold text-lg mb-4">Registro de Ediciones</h3>
-                    <div class="space-y-4" id="log-ediciones">
-                        </div>
+                    <div class="space-y-4" id="log-ediciones"></div>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // DATOS REALES DEL PROYECTO
         const projectData = {
             editions: [
                 { name: "Panamá", cards: 12, active: true, emoji: "🇵🇦" },
@@ -109,20 +117,39 @@
             ]
         };
 
-        function initDashboard() {
-            // Calcular totales
+        async function initDashboard() {
+            // ── 1. Verificar que sea admin ──────────────────────
+            const profile = await requireAdmin();
+            // requireAdmin() redirige si no es admin, así que si llegamos aquí, es admin.
+
+            // ── 2. Mostrar nombre del admin ─────────────────────
+            const session = await getSession();
+            const adminName = profile?.name || session?.user?.email || 'Admin';
+            document.getElementById('admin-name-sidebar').textContent = adminName;
+            document.getElementById('welcome-msg').textContent = `Bienvenido, ${adminName}`;
+
+            // ── 3. Stats de juego (igual que antes) ────────────
             let totalCards = 0;
             projectData.editions.forEach(ed => totalCards += ed.cards);
-
-            // Actualizar Tarjetas Superiores
             document.getElementById('stat-editions').innerText = projectData.editions.length;
             document.getElementById('stat-cards').innerText = totalCards;
-            document.getElementById('stat-pairs').innerText = totalCards; // Porque son parejas
 
-            // Renderizar Distribución
+            // ── 4. Stats desde Supabase ─────────────────────────
+            // Contar usuarios
+            const { count: userCount } = await supabaseClient
+                .from('profiles')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('stat-users').textContent = userCount ?? '—';
+
+            // Contar partidas jugadas
+            const { count: sessionCount } = await supabaseClient
+                .from('game_sessions')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('stat-sessions').textContent = sessionCount ?? '—';
+
+            // ── 5. Distribución ────────────────────────────────
             const distContainer = document.getElementById('distribucion-content');
             distContainer.innerHTML = '';
-            
             projectData.editions.forEach(ed => {
                 const percentage = (ed.cards / totalCards) * 100;
                 distContainer.innerHTML += `
@@ -138,18 +165,16 @@
                 `;
             });
 
-            // Renderizar Log
+            // ── 6. Log de ediciones ────────────────────────────
             const logContainer = document.getElementById('log-ediciones');
             logContainer.innerHTML = '';
             projectData.editions.forEach(ed => {
                 logContainer.innerHTML += `
                     <div class="flex items-center p-3 border rounded-lg bg-slate-50">
-                        <div class="h-8 w-8 rounded bg-white flex items-center justify-center border mr-3 text-lg">
-                            ${ed.emoji}
-                        </div>
+                        <div class="h-8 w-8 rounded bg-white flex items-center justify-center border mr-3 text-lg">${ed.emoji}</div>
                         <div class="flex-1">
                             <p class="text-sm font-bold">${ed.name}</p>
-                            <p class="text-[10px] text-slate-500 uppercase">${ed.cards * 2} cartas totales en tablero</p>
+                            <p class="text-[10px] text-slate-500 uppercase">${ed.cards * 2} cartas en tablero</p>
                         </div>
                         <span class="h-2 w-2 rounded-full ${ed.active ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}"></span>
                     </div>
@@ -161,15 +186,5 @@
 
         window.onload = initDashboard;
     </script>
-
-    <script>
-        function logout() {
-            sessionStorage.removeItem('isAdmin');
-            window.location.href = 'index.html';
-        }
-    </script>
-    <button onclick="logout()" class="flex items-center w-full px-4 py-3 text-red-400 hover:bg-slate-800 rounded-lg transition">
-        <i data-lucide="log-out" class="mr-3 h-5 w-5"></i> Cerrar Sesión
-    </button>
 </body>
 </html>
