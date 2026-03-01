@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego de Memoria - TipoVisual</title>
+    <!-- ✅ FASE 1: Supabase para guardar partidas -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <script src="data.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -57,23 +60,37 @@
                 <div class="text-sm font-medium">
                     Movimientos: <span id="moves-count" class="font-bold text-amber-600 text-lg">0</span>
                 </div>
+                <!-- Badge de sesión del usuario -->
+                <div id="user-badge" class="hidden items-center gap-1.5 bg-green-50 border border-green-100 px-3 py-1 rounded-full">
+                    <div class="h-1.5 w-1.5 rounded-full bg-green-500"></div>
+                    <span id="user-badge-name" class="text-xs font-bold text-green-700"></span>
+                </div>
                 <div class="text-sm font-medium">
                     Pares: <span id="pairs-count" class="font-bold text-amber-600 text-lg">0/0</span>
                 </div>
             </div>
 
             <div id="game-grid" class="grid grid-cols-3 gap-2 md:grid-cols-6 md:gap-4 lg:max-w-5xl mx-auto">
-                </div>
+            </div>
 
             <div id="win-message" class="hidden mt-12 flex flex-col items-center space-y-4 pb-12">
                 <div class="bg-amber-100 p-6 rounded-full">
-                    <i data-lucide="tropy" class="h-12 w-12 text-amber-600"></i>
+                    <i data-lucide="trophy" class="h-12 w-12 text-amber-600"></i>
                 </div>
                 <h2 class="text-3xl font-black text-slate-800">¡Victoria Magistral!</h2>
                 <p id="final-stats" class="text-center text-slate-600 max-w-xs"></p>
-                <button onclick="resetGame()" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition shadow-xl uppercase tracking-wider">
-                    Jugar de nuevo
-                </button>
+                <!-- Badge de guardado -->
+                <div id="saved-badge" class="hidden bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+                    <i data-lucide="check-circle" class="h-4 w-4"></i> Partida guardada en tu perfil
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="resetGame()" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition shadow-xl uppercase tracking-wider">
+                        Jugar de nuevo
+                    </button>
+                    <a href="profile.html" id="btn-ver-perfil" class="hidden bg-amber-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-amber-700 transition shadow-xl uppercase tracking-wider">
+                        Ver mi perfil
+                    </a>
+                </div>
             </div>
         </main>
 
@@ -102,45 +119,87 @@
     </div>
 
     <script>
-        // Lógica del Juego con Datos Unificados
-        let currentEdition = localStorage.getItem('selectedEdition') || 'panama';        
+        let currentEdition = localStorage.getItem('selectedEdition') || 'panama';
         let cardData = [];
         let cards = [];
         let flippedCards = [];
         let matchedPairs = 0;
         let moves = 0;
         let canClick = true;
+        let currentSession = null; // Sesión de Supabase
 
+        // ─────────────────────────────────────────
+        // GUARDAR PARTIDA EN SUPABASE
+        // Solo guarda si hay sesión activa — si no, el juego igual funciona
+        // ─────────────────────────────────────────
+        async function saveGameSession(edition, totalMoves) {
+            if (!currentSession) return; // Sin sesión → no guarda, sin error
+
+            const { error } = await supabaseClient
+                .from('game_sessions')
+                .insert({
+                    user_id: currentSession.user.id,
+                    edition: edition,
+                    moves: totalMoves
+                });
+
+            if (!error) {
+                // Mostrar badge de guardado y botón de perfil
+                document.getElementById('saved-badge').classList.remove('hidden');
+                document.getElementById('saved-badge').classList.add('flex');
+                document.getElementById('btn-ver-perfil').classList.remove('hidden');
+                lucide.createIcons();
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // PREPARAR CARTAS
+        // ─────────────────────────────────────────
         function prepareCards() {
-            // Verificamos si gameData existe (viene de data.js)
             if (typeof gameData === 'undefined') {
-                console.error("Error: No se encontró el archivo data.js o la variable gameData.");
+                console.error("Error: No se encontró data.js");
                 return;
             }
-            
+
             const titleElement = document.querySelector('header h1');
             if (titleElement && gameData[currentEdition]) {
                 titleElement.innerText = "Edición " + (currentEdition === 'panama' ? 'Panamá' : 'Venezuela');
-                }
-        }
+            }
 
             const rawData = gameData[currentEdition].cards;
             cardData = [];
-            
+
             rawData.forEach(item => {
-                const cardPair = { 
-                    content: item.img, 
-                    title: item.name, 
-                    description: item.desc 
+                const cardPair = {
+                    content: item.img,
+                    title: item.name,
+                    description: item.desc
                 };
-                // Añadimos dos veces cada carta para formar la pareja
                 cardData.push({...cardPair, uniqueId: item.id + "_a"});
                 cardData.push({...cardPair, uniqueId: item.id + "_b"});
             });
+        }
 
-        function init() {
-            prepareCards(); // Llenamos cardData desde data.js
+        // ─────────────────────────────────────────
+        // INIT
+        // ─────────────────────────────────────────
+        async function init() {
+            // Verificar sesión de Supabase (no bloquea el juego si no hay)
+            currentSession = await getSession();
+
+            // Mostrar badge de usuario si hay sesión
+            if (currentSession) {
+                const profile = await getUserProfile();
+                const badgeEl = document.getElementById('user-badge');
+                const badgeName = document.getElementById('user-badge-name');
+                badgeEl.classList.remove('hidden');
+                badgeEl.classList.add('flex');
+                badgeName.textContent = profile?.name || currentSession.user.email.split('@')[0];
+            }
+
+            prepareCards();
             lucide.createIcons();
+
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('game-container').classList.remove('hidden');
@@ -148,18 +207,23 @@
             }, 1000);
         }
 
+        // ─────────────────────────────────────────
+        // LÓGICA DEL JUEGO (sin cambios)
+        // ─────────────────────────────────────────
         function resetGame() {
-            // Mezclamos las cartas preparadas
             cards = [...cardData]
                 .sort(() => Math.random() - 0.5)
                 .map((card, index) => ({ ...card, gameId: index, matched: false, flipped: false }));
-            
+
             flippedCards = [];
             matchedPairs = 0;
             moves = 0;
             canClick = true;
-            
+
             document.getElementById('win-message').classList.add('hidden');
+            document.getElementById('saved-badge').classList.add('hidden');
+            document.getElementById('saved-badge').classList.remove('flex');
+            document.getElementById('btn-ver-perfil').classList.add('hidden');
             document.getElementById('game-grid').classList.remove('hidden');
             updateStats();
             renderBoard();
@@ -179,7 +243,7 @@
                 const cardEl = document.createElement('div');
                 cardEl.className = `aspect-[2/3] cursor-pointer relative transition-transform hover:scale-105 ${card.flipped || card.matched ? 'flipped' : ''}`;
                 cardEl.onclick = () => handleCardClick(card.gameId);
-                
+
                 cardEl.innerHTML = `
                     <div class="card-inner w-full h-full relative">
                         <div class="back w-full h-full bg-amber-600 rounded-xl shadow-lg border-2 border-white overflow-hidden">
@@ -226,10 +290,8 @@
                 card1.matched = true;
                 card2.matched = true;
                 matchedPairs++;
-                
-                setTimeout(() => {
-                    showMatchModal(card1);
-                }, 500);
+
+                setTimeout(() => { showMatchModal(card1); }, 500);
 
                 flippedCards = [];
                 canClick = true;
@@ -259,11 +321,15 @@
             document.getElementById('match-modal').classList.add('hidden');
         }
 
-        function showWin() {
+        async function showWin() {
             document.getElementById('game-grid').classList.add('hidden');
             document.getElementById('win-message').classList.remove('hidden');
-            document.getElementById('final-stats').innerText = `Completaste la edición de ${gameData[currentEdition].title} en ${moves} movimientos.`;
+            document.getElementById('final-stats').innerText =
+                `Completaste la edición ${gameData[currentEdition].title} en ${moves} movimientos.`;
             lucide.createIcons();
+
+            // ✅ Guardar en Supabase si hay sesión
+            await saveGameSession(currentEdition, moves);
         }
 
         init();
