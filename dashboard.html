@@ -1,190 +1,674 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- ✅ FASE 1: Auth migrada a Supabase. Ya no usa sessionStorage. -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — TipoVisual</title>
+    <title>Dashboard — TipoVisual Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-link.active { background: #1E293B; color: white; }
+        .status-badge { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15,15,15,0.6); z-index: 200; display: none; align-items: center; justify-content: center; padding: 24px; }
+        .modal-overlay.open { display: flex; }
+        input[type="text"], input[type="number"], input[type="url"], textarea, select {
+            width: 100%; padding: 10px 14px; border: 1.5px solid #E2E8F0;
+            border-radius: 12px; font-size: 13px; outline: none;
+            transition: border-color 0.2s; background: #F8FAFC;
+        }
+        input:focus, textarea:focus, select:focus { border-color: #D97706; background: white; }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-950 font-sans">
 
-    <div class="flex min-h-screen">
-        <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
-            <div class="p-6">
-                <h1 class="text-xl font-bold text-amber-500 flex items-center">
-                    <i data-lucide="layout-dashboard" class="mr-2 h-6 w-6"></i> PUNTICO Admin
-                </h1>
-                <!-- Badge de admin -->
-                <div class="mt-2 flex items-center gap-2">
-                    <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
-                    <span id="admin-name-sidebar" class="text-xs text-slate-400">Cargando...</span>
-                </div>
-            </div>
-            <nav class="flex-1 px-4 space-y-2">
-                <a href="dashboard.html" class="flex items-center px-4 py-3 bg-slate-800 text-white rounded-lg">
-                    <i data-lucide="bar-chart-3" class="mr-3 h-5 w-5"></i> Dashboard
-                </a>
-                <a href="editions.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition">
-                    <i data-lucide="layers" class="mr-3 h-5 w-5"></i> Ediciones
-                </a>
-                <div class="pt-4 pb-2 border-t border-slate-800 mt-4">
-                    <span class="px-4 text-xs font-semibold text-slate-500 uppercase">Vista Pública</span>
-                </div>
-                <a href="index.html" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition">
-                    <i data-lucide="home" class="mr-3 h-5 w-5"></i> Inicio
-                </a>
-            </nav>
-            <!-- Botón logout conectado a Supabase -->
-            <div class="p-4 border-t border-slate-800">
-                <button onclick="logout()" class="flex items-center w-full px-4 py-3 text-red-400 hover:bg-slate-800 rounded-lg transition text-sm font-medium">
-                    <i data-lucide="log-out" class="mr-3 h-5 w-5"></i> Cerrar Sesión
-                </button>
-            </div>
-        </aside>
+<div class="flex min-h-screen">
 
-        <main class="flex-1 p-4 md:p-8 pt-6">
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
+        <div class="p-6">
+            <h1 class="text-xl font-bold text-amber-500 flex items-center">
+                <i data-lucide="layout-dashboard" class="mr-2 h-6 w-6"></i> TipoVisual Admin
+            </h1>
+            <div class="mt-2 flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
+                <span id="admin-name-sidebar" class="text-xs text-slate-400">Cargando...</span>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 space-y-1">
+            <a href="#" onclick="showTab('overview')" id="nav-overview" class="nav-link active flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="bar-chart-3" class="mr-3 h-4 w-4"></i> Vista General
+            </a>
+            <a href="#" onclick="showTab('editions')" id="nav-editions" class="nav-link flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="layers" class="mr-3 h-4 w-4"></i> Ediciones
+            </a>
+            <a href="#" onclick="showTab('products')" id="nav-products" class="nav-link flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="package" class="mr-3 h-4 w-4"></i> Productos
+            </a>
+            <a href="#" onclick="showTab('orders')" id="nav-orders" class="nav-link flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="shopping-bag" class="mr-3 h-4 w-4"></i> Órdenes
+                <span id="pending-badge" class="hidden ml-auto bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">0</span>
+            </a>
+            <div class="pt-4 pb-2 border-t border-slate-800 mt-2">
+                <span class="px-4 text-[10px] font-semibold text-slate-500 uppercase">Vista Pública</span>
+            </div>
+            <a href="index.html" class="nav-link flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="home" class="mr-3 h-4 w-4"></i> Inicio
+            </a>
+            <a href="store.html" class="nav-link flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="shopping-cart" class="mr-3 h-4 w-4"></i> Tienda
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-800">
+            <button onclick="logout()" class="flex items-center w-full px-4 py-3 text-red-400 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="log-out" class="mr-3 h-4 w-4"></i> Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+
+        <!-- ══ TAB: VISTA GENERAL ═══════════════════════════════════ -->
+        <div id="tab-overview" class="tab-content active">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Vista General</h2>
-                    <p id="welcome-msg" class="text-sm text-slate-400 mt-1">Cargando sesión...</p>
+                    <h2 class="text-3xl font-bold tracking-tight">Vista General</h2>
+                    <p id="welcome-msg" class="text-sm text-slate-400 mt-1">Cargando...</p>
                 </div>
                 <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-full border shadow-sm">
                     Estado: <span class="text-green-600">En Línea</span>
                 </div>
             </div>
 
+            <!-- Stats cards -->
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
                 <div class="rounded-xl border bg-white shadow-sm p-6">
-                    <div class="flex flex-row items-center justify-between pb-2">
+                    <div class="flex items-center justify-between pb-2">
                         <h3 class="text-sm font-medium text-slate-500">Ediciones</h3>
                         <i data-lucide="layers" class="h-4 w-4 text-amber-600"></i>
                     </div>
-                    <div class="text-2xl font-bold" id="stat-editions">2</div>
-                    <p class="text-xs text-slate-400">Panamá y Venezuela</p>
+                    <div class="text-2xl font-bold">2</div>
+                    <p class="text-xs text-slate-400 mt-1">Panamá y Venezuela</p>
                 </div>
-
                 <div class="rounded-xl border bg-white shadow-sm p-6">
-                    <div class="flex flex-row items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">Cartas Únicas</h3>
-                        <i data-lucide="image" class="h-4 w-4 text-amber-600"></i>
-                    </div>
-                    <div class="text-2xl font-bold" id="stat-cards">0</div>
-                    <p class="text-xs text-slate-400">En todas las ediciones</p>
-                </div>
-
-                <div class="rounded-xl border bg-white shadow-sm p-6">
-                    <div class="flex flex-row items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">Usuarios Registrados</h3>
+                    <div class="flex items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Usuarios</h3>
                         <i data-lucide="users" class="h-4 w-4 text-green-600"></i>
                     </div>
-                    <div class="text-2xl font-bold text-slate-800" id="stat-users">—</div>
-                    <p class="text-xs text-slate-400">En Supabase Auth</p>
+                    <div class="text-2xl font-bold" id="stat-users">—</div>
+                    <p class="text-xs text-slate-400 mt-1">Registrados en Supabase</p>
                 </div>
-
                 <div class="rounded-xl border bg-white shadow-sm p-6">
-                    <div class="flex flex-row items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">Partidas Jugadas</h3>
+                    <div class="flex items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Órdenes</h3>
+                        <i data-lucide="shopping-bag" class="h-4 w-4 text-amber-600"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-orders">—</div>
+                    <p class="text-xs text-slate-400 mt-1" id="stat-orders-pending">— pendientes</p>
+                </div>
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Partidas</h3>
                         <i data-lucide="zap" class="h-4 w-4 text-amber-600"></i>
                     </div>
                     <div class="text-2xl font-bold" id="stat-sessions">—</div>
-                    <p class="text-xs text-slate-400">Total histórico</p>
+                    <p class="text-xs text-slate-400 mt-1">Total histórico</p>
                 </div>
             </div>
 
-            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <div class="col-span-4 rounded-xl border bg-white shadow-sm p-6">
-                    <h3 class="font-bold text-lg mb-4">Distribución de Contenido</h3>
-                    <div class="space-y-4" id="distribucion-content"></div>
+            <!-- Últimas órdenes en overview -->
+            <div class="bg-white rounded-xl border shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-lg">Últimas órdenes</h3>
+                    <button onclick="showTab('orders')" class="text-xs font-bold text-amber-600 hover:underline uppercase tracking-wider">Ver todas →</button>
                 </div>
-
-                <div class="col-span-3 rounded-xl border bg-white shadow-sm p-6">
-                    <h3 class="font-bold text-lg mb-4">Registro de Ediciones</h3>
-                    <div class="space-y-4" id="log-ediciones"></div>
+                <div id="recent-orders-list" class="space-y-3">
+                    <p class="text-sm text-slate-400">Cargando...</p>
                 </div>
             </div>
-        </main>
+        </div>
+
+        <!-- ══ TAB: EDICIONES ════════════════════════════════════════ -->
+        <div id="tab-editions" class="tab-content">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Ediciones</h2>
+                    <p class="text-sm text-slate-400 mt-1">Gestiona las colecciones del juego.</p>
+                </div>
+            </div>
+            <!-- Contenido de ediciones (el existente) -->
+            <div id="editions-grid" class="grid gap-6 md:grid-cols-2 max-w-4xl"></div>
+        </div>
+
+        <!-- ══ TAB: PRODUCTOS ════════════════════════════════════════ -->
+        <div id="tab-products" class="tab-content">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Productos</h2>
+                    <p class="text-sm text-slate-400 mt-1">Gestiona el catálogo de la tienda.</p>
+                </div>
+                <button onclick="openProductModal()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center hover:bg-amber-600 transition">
+                    <i data-lucide="plus" class="mr-2 h-4 w-4"></i> Nuevo producto
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Producto</th>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Precio</th>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Stock</th>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Estado</th>
+                            <th class="text-right px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body" class="divide-y divide-slate-100">
+                        <tr><td colspan="5" class="px-6 py-8 text-center text-slate-400 text-sm">Cargando productos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══ TAB: ÓRDENES ══════════════════════════════════════════ -->
+        <div id="tab-orders" class="tab-content">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Órdenes</h2>
+                    <p class="text-sm text-slate-400 mt-1">Pedidos recibidos desde la tienda.</p>
+                </div>
+                <!-- Filtro de estado -->
+                <select id="orders-filter" onchange="loadOrders()" class="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:border-amber-500 outline-none shadow-sm" style="width:auto;">
+                    <option value="all">Todos los estados</option>
+                    <option value="pending">Pendientes</option>
+                    <option value="confirmed">Confirmados</option>
+                    <option value="shipped">Enviados</option>
+                    <option value="delivered">Entregados</option>
+                    <option value="cancelled">Cancelados</option>
+                </select>
+            </div>
+
+            <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Orden</th>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Cliente</th>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Entrega</th>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Total</th>
+                            <th class="text-left px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Estado</th>
+                            <th class="text-right px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body" class="divide-y divide-slate-100">
+                        <tr><td colspan="6" class="px-6 py-8 text-center text-slate-400 text-sm">Cargando órdenes...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- ══ MODAL PRODUCTO ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="product-modal">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold" id="modal-title">Nuevo producto</h3>
+            <button onclick="closeProductModal()" class="p-2 hover:bg-slate-100 rounded-xl transition">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <input type="hidden" id="product-id">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nombre del producto</label>
+                <input type="text" id="product-name" placeholder="Ej: Juego de Memoria — Edición Panamá">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Descripción</label>
+                <textarea id="product-desc" rows="2" placeholder="Descripción breve del producto..."></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Precio (USD)</label>
+                    <input type="number" id="product-price" placeholder="24.99" min="0" step="0.01">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Stock</label>
+                    <input type="number" id="product-stock" placeholder="50" min="0">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Edición</label>
+                    <select id="product-edition">
+                        <option value="panama">🇵🇦 Panamá</option>
+                        <option value="venezuela">🇻🇪 Venezuela</option>
+                        <option value="combo">⭐ Combo</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Estado</label>
+                    <select id="product-active">
+                        <option value="true">✅ Activo</option>
+                        <option value="false">⏸️ Inactivo</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">URL de imagen</label>
+                <input type="url" id="product-image" placeholder="assets/cartas/BANDERA PANAMÁ.png">
+            </div>
+            <div id="modal-error" class="hidden p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600 font-medium"></div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeProductModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold hover:bg-slate-200 transition text-sm">
+                    Cancelar
+                </button>
+                <button onclick="saveProduct()" id="btn-save-product" class="flex-1 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-amber-600 transition text-sm">
+                    Guardar producto
+                </button>
+            </div>
+        </div>
     </div>
+</div>
 
-    <script>
-        const projectData = {
-            editions: [
-                { name: "Panamá", cards: 12, active: true, emoji: "🇵🇦" },
-                { name: "Venezuela", cards: 6, active: false, emoji: "🇻🇪" }
-            ]
-        };
+<!-- ══ MODAL DETALLE ORDEN ════════════════════════════════════════════ -->
+<div class="modal-overlay" id="order-modal">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold">Detalle de orden</h3>
+            <button onclick="closeOrderModal()" class="p-2 hover:bg-slate-100 rounded-xl transition">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+        </div>
+        <div id="order-detail-content"></div>
+    </div>
+</div>
 
-        async function initDashboard() {
-            // ── 1. Verificar que sea admin ──────────────────────
-            const profile = await requireAdmin();
-            // requireAdmin() redirige si no es admin, así que si llegamos aquí, es admin.
+<script>
+    // ════════════════════════════════════════════════
+    // TABS
+    // ════════════════════════════════════════════════
+    function showTab(name) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        document.getElementById('nav-' + name).classList.add('active');
 
-            // ── 2. Mostrar nombre del admin ─────────────────────
-            const session = await getSession();
-            const adminName = profile?.name || session?.user?.email || 'Admin';
-            document.getElementById('admin-name-sidebar').textContent = adminName;
-            document.getElementById('welcome-msg').textContent = `Bienvenido, ${adminName}`;
+        // Cargar datos según tab
+        if (name === 'products') loadProducts();
+        if (name === 'orders')   loadOrders();
+        if (name === 'editions') renderEditions();
+        return false;
+    }
 
-            // ── 3. Stats de juego (igual que antes) ────────────
-            let totalCards = 0;
-            projectData.editions.forEach(ed => totalCards += ed.cards);
-            document.getElementById('stat-editions').innerText = projectData.editions.length;
-            document.getElementById('stat-cards').innerText = totalCards;
+    // ════════════════════════════════════════════════
+    // INIT
+    // ════════════════════════════════════════════════
+    window.addEventListener('load', async () => {
+        lucide.createIcons();
+        const profile = await requireAdmin();
+        const session = await getSession();
+        const adminName = profile?.name || session?.user?.email || 'Admin';
+        document.getElementById('admin-name-sidebar').textContent = adminName;
+        document.getElementById('welcome-msg').textContent = `Bienvenido, ${adminName}`;
+        await loadOverview();
+    });
 
-            // ── 4. Stats desde Supabase ─────────────────────────
-            // Contar usuarios
-            const { count: userCount } = await supabaseClient
-                .from('profiles')
-                .select('*', { count: 'exact', head: true });
-            document.getElementById('stat-users').textContent = userCount ?? '—';
+    // ════════════════════════════════════════════════
+    // OVERVIEW
+    // ════════════════════════════════════════════════
+    async function loadOverview() {
+        const [
+            { count: userCount },
+            { count: sessionCount },
+            { count: orderCount },
+            { data: pendingOrders },
+            { data: recentOrders }
+        ] = await Promise.all([
+            supabaseClient.from('profiles').select('*', { count: 'exact', head: true }),
+            supabaseClient.from('game_sessions').select('*', { count: 'exact', head: true }),
+            supabaseClient.from('orders').select('*', { count: 'exact', head: true }),
+            supabaseClient.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            supabaseClient.from('orders').select('*').order('created_at', { ascending: false }).limit(5)
+        ]);
 
-            // Contar partidas jugadas
-            const { count: sessionCount } = await supabaseClient
-                .from('game_sessions')
-                .select('*', { count: 'exact', head: true });
-            document.getElementById('stat-sessions').textContent = sessionCount ?? '—';
+        document.getElementById('stat-users').textContent    = userCount ?? '—';
+        document.getElementById('stat-sessions').textContent = sessionCount ?? '—';
+        document.getElementById('stat-orders').textContent   = orderCount ?? '—';
+        document.getElementById('stat-orders-pending').textContent = `${pendingOrders?.length ?? 0} pendientes`;
 
-            // ── 5. Distribución ────────────────────────────────
-            const distContainer = document.getElementById('distribucion-content');
-            distContainer.innerHTML = '';
-            projectData.editions.forEach(ed => {
-                const percentage = (ed.cards / totalCards) * 100;
-                distContainer.innerHTML += `
-                    <div>
-                        <div class="flex justify-between text-sm font-medium mb-1">
-                            <span>Edición ${ed.name} ${ed.emoji}</span>
-                            <span>${ed.cards} cartas</span>
-                        </div>
-                        <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-amber-500 rounded-full" style="width: ${percentage}%"></div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // ── 6. Log de ediciones ────────────────────────────
-            const logContainer = document.getElementById('log-ediciones');
-            logContainer.innerHTML = '';
-            projectData.editions.forEach(ed => {
-                logContainer.innerHTML += `
-                    <div class="flex items-center p-3 border rounded-lg bg-slate-50">
-                        <div class="h-8 w-8 rounded bg-white flex items-center justify-center border mr-3 text-lg">${ed.emoji}</div>
-                        <div class="flex-1">
-                            <p class="text-sm font-bold">${ed.name}</p>
-                            <p class="text-[10px] text-slate-500 uppercase">${ed.cards * 2} cartas en tablero</p>
-                        </div>
-                        <span class="h-2 w-2 rounded-full ${ed.active ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}"></span>
-                    </div>
-                `;
-            });
-
-            lucide.createIcons();
+        // Badge de pendientes en sidebar
+        const pendingCount = pendingOrders?.length ?? 0;
+        if (pendingCount > 0) {
+            const badge = document.getElementById('pending-badge');
+            badge.textContent = pendingCount;
+            badge.classList.remove('hidden');
         }
 
-        window.onload = initDashboard;
-    </script>
+        // Últimas órdenes en overview
+        const container = document.getElementById('recent-orders-list');
+        if (!recentOrders || recentOrders.length === 0) {
+            container.innerHTML = '<p class="text-sm text-slate-400">No hay órdenes aún.</p>';
+            return;
+        }
+        container.innerHTML = recentOrders.map(o => `
+            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="text-lg">${o.delivery_type === 'delivery' ? '🚚' : '🏪'}</div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">${o.customer_name}</p>
+                        <p class="text-xs text-slate-400">#${o.id.slice(0,8).toUpperCase()} · ${new Date(o.created_at).toLocaleDateString('es')}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-slate-900">$${parseFloat(o.total).toFixed(2)}</span>
+                    ${statusBadge(o.status)}
+                </div>
+            </div>
+        `).join('');
+
+        lucide.createIcons();
+    }
+
+    // ════════════════════════════════════════════════
+    // PRODUCTOS
+    // ════════════════════════════════════════════════
+    async function loadProducts() {
+        const { data, error } = await supabaseClient
+            .from('products').select('*').order('created_at');
+
+        const tbody = document.getElementById('products-table-body');
+        if (error || !data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400 text-sm">No hay productos. Crea el primero.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.map(p => `
+            <tr class="hover:bg-slate-50 transition">
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <img src="${p.image_url || ''}" class="max-h-full max-w-full object-contain p-1" onerror="this.style.display='none'">
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">${p.name}</p>
+                            <p class="text-xs text-slate-400">${p.edition || '—'}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 hidden md:table-cell">
+                    <span class="font-bold text-slate-800">$${parseFloat(p.price).toFixed(2)}</span>
+                </td>
+                <td class="px-6 py-4 hidden md:table-cell">
+                    <span class="font-medium ${p.stock < 5 ? 'text-red-600' : 'text-slate-700'}">${p.stock} uds</span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="status-badge ${p.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">
+                        ${p.active ? 'Activo' : 'Inactivo'}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                        <button onclick="editProduct('${p.id}')" class="p-2 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition">
+                            <i data-lucide="edit-3" class="h-4 w-4"></i>
+                        </button>
+                        <button onclick="toggleProductStatus('${p.id}', ${p.active})" class="p-2 hover:bg-slate-100 rounded-lg transition" title="${p.active ? 'Desactivar' : 'Activar'}">
+                            <i data-lucide="${p.active ? 'eye-off' : 'eye'}" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    // ── Modal producto ──────────────────────────────
+    let editingProductId = null;
+
+    function openProductModal(product = null) {
+        editingProductId = product?.id || null;
+        document.getElementById('modal-title').textContent  = product ? 'Editar producto' : 'Nuevo producto';
+        document.getElementById('product-id').value         = product?.id || '';
+        document.getElementById('product-name').value       = product?.name || '';
+        document.getElementById('product-desc').value       = product?.description || '';
+        document.getElementById('product-price').value      = product?.price || '';
+        document.getElementById('product-stock').value      = product?.stock || '';
+        document.getElementById('product-edition').value    = product?.edition || 'panama';
+        document.getElementById('product-active').value     = product ? String(product.active) : 'true';
+        document.getElementById('product-image').value      = product?.image_url || '';
+        document.getElementById('modal-error').classList.add('hidden');
+        document.getElementById('product-modal').classList.add('open');
+        lucide.createIcons();
+    }
+
+    function closeProductModal() {
+        document.getElementById('product-modal').classList.remove('open');
+        editingProductId = null;
+    }
+
+    async function editProduct(id) {
+        const { data } = await supabaseClient.from('products').select('*').eq('id', id).single();
+        if (data) openProductModal(data);
+    }
+
+    async function toggleProductStatus(id, currentActive) {
+        await supabaseClient.from('products').update({ active: !currentActive }).eq('id', id);
+        loadProducts();
+    }
+
+    async function saveProduct() {
+        const name    = document.getElementById('product-name').value.trim();
+        const price   = parseFloat(document.getElementById('product-price').value);
+        const stock   = parseInt(document.getElementById('product-stock').value);
+        const errorEl = document.getElementById('modal-error');
+
+        if (!name || isNaN(price) || isNaN(stock)) {
+            errorEl.textContent = 'Nombre, precio y stock son obligatorios.';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        const payload = {
+            name,
+            description: document.getElementById('product-desc').value.trim() || null,
+            price,
+            stock,
+            edition:   document.getElementById('product-edition').value,
+            active:    document.getElementById('product-active').value === 'true',
+            image_url: document.getElementById('product-image').value.trim() || null
+        };
+
+        const btn = document.getElementById('btn-save-product');
+        btn.disabled = true; btn.textContent = 'Guardando...';
+
+        const { error } = editingProductId
+            ? await supabaseClient.from('products').update(payload).eq('id', editingProductId)
+            : await supabaseClient.from('products').insert(payload);
+
+        btn.disabled = false; btn.textContent = 'Guardar producto';
+
+        if (error) {
+            errorEl.textContent = 'Error al guardar. Intenta nuevamente.';
+            errorEl.classList.remove('hidden');
+        } else {
+            closeProductModal();
+            loadProducts();
+        }
+    }
+
+    // ════════════════════════════════════════════════
+    // ÓRDENES
+    // ════════════════════════════════════════════════
+    async function loadOrders() {
+        const filter = document.getElementById('orders-filter').value;
+        let query = supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+        if (filter !== 'all') query = query.eq('status', filter);
+
+        const { data, error } = await query;
+        const tbody = document.getElementById('orders-table-body');
+
+        if (error || !data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400 text-sm">No hay órdenes con este filtro.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.map(o => `
+            <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="viewOrder('${o.id}')">
+                <td class="px-6 py-4">
+                    <p class="font-bold text-slate-800 text-xs uppercase tracking-wider">#${o.id.slice(0,8).toUpperCase()}</p>
+                    <p class="text-xs text-slate-400">${new Date(o.created_at).toLocaleDateString('es', { day:'2-digit', month:'short' })}</p>
+                </td>
+                <td class="px-6 py-4 hidden md:table-cell">
+                    <p class="font-medium text-slate-800 text-sm">${o.customer_name}</p>
+                    <p class="text-xs text-slate-400">${o.customer_phone}</p>
+                </td>
+                <td class="px-6 py-4 hidden lg:table-cell">
+                    <span class="text-sm">${o.delivery_type === 'delivery' ? '🚚 Domicilio' : '🏪 Retiro'}</span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="font-bold text-slate-900">$${parseFloat(o.total).toFixed(2)}</span>
+                </td>
+                <td class="px-6 py-4">
+                    ${statusBadge(o.status)}
+                </td>
+                <td class="px-6 py-4 text-right" onclick="event.stopPropagation()">
+                    <select onchange="updateOrderStatus('${o.id}', this.value)" class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:border-amber-500 outline-none" style="width:auto;">
+                        <option value="pending"   ${o.status==='pending'   ? 'selected':''}>Pendiente</option>
+                        <option value="confirmed" ${o.status==='confirmed' ? 'selected':''}>Confirmado</option>
+                        <option value="shipped"   ${o.status==='shipped'   ? 'selected':''}>Enviado</option>
+                        <option value="delivered" ${o.status==='delivered' ? 'selected':''}>Entregado</option>
+                        <option value="cancelled" ${o.status==='cancelled' ? 'selected':''}>Cancelado</option>
+                    </select>
+                </td>
+            </tr>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+        await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
+        loadOverview(); // Actualiza el badge de pendientes
+    }
+
+    async function viewOrder(orderId) {
+        const { data: order } = await supabaseClient.from('orders').select('*').eq('id', orderId).single();
+        const { data: items  } = await supabaseClient.from('order_items').select('*').eq('order_id', orderId);
+
+        if (!order) return;
+        const shortId = order.id.slice(0,8).toUpperCase();
+
+        document.getElementById('order-detail-content').innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">#${shortId}</span>
+                    ${statusBadge(order.status)}
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-4 space-y-2 text-sm">
+                    <p><span class="font-bold text-slate-500">Cliente:</span> ${order.customer_name}</p>
+                    <p><span class="font-bold text-slate-500">Email:</span> ${order.customer_email}</p>
+                    <p><span class="font-bold text-slate-500">WhatsApp:</span>
+                        <a href="https://wa.me/${order.customer_phone.replace(/\D/g,'')}" target="_blank" class="text-green-600 font-bold hover:underline">${order.customer_phone}</a>
+                    </p>
+                    <p><span class="font-bold text-slate-500">Entrega:</span> ${order.delivery_type === 'delivery' ? `🚚 ${order.address || 'Sin dirección'}` : '🏪 Retiro en local'}</p>
+                    ${order.notes ? `<p><span class="font-bold text-slate-500">Notas:</span> ${order.notes}</p>` : ''}
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Productos</p>
+                    <div class="space-y-2">
+                        ${(items || []).map(item => `
+                            <div class="flex justify-between items-center py-2 border-b border-slate-100 text-sm">
+                                <span class="font-medium text-slate-700">${item.product_name} <span class="text-slate-400">x${item.quantity}</span></span>
+                                <span class="font-bold">$${parseFloat(item.subtotal).toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="flex justify-between items-center pt-2 border-t-2 border-amber-100">
+                    <span class="font-black uppercase tracking-tighter text-slate-900">Total</span>
+                    <span class="font-black text-amber-600 text-xl">$${parseFloat(order.total).toFixed(2)}</span>
+                </div>
+                <a href="https://wa.me/${order.customer_phone.replace(/\D/g,'')}?text=${encodeURIComponent(`Hola ${order.customer_name}, te escribimos de TipoVisual sobre tu pedido #${shortId}.`)}"
+                   target="_blank"
+                   class="flex items-center justify-center gap-2 w-full bg-green-500 text-white py-3 rounded-2xl font-bold text-sm hover:bg-green-600 transition mt-2">
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    Contactar por WhatsApp
+                </a>
+            </div>
+        `;
+        document.getElementById('order-modal').classList.add('open');
+        lucide.createIcons();
+    }
+
+    function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
+
+    // ── Helper badge de estado ──────────────────────
+    function statusBadge(status) {
+        const map = {
+            pending:   ['bg-amber-100 text-amber-700',  'Pendiente'],
+            confirmed: ['bg-blue-100 text-blue-700',    'Confirmado'],
+            shipped:   ['bg-purple-100 text-purple-700','Enviado'],
+            delivered: ['bg-green-100 text-green-700',  'Entregado'],
+            cancelled: ['bg-red-100 text-red-700',      'Cancelado']
+        };
+        const [cls, label] = map[status] || ['bg-slate-100 text-slate-500', status];
+        return `<span class="status-badge ${cls}">${label}</span>`;
+    }
+
+    // ── Ediciones (reutilizado del editions.html original) ──
+    const initialEditions = [
+        { id:'panama',    name:'Edición Panamá 🇵🇦',    description:'Colección con elementos culturales, flora y fauna panameña.', cardCount:24, active:true,  image:"assets/cartas/BANDERA PANAMÁ.png" },
+        { id:'venezuela', name:'Edición Venezuela 🇻🇪', description:'Colección con monumentos, comida y símbolos venezolanos.',     cardCount:12, active:false, image:"assets/cartas/venezuela/salto_angel.png" }
+    ];
+    let editions = JSON.parse(localStorage.getItem('tipoVisual_editions')) || initialEditions;
+
+    function renderEditions() {
+        const grid = document.getElementById('editions-grid');
+        if (!grid) return;
+        grid.innerHTML = editions.map(edition => `
+            <div class="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col">
+                <div class="p-6 flex-1">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="h-16 w-12 rounded-lg bg-slate-100 border overflow-hidden shadow-inner">
+                            <img src="${edition.image}" class="h-full w-full object-cover" onerror="this.style.display='none'">
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${edition.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">
+                            ${edition.active ? 'Activa' : 'Inactiva'}
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-1">${edition.name}</h3>
+                    <p class="text-sm text-slate-500 mb-4">${edition.description}</p>
+                </div>
+                <div class="px-6 py-4 bg-slate-50 border-t flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <div class="relative">
+                            <input type="checkbox" class="sr-only" ${edition.active ? 'checked' : ''} onchange="toggleEdition('${edition.id}')">
+                            <div class="w-10 h-6 rounded-full transition ${edition.active ? 'bg-amber-500' : 'bg-slate-200'}">
+                                <div class="w-4 h-4 bg-white rounded-full shadow absolute top-1 transition-transform ${edition.active ? 'translate-x-5' : 'translate-x-1'}"></div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold uppercase tracking-wider">${edition.active ? 'Visible' : 'Oculta'}</span>
+                    </label>
+                    <a href="edit-edition.html?id=${edition.id}" class="p-2 bg-white border rounded-lg hover:text-amber-600 transition shadow-sm">
+                        <i data-lucide="edit-3" class="h-4 w-4"></i>
+                    </a>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function toggleEdition(id) {
+        editions = editions.map(e => e.id === id ? {...e, active: !e.active} : e);
+        localStorage.setItem('tipoVisual_editions', JSON.stringify(editions));
+        renderEditions();
+    }
+</script>
 </body>
 </html>
