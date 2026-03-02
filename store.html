@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda — TipoVisual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        @keyframes float {
+            0%   { transform: translateY(0px); }
+            50%  { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .cart-sidebar {
+            position: fixed; top: 0; right: -100%;
+            width: 100%; max-width: 420px; height: 100vh;
+            background: white;
+            box-shadow: -20px 0 60px rgba(0,0,0,0.15);
+            transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+            z-index: 200; display: flex; flex-direction: column;
+        }
+        .cart-sidebar.open { right: 0; }
+        .cart-overlay {
+            position: fixed; inset: 0;
+            background: rgba(15,15,15,0.6);
+            z-index: 199; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .cart-overlay.open { opacity: 1; pointer-events: all; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-white to-orange-50 min-h-screen flex flex-col font-sans">
+
+    <!-- HEADER -->
+    <header class="p-6 flex justify-between items-center container mx-auto">
+        <a href="index.html" class="flex items-center space-x-2">
+            <div class="bg-amber-600 p-2 rounded-lg text-white">
+                <i data-lucide="brain-circuit" class="h-6 w-6"></i>
+            </div>
+            <span class="text-xl font-black tracking-tighter uppercase text-slate-800">TipoVisual</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition hidden md:block">Jugar</a>
+            <a href="profile.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition hidden md:block">Mi perfil</a>
+            <button onclick="toggleCart()" class="relative flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-amber-600 transition-all font-black text-xs uppercase tracking-widest">
+                <i data-lucide="shopping-bag" class="h-4 w-4"></i>
+                Carrito
+                <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="container mx-auto px-6 pt-8 pb-12 text-center">
+        <span class="bg-amber-100 text-amber-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Tienda Oficial</span>
+        <h1 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-6">
+            LLEVA LA CULTURA <br><span class="text-amber-600">A TU MESA</span>
+        </h1>
+        <p class="text-slate-600 text-lg max-w-xl mx-auto font-medium">
+            Versiones físicas de nuestros juegos de memoria. Hechos para compartir, aprender y coleccionar.
+        </p>
+        <div class="flex items-center justify-center gap-6 mt-6 text-sm font-black uppercase tracking-widest text-slate-400">
+            <span class="flex items-center gap-2"><i data-lucide="package" class="h-4 w-4 text-amber-500"></i> Envío en Panamá</span>
+            <span class="flex items-center gap-2"><i data-lucide="store" class="h-4 w-4 text-amber-500"></i> Retiro en local</span>
+        </div>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <main class="container mx-auto px-6 pb-20 flex-1">
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="h-96 rounded-[3rem] bg-white/60 animate-pulse border-2 border-white shadow-xl"></div>
+            <div class="h-96 rounded-[3rem] bg-white/60 animate-pulse border-2 border-white shadow-xl"></div>
+            <div class="h-96 rounded-[3rem] bg-white/60 animate-pulse border-2 border-white shadow-xl"></div>
+        </div>
+        <div id="empty-state" class="hidden text-center py-20">
+            <span class="text-6xl mb-6 block float-animation">📦</span>
+            <h3 class="text-3xl font-black text-slate-900 uppercase tracking-tighter">Próximamente</h3>
+            <p class="text-slate-500 font-medium mt-2">Estamos preparando el catálogo.</p>
+        </div>
+    </main>
+
+    <footer class="p-8 text-center">
+        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">© 2026 TipoVisual • Raíces que conectan</p>
+    </footer>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="flex items-center justify-between p-6 border-b border-slate-100">
+            <div>
+                <h3 class="text-xl font-black uppercase tracking-tighter text-slate-900">Tu carrito</h3>
+                <p id="cart-subtitle" class="text-xs font-black uppercase tracking-widest text-slate-400 mt-0.5">0 productos</p>
+            </div>
+            <button onclick="toggleCart()" class="p-2 rounded-xl hover:bg-amber-50 hover:text-amber-600 transition">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-3">
+            <div id="cart-empty" class="flex flex-col items-center justify-center h-full text-center py-12">
+                <span class="text-5xl mb-4 block float-animation">🛒</span>
+                <p class="font-black uppercase tracking-tighter text-slate-600 text-lg">Carrito vacío</p>
+                <p class="text-sm text-slate-400 font-medium mt-1">Agrega productos para continuar</p>
+            </div>
+        </div>
+        <div id="cart-footer" class="hidden p-6 border-t border-slate-100 space-y-4">
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm font-medium text-slate-500">
+                    <span>Subtotal</span><span id="cart-subtotal">$0.00</span>
+                </div>
+                <div class="flex justify-between text-sm font-medium text-slate-500">
+                    <span>Envío</span>
+                    <span class="text-amber-600 font-black text-xs uppercase">Se coordina</span>
+                </div>
+                <div class="flex justify-between pt-3 border-t border-slate-100">
+                    <span class="font-black uppercase tracking-tighter text-slate-900 text-lg">Total</span>
+                    <span id="cart-total" class="font-black text-amber-600 text-xl">$0.00</span>
+                </div>
+            </div>
+            <a href="checkout.html" onclick="saveCartToStorage()"
+                class="block w-full bg-slate-900 text-white text-center py-4 rounded-[1.5rem] font-black uppercase tracking-widest text-sm hover:bg-amber-600 transition-all shadow-xl">
+                Proceder al pago →
+            </a>
+            <button onclick="toggleCart()" class="w-full text-xs font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition">
+                Seguir comprando
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let cart     = JSON.parse(localStorage.getItem('tv_cart')) || [];
+        let products = [];
+
+        // ── Lucide se inicializa al cargar la página ──
+        window.addEventListener('load', () => {
+            lucide.createIcons();
+            loadProducts();
+            updateCartUI();
+        });
+
+        function saveCartToStorage() { localStorage.setItem('tv_cart', JSON.stringify(cart)); }
+        function getCartTotal()  { return cart.reduce((s, i) => s + i.price * i.quantity, 0); }
+        function getCartCount()  { return cart.reduce((s, i) => s + i.quantity, 0); }
+
+        async function loadProducts() {
+            const { data, error } = await supabaseClient
+                .from('products').select('*').eq('active', true).order('created_at');
+
+            const grid = document.getElementById('products-grid');
+            if (error || !data || data.length === 0) {
+                grid.innerHTML = '';
+                document.getElementById('empty-state').classList.remove('hidden');
+                return;
+            }
+            products = data;
+            grid.innerHTML = '';
+            data.forEach(p => grid.appendChild(createProductCard(p)));
+            lucide.createIcons();
+        }
+
+        function createProductCard(product) {
+            const isCombo    = product.edition === 'combo';
+            const outOfStock = product.stock === 0;
+            const card = document.createElement('div');
+            card.className = 'group relative bg-white p-8 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 overflow-hidden flex flex-col';
+            card.innerHTML = `
+                ${isCombo ? `<span class="absolute top-6 left-6 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">⭐ Pack especial</span>` : ''}
+                ${outOfStock ? `<span class="absolute top-6 right-6 bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">Agotado</span>` : ''}
+                <div class="flex items-center justify-center h-40 mb-6">
+                    <img src="${product.image_url || ''}"
+                         class="max-h-full max-w-full object-contain drop-shadow-xl float-animation group-hover:scale-105 transition-transform duration-500"
+                         onerror="this.outerHTML='<span class=\'text-6xl float-animation\'>📦</span>'">
+                </div>
+                <div class="flex-1 flex flex-col">
+                    <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-tight mb-2">${product.name}</h3>
+                    <p class="text-slate-500 font-medium text-sm leading-relaxed mb-6 flex-1">${product.description || ''}</p>
+                    <div class="flex items-center justify-between mt-auto">
+                        <div>
+                            <div class="text-3xl font-black text-amber-600">$${parseFloat(product.price).toFixed(2)}</div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">
+                                ${outOfStock ? '❌ Sin stock' : `✅ ${product.stock} disponibles`}
+                            </div>
+                        </div>
+                        <button onclick="addToCart('${product.id}', this)" ${outOfStock ? 'disabled' : ''}
+                            class="flex items-center gap-2 ${outOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-amber-600'} px-5 py-3 rounded-full font-black uppercase tracking-widest text-xs transition-all">
+                            <i data-lucide="shopping-bag" class="h-3.5 w-3.5"></i>
+                            ${outOfStock ? 'Agotado' : 'Agregar'}
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute -bottom-10 -right-10 text-slate-50 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
+                    <i data-lucide="package" class="h-40 w-40"></i>
+                </div>
+            `;
+            return card;
+        }
+
+        function addToCart(productId, btn) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const existing = cart.find(i => i.id === productId);
+            if (existing) { if (existing.quantity < product.stock) existing.quantity++; }
+            else cart.push({ id: product.id, name: product.name, price: parseFloat(product.price), image: product.image_url, quantity: 1, stock: product.stock });
+            saveCartToStorage();
+            updateCartUI();
+            openCart();
+            if (btn) {
+                const orig = btn.innerHTML;
+                btn.textContent = '✓ Agregado';
+                btn.classList.add('bg-green-600'); btn.classList.remove('bg-slate-900','hover:bg-amber-600');
+                setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('bg-green-600'); btn.classList.add('bg-slate-900','hover:bg-amber-600'); lucide.createIcons(); }, 1500);
+            }
+        }
+
+        function removeFromCart(id) { cart = cart.filter(i => i.id !== id); saveCartToStorage(); updateCartUI(); }
+
+        function updateQuantity(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+            item.quantity = Math.max(1, Math.min(item.stock, item.quantity + delta));
+            saveCartToStorage(); updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count  = getCartCount();
+            const total  = getCartTotal();
+            const countEl = document.getElementById('cart-count');
+            const itemsEl = document.getElementById('cart-items');
+            const footer  = document.getElementById('cart-footer');
+
+            countEl.classList.toggle('hidden', count === 0);
+            countEl.classList.toggle('flex', count > 0);
+            if (count > 0) countEl.textContent = count;
+            document.getElementById('cart-subtitle').textContent = `${count} producto${count !== 1 ? 's' : ''}`;
+
+            if (cart.length === 0) {
+                itemsEl.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center py-12">
+                        <span class="text-5xl mb-4 block float-animation">🛒</span>
+                        <p class="font-black uppercase tracking-tighter text-slate-600 text-lg">Carrito vacío</p>
+                        <p class="text-sm text-slate-400 font-medium mt-1">Agrega productos para continuar</p>
+                    </div>`;
+                footer.classList.add('hidden'); return;
+            }
+
+            footer.classList.remove('hidden');
+            itemsEl.innerHTML = '';
+            cart.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-3 p-3 bg-amber-50/50 rounded-2xl border border-amber-100';
+                div.innerHTML = `
+                    <div class="w-12 h-12 bg-white rounded-xl border border-amber-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <img src="${item.image || ''}" class="max-h-full max-w-full object-contain p-1" onerror="this.style.display='none'">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-black uppercase tracking-tight text-slate-800 leading-tight truncate">${item.name}</p>
+                        <p class="text-sm text-amber-600 font-black mt-0.5">$${item.price.toFixed(2)}</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button onclick="updateQuantity('${item.id}',-1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 hover:border-amber-400 flex items-center justify-center font-black text-sm transition">−</button>
+                        <span class="text-sm font-black w-5 text-center">${item.quantity}</span>
+                        <button onclick="updateQuantity('${item.id}',1)"  class="w-7 h-7 rounded-lg bg-white border border-slate-200 hover:border-amber-400 flex items-center justify-center font-black text-sm transition">+</button>
+                        <button onclick="removeFromCart('${item.id}')" class="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-300 hover:text-red-400 transition ml-1">
+                            <i data-lucide="x" class="h-3.5 w-3.5"></i>
+                        </button>
+                    </div>`;
+                itemsEl.appendChild(div);
+            });
+
+            document.getElementById('cart-subtotal').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('cart-total').textContent    = `$${total.toFixed(2)}`;
+            lucide.createIcons();
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('open');
+            document.getElementById('cart-overlay').classList.toggle('open');
+        }
+        function openCart() {
+            document.getElementById('cart-sidebar').classList.add('open');
+            document.getElementById('cart-overlay').classList.add('open');
+        }
+    </script>
+</body>
+</html>

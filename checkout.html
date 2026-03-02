@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — TipoVisual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        @keyframes float {
+            0%   { transform: translateY(0px); }
+            50%  { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+
+        .field-input {
+            width: 100%; padding: 12px 16px;
+            border: 2px solid #E7E5E4; border-radius: 16px;
+            font-size: 14px; font-family: inherit;
+            outline: none; background: #FAFAF9;
+            transition: border-color 0.2s, background 0.2s;
+            font-weight: 500;
+        }
+        .field-input:focus { border-color: #D97706; background: white; }
+
+        .delivery-option {
+            border: 2px solid #E7E5E4; border-radius: 24px;
+            padding: 20px; cursor: pointer; transition: all 0.2s;
+        }
+        .delivery-option.selected { border-color: #D97706; background: #FFFBEB; }
+        .delivery-option:hover:not(.selected) { border-color: #CBD5E1; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.4s ease-out; }
+        #success-screen { display: none; }
+        #success-screen.show { display: flex; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-white to-orange-50 min-h-screen font-sans">
+
+    <!-- HEADER -->
+    <header class="p-6 flex justify-between items-center container mx-auto">
+        <a href="index.html" class="flex items-center space-x-2">
+            <div class="bg-amber-600 p-2 rounded-lg text-white">
+                <i data-lucide="brain-circuit" class="h-6 w-6"></i>
+            </div>
+            <span class="text-xl font-black tracking-tighter uppercase text-slate-800">TipoVisual</span>
+        </a>
+        <a href="store.html" class="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition">
+            <i data-lucide="arrow-left" class="h-4 w-4"></i> Volver
+        </a>
+    </header>
+
+    <!-- ═══ CHECKOUT ════════════════════════════════════ -->
+    <div id="checkout-screen" class="container mx-auto px-6 py-8 fade-up">
+
+        <div class="mb-10">
+            <span class="bg-amber-100 text-amber-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Paso final</span>
+            <h1 class="text-5xl font-black text-slate-900 tracking-tighter leading-none">
+                CONFIRMA TU <br><span class="text-amber-600">PEDIDO</span>
+            </h1>
+            <p class="text-slate-500 font-medium mt-3">Completa tus datos y te contactamos por WhatsApp para coordinar el pago.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+            <!-- FORMULARIO -->
+            <div class="lg:col-span-3 space-y-6">
+
+                <!-- Datos personales -->
+                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-2 border-transparent">
+                    <h2 class="text-xl font-black uppercase tracking-tighter text-slate-900 mb-6 flex items-center gap-2">
+                        <i data-lucide="user" class="h-5 w-5 text-amber-600"></i> Tus datos
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nombre completo</label>
+                            <input id="customer-name" type="text" placeholder="Tu nombre completo" class="field-input">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Email</label>
+                                <input id="customer-email" type="email" placeholder="tu@email.com" class="field-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">WhatsApp</label>
+                                <input id="customer-phone" type="tel" placeholder="+507 6000-0000" class="field-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tipo de entrega -->
+                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-2 border-transparent">
+                    <h2 class="text-xl font-black uppercase tracking-tighter text-slate-900 mb-6 flex items-center gap-2">
+                        <i data-lucide="truck" class="h-5 w-5 text-amber-600"></i> Entrega
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="delivery-option selected text-center" id="opt-delivery" onclick="selectDelivery('delivery')">
+                            <div class="text-3xl mb-2 float-animation">🚚</div>
+                            <div class="font-black uppercase tracking-tighter text-slate-900">A domicilio</div>
+                            <div class="text-xs font-black uppercase tracking-widest text-slate-400 mt-1">Panamá metro</div>
+                        </div>
+                        <div class="delivery-option text-center" id="opt-pickup" onclick="selectDelivery('pickup')">
+                            <div class="text-3xl mb-2" style="animation: float 3s ease-in-out infinite 0.5s;">🏪</div>
+                            <div class="font-black uppercase tracking-tighter text-slate-900">Retiro en local</div>
+                            <div class="text-xs font-black uppercase tracking-widest text-slate-400 mt-1">Sin costo extra</div>
+                        </div>
+                    </div>
+
+                    <!-- Campos dirección -->
+                    <div id="address-fields" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Dirección</label>
+                            <input id="customer-address" type="text" placeholder="Calle 50, El Cangrejo, Ciudad de Panamá" class="field-input">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Corregimiento</label>
+                                <select id="customer-district" class="field-input">
+                                    <option value="">Selecciona...</option>
+                                    <option>Bella Vista</option><option>El Cangrejo</option>
+                                    <option>Marbella</option><option>San Francisco</option>
+                                    <option>Obarrio</option><option>Punta Paitilla</option>
+                                    <option>Betania</option><option>Juan Díaz</option>
+                                    <option>Las Cumbres</option><option>Otro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Referencia</label>
+                                <input id="customer-ref" type="text" placeholder="Torre, apto, color..." class="field-input">
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 border-2 border-amber-100 rounded-2xl p-4 text-sm font-medium text-amber-700 flex items-start gap-2">
+                            <i data-lucide="info" class="h-4 w-4 flex-shrink-0 mt-0.5 text-amber-500"></i>
+                            El costo de envío se coordina por WhatsApp según tu zona (generalmente $3–$8 en ciudad).
+                        </div>
+                    </div>
+
+                    <!-- Info pickup -->
+                    <div id="pickup-info" class="hidden bg-amber-50 border-2 border-amber-100 rounded-2xl p-4 text-sm font-medium text-amber-700">
+                        📍 Te confirmamos la dirección exacta de retiro por WhatsApp al recibir tu pedido.
+                    </div>
+                </div>
+
+                <!-- Notas -->
+                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-2 border-transparent">
+                    <h2 class="text-xl font-black uppercase tracking-tighter text-slate-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="message-square" class="h-5 w-5 text-amber-600"></i> Notas
+                        <span class="text-slate-400 font-medium text-sm normal-case tracking-normal">(opcional)</span>
+                    </h2>
+                    <textarea id="order-notes" rows="3" placeholder="¿Es un regalo? ¿Alguna indicación especial?" class="field-input resize-none"></textarea>
+                </div>
+            </div>
+
+            <!-- RESUMEN -->
+            <div class="lg:col-span-2">
+                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-2 border-transparent sticky top-6">
+                    <h2 class="text-xl font-black uppercase tracking-tighter text-slate-900 mb-6">Resumen</h2>
+
+                    <div id="summary-items" class="space-y-3 mb-6"></div>
+
+                    <div class="border-t-2 border-amber-100 pt-4 space-y-3">
+                        <div class="flex justify-between text-sm font-medium text-slate-500">
+                            <span>Subtotal</span><span id="summary-subtotal">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-medium text-slate-500">
+                            <span>Envío</span>
+                            <span id="summary-delivery" class="font-black text-xs uppercase text-amber-600">Por coordinar</span>
+                        </div>
+                        <div class="flex justify-between pt-3 border-t-2 border-amber-100">
+                            <span class="font-black uppercase tracking-tighter text-slate-900 text-lg">Total</span>
+                            <span id="summary-total" class="font-black text-amber-600 text-2xl">$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Error -->
+                    <div id="checkout-error" class="hidden mt-4 p-4 bg-red-50 border-2 border-red-100 rounded-2xl text-sm font-medium text-red-600"></div>
+
+                    <!-- Botón confirmar -->
+                    <button onclick="confirmOrder()" id="btn-confirm"
+                        class="mt-6 w-full bg-slate-900 text-white py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-amber-600 transition-all shadow-xl flex items-center justify-center gap-2">
+                        <i data-lucide="check-circle" class="h-4 w-4"></i>
+                        Confirmar pedido
+                    </button>
+
+                    <p class="text-center text-xs font-medium text-slate-400 mt-4 leading-relaxed">
+                        Recibirás un WhatsApp con los detalles del pago y la entrega.
+                    </p>
+
+                    <!-- Métodos de pago -->
+                    <div class="mt-4 pt-4 border-t-2 border-slate-100">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Métodos de pago</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="text-xs bg-amber-50 border-2 border-amber-100 px-3 py-1 rounded-full text-amber-700 font-black uppercase tracking-wider">💳 Tarjeta</span>
+                            <span class="text-xs bg-amber-50 border-2 border-amber-100 px-3 py-1 rounded-full text-amber-700 font-black uppercase tracking-wider">🏦 Transferencia</span>
+                            <span class="text-xs bg-amber-50 border-2 border-amber-100 px-3 py-1 rounded-full text-amber-700 font-black uppercase tracking-wider">💵 Efectivo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══ PANTALLA DE ÉXITO ════════════════════════════ -->
+    <div id="success-screen" class="min-h-screen flex-col items-center justify-center text-center px-6 py-12">
+        <div class="max-w-md mx-auto fade-up">
+            <span class="text-8xl mb-8 block float-animation">🎉</span>
+            <span class="bg-amber-100 text-amber-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">¡Pedido recibido!</span>
+            <h1 class="text-5xl font-black text-slate-900 tracking-tighter leading-none mb-4">
+                TODO LISTO <br><span class="text-amber-600">POR AQUÍ</span>
+            </h1>
+            <p class="text-slate-500 font-medium leading-relaxed mb-8">
+                En los próximos minutos recibirás un WhatsApp para coordinar el pago y la entrega.
+            </p>
+            <div class="bg-white border-2 border-amber-100 rounded-[2rem] px-8 py-5 mb-8 inline-block shadow-xl">
+                <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Número de orden</p>
+                <p id="order-id-text" class="text-2xl font-black text-amber-600 tracking-tighter">#------</p>
+            </div>
+            <div class="space-y-3">
+                <a id="whatsapp-link" href="#" target="_blank"
+                    class="flex items-center justify-center gap-3 bg-green-500 text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-green-600 transition-all shadow-xl">
+                    <svg viewBox="0 0 24 24" class="h-5 w-5 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    Contactar por WhatsApp
+                </a>
+                <div class="flex gap-4 justify-center pt-2">
+                    <a href="store.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition">← Tienda</a>
+                    <span class="text-slate-200">|</span>
+                    <a href="profile.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition">Mis pedidos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ Reemplaza con tu número de WhatsApp sin el +
+        // Ejemplo Panamá: 50769001234
+        const ADMIN_WHATSAPP = '50763068799';
+
+        let cart             = JSON.parse(localStorage.getItem('tv_cart')) || [];
+        let selectedDelivery = 'delivery';
+        let currentSession   = null;
+
+        // ── Lucide se inicializa al cargar la página ──
+        window.addEventListener('load', () => {
+            lucide.createIcons();
+            init();
+        });
+
+        async function init() {
+            currentSession = await getSession();
+            if (currentSession) {
+                const profile = await getUserProfile();
+                if (profile?.name)  document.getElementById('customer-name').value  = profile.name;
+                document.getElementById('customer-email').value = currentSession.user.email;
+            }
+            renderSummary();
+        }
+
+        function getTotal() { return cart.reduce((s, i) => s + i.price * i.quantity, 0); }
+
+        function renderSummary() {
+            if (cart.length === 0) { window.location.href = 'store.html'; return; }
+
+            const container = document.getElementById('summary-items');
+            container.innerHTML = '';
+            cart.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-3 p-3 bg-amber-50/50 rounded-2xl border border-amber-100';
+                div.innerHTML = `
+                    <div class="w-10 h-10 bg-white rounded-xl border border-amber-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <img src="${item.image || ''}" class="max-h-full max-w-full object-contain p-1" onerror="this.style.display='none'">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-black uppercase tracking-tight text-slate-800 truncate">${item.name}</p>
+                        <p class="text-[10px] text-slate-400 font-black uppercase">Cant: ${item.quantity}</p>
+                    </div>
+                    <span class="text-sm font-black text-slate-900">$${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                container.appendChild(div);
+            });
+
+            const total = getTotal();
+            document.getElementById('summary-subtotal').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('summary-total').textContent    = `$${total.toFixed(2)}`;
+        }
+
+        function selectDelivery(type) {
+            selectedDelivery = type;
+            document.getElementById('opt-delivery').classList.toggle('selected', type === 'delivery');
+            document.getElementById('opt-pickup').classList.toggle('selected',   type === 'pickup');
+            document.getElementById('address-fields').classList.toggle('hidden', type === 'pickup');
+            document.getElementById('pickup-info').classList.toggle('hidden',    type === 'delivery');
+            document.getElementById('summary-delivery').textContent = type === 'pickup' ? 'Gratis (retiro)' : 'Por coordinar';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('checkout-error');
+            el.textContent = msg; el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 4000);
+        }
+
+        function validateForm() {
+            const name  = document.getElementById('customer-name').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const addr  = document.getElementById('customer-address').value.trim();
+            if (!name)  { showError('Por favor ingresa tu nombre.');             return false; }
+            if (!email) { showError('Por favor ingresa tu email.');              return false; }
+            if (!phone) { showError('Por favor ingresa tu WhatsApp.');           return false; }
+            if (selectedDelivery === 'delivery' && !addr) {
+                showError('Por favor ingresa tu dirección de entrega.');         return false;
+            }
+            return true;
+        }
+
+        async function confirmOrder() {
+            if (!validateForm() || cart.length === 0) return;
+
+            const btn = document.getElementById('btn-confirm');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i> Procesando...';
+            lucide.createIcons();
+
+            const name     = document.getElementById('customer-name').value.trim();
+            const email    = document.getElementById('customer-email').value.trim();
+            const phone    = document.getElementById('customer-phone').value.trim();
+            const address  = document.getElementById('customer-address').value.trim();
+            const district = document.getElementById('customer-district').value;
+            const ref      = document.getElementById('customer-ref').value.trim();
+            const notes    = document.getElementById('order-notes').value.trim();
+            const total    = getTotal();
+            const fullAddr = [address, district, ref].filter(Boolean).join(', ');
+
+            try {
+                // Guardar orden en Supabase
+                const { data: order, error: orderError } = await supabaseClient
+                    .from('orders')
+                    .insert({
+                        user_id:        currentSession?.user?.id || null,
+                        customer_name:  name,
+                        customer_email: email,
+                        customer_phone: phone,
+                        delivery_type:  selectedDelivery,
+                        address:        selectedDelivery === 'delivery' ? fullAddr : null,
+                        subtotal:       total,
+                        delivery_fee:   0,
+                        total,
+                        status:        'pending',
+                        notes:          notes || null
+                    })
+                    .select().single();
+
+                if (orderError) throw orderError;
+
+                // Guardar items
+                await supabaseClient.from('order_items').insert(
+                    cart.map(item => ({
+                        order_id:     order.id,
+                        product_id:   item.id,
+                        product_name: item.name,
+                        quantity:     item.quantity,
+                        unit_price:   item.price,
+                        subtotal:     item.price * item.quantity
+                    }))
+                );
+
+                // Limpiar carrito
+                localStorage.removeItem('tv_cart');
+
+                // Construir mensaje WhatsApp
+                const shortId    = order.id.slice(0, 8).toUpperCase();
+                const itemsList  = cart.map(i => `• ${i.name} x${i.quantity} — $${(i.price * i.quantity).toFixed(2)}`).join('\n');
+                const deliveryTxt = selectedDelivery === 'delivery' ? `🚚 Envío a: ${fullAddr}` : '🏪 Retiro en local';
+                const waMessage  = encodeURIComponent(
+`🛒 *NUEVO PEDIDO #${shortId}*
+
+👤 ${name}
+📧 ${email}
+📱 ${phone}
+
+📦 *Productos:*
+${itemsList}
+
+${deliveryTxt}${notes ? `\n📝 ${notes}` : ''}
+
+💰 *Total: $${total.toFixed(2)}*`
+                );
+
+                // Mostrar pantalla de éxito
+                document.getElementById('checkout-screen').style.display = 'none';
+                document.getElementById('success-screen').classList.add('show');
+                document.getElementById('order-id-text').textContent = `#${shortId}`;
+                document.getElementById('whatsapp-link').href = `https://wa.me/${ADMIN_WHATSAPP}?text=${waMessage}`;
+                window.scrollTo(0, 0);
+                lucide.createIcons();
+
+            } catch (err) {
+                console.error(err);
+                showError('Error al procesar tu pedido. Intenta nuevamente.');
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="check-circle" class="h-4 w-4"></i> Confirmar pedido';
+                lucide.createIcons();
+            }
+        }
+    </script>
+</body>
+</html>
