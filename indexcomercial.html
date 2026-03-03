@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TipoVisual - Raíces que conectan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .hero-pattern {
+            background-color: #fffbeb;
+            background-image: radial-gradient(#d97706 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-900 font-sans">
+
+    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center space-x-2">
+            <div class="bg-amber-600 p-2 rounded-lg text-white font-bold">TV</div>
+            <span class="text-xl font-black tracking-tighter uppercase">TipoVisual</span>
+        </div>
+        <div class="hidden md:flex space-x-8 font-bold text-sm uppercase tracking-widest text-slate-500">
+            <a href="#historia" class="hover:text-amber-600">El Proyecto</a>
+            <a href="#jugar" class="hover:text-amber-600">Jugar Online</a>
+            <a href="#tienda" class="hover:text-amber-600 font-black text-slate-900">Versión Física</a>
+        </div>
+        <button onclick="checkAdminAccess()" class="text-slate-300 hover:text-slate-600">
+            <i data-lucide="settings" class="h-5 w-5"></i>
+        </button>
+    </nav>
+
+    <section id="historia" class="hero-pattern py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="bg-amber-600 text-white px-4 py-1 rounded-full text-xs font-black uppercase mb-6 inline-block tracking-[0.2em]">Cultura Latinoamericana</span>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8">
+                MÁS QUE UN JUEGO, <br> <span class="text-amber-600">UNA IDENTIDAD.</span>
+            </h1>
+            <p class="text-xl text-slate-600 mb-10 leading-relaxed font-medium">
+                TipoVisual nació para rescatar los iconos que nos definen. De las librerías a tu pantalla, una experiencia educativa para todas las edades.
+            </p>
+        </div>
+    </section>
+
+    <section id="jugar" class="py-24 bg-slate-900 text-white rounded-[4rem] -mt-10 relative z-10 shadow-2xl mx-2">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 uppercase tracking-tighter">Prueba la experiencia online</h2>
+                <p class="text-slate-400">Elige una edición y pon a prueba tu memoria.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="selector-paises">
+                <button id="btn-panama" onclick="play('panama')" class="group bg-slate-800 p-1 bg-gradient-to-br from-slate-700 to-slate-800 rounded-[2.5rem] transition-all hover:scale-[1.02]">
+                    <div class="bg-slate-900 p-8 rounded-[2.3rem] h-full text-left">
+                        <span class="text-5xl mb-6 block">🇵🇦</span>
+                        <h3 class="text-2xl font-black uppercase mb-2">Edición Panamá</h3>
+                        <p class="text-slate-500 mb-6 text-sm">Descubre los secretos del istmo.</p>
+                        <span class="flex items-center text-amber-500 font-bold text-xs uppercase tracking-widest">
+                            Jugar gratis <i data-lucide="play" class="ml-2 h-4 w-4 fill-amber-500"></i>
+                        </span>
+                    </div>
+                </button>
+
+                <button id="btn-venezuela" onclick="play('venezuela')" class="group bg-slate-800 p-1 bg-gradient-to-br from-slate-700 to-slate-800 rounded-[2.5rem] transition-all hover:scale-[1.02]">
+                    <div class="bg-slate-900 p-8 rounded-[2.3rem] h-full text-left">
+                        <span class="text-5xl mb-6 block">🇻🇪</span>
+                        <h3 class="text-2xl font-black uppercase mb-2">Edición Venezuela</h3>
+                        <p class="text-slate-500 mb-6 text-sm">Próximamente más iconos culturales.</p>
+                        <span class="flex items-center text-amber-500 font-bold text-xs uppercase tracking-widest">
+                            Jugar gratis <i data-lucide="play" class="ml-2 h-4 w-4 fill-amber-500"></i>
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="tienda" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row items-center gap-12 bg-amber-50 p-12 rounded-[3rem] border border-amber-100">
+            <div class="md:w-1/2">
+                <img src="assets/cartas/caja-fisica.png" alt="TipoVisual Juego Físico" class="rounded-2xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/500x500?text=Caja+TipoVisual'">
+            </div>
+            <div class="md:w-1/2">
+                <h2 class="text-4xl font-black text-slate-900 mb-6 leading-none tracking-tighter uppercase">Lleva la cultura <br> a tu mesa.</h2>
+                <p class="text-lg text-slate-600 mb-8 font-medium italic">
+                    "La edición física incluye 24 cartas de alta calidad, acabados premium y una guía educativa extendida sobre cada símbolo."
+                </p>
+                <div class="space-y-4">
+                    <p class="font-bold flex items-center text-slate-700">
+                        <i data-lucide="check-circle-2" class="text-green-600 mr-2"></i> Disponible en El Hombre de la Mancha
+                    </p>
+                    <p class="font-bold flex items-center text-slate-700">
+                        <i data-lucide="check-circle-2" class="text-green-600 mr-2"></i> Disponible en Librería Cultural
+                    </p>
+                </div>
+                <button class="mt-10 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-amber-600 transition shadow-xl">
+                    Dónde Comprar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+        © 2026 TipoVisual • Hecho en Panamá & Venezuela
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. Cargamos el estado desde el Admin
+        const savedEditions = JSON.parse(localStorage.getItem('tipoVisual_editions'));
+
+        // 2. Aplicamos la lógica de bloqueo visual
+        if (savedEditions) {
+            savedEditions.forEach(edition => {
+                const btn = document.getElementById(`btn-${edition.id}`);
+                if (btn && !edition.active) {
+                    btn.classList.add('opacity-40', 'grayscale', 'cursor-not-allowed');
+                    const label = btn.querySelector('span:last-child');
+                    if (label) label.innerHTML = 'Edición en pausa';
+                    btn.onclick = () => alert('Esta edición se encuentra en mantenimiento administrativo.');
+                }
+            });
+        }
+
+        function play(editionId) {
+            localStorage.setItem('selectedEdition', editionId);
+            window.location.href = 'game.html';
+        }
+
+        function checkAdminAccess() {
+            const accessKey = "admin2026";
+            const userInput = prompt("Clave Admin:");
+            if (userInput === accessKey) {
+                sessionStorage.setItem('isAdmin', 'true');
+                window.location.href = 'dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html>
