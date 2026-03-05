@@ -29,9 +29,17 @@
 
     <!-- SIDEBAR -->
     <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
-        <img src="assets/brand-puntico.svg" class="h-10 w-auto">
+
+        <!-- Logo + nombre admin — BLOQUE CORREGIDO -->
+        <div class="p-6 border-b border-slate-800">
+            <img src="assets/brand-puntico.svg" class="h-10 w-auto mb-4">
+            <div class="flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
+                <span id="admin-name-sidebar" class="text-xs text-slate-400">Cargando...</span>
+            </div>
         </div>
-        <nav class="flex-1 px-4 space-y-1">
+
+        <nav class="flex-1 px-4 space-y-1 pt-4">
             <a href="#" onclick="showTab('overview')" id="nav-overview" class="nav-link active flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
                 <i data-lucide="bar-chart-3" class="mr-3 h-4 w-4"></i> Vista General
             </a>
@@ -55,6 +63,7 @@
                 <i data-lucide="shopping-cart" class="mr-3 h-4 w-4"></i> Tienda
             </a>
         </nav>
+
         <div class="p-4 border-t border-slate-800">
             <button onclick="logout()" class="flex items-center w-full px-4 py-3 text-red-400 hover:bg-slate-800 rounded-lg transition text-sm">
                 <i data-lucide="log-out" class="mr-3 h-4 w-4"></i> Cerrar Sesión
@@ -77,7 +86,6 @@
                 </div>
             </div>
 
-            <!-- Stats cards -->
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
                 <div class="rounded-xl border bg-white shadow-sm p-6">
                     <div class="flex items-center justify-between pb-2">
@@ -113,7 +121,6 @@
                 </div>
             </div>
 
-            <!-- Últimas órdenes en overview -->
             <div class="bg-white rounded-xl border shadow-sm p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-lg">Últimas órdenes</h3>
@@ -133,7 +140,6 @@
                     <p class="text-sm text-slate-400 mt-1">Gestiona las colecciones del juego.</p>
                 </div>
             </div>
-            <!-- Contenido de ediciones (el existente) -->
             <div id="editions-grid" class="grid gap-6 md:grid-cols-2 max-w-4xl"></div>
         </div>
 
@@ -148,7 +154,6 @@
                     <i data-lucide="plus" class="mr-2 h-4 w-4"></i> Nuevo producto
                 </button>
             </div>
-
             <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 border-b">
@@ -174,7 +179,6 @@
                     <h2 class="text-3xl font-bold tracking-tight">Órdenes</h2>
                     <p class="text-sm text-slate-400 mt-1">Pedidos recibidos desde la tienda.</p>
                 </div>
-                <!-- Filtro de estado -->
                 <select id="orders-filter" onchange="loadOrders()" class="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:border-amber-500 outline-none shadow-sm" style="width:auto;">
                     <option value="all">Todos los estados</option>
                     <option value="pending">Pendientes</option>
@@ -184,7 +188,6 @@
                     <option value="cancelled">Cancelados</option>
                 </select>
             </div>
-
             <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 border-b">
@@ -256,7 +259,7 @@
             </div>
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">URL de imagen</label>
-                <input type="url" id="product-image" placeholder="assets/cartas/BANDERA PANAMÁ.png">
+                <input type="url" id="product-image" placeholder="https://punticomemoria.netlify.app/assets/mockups/edicion_panama.png">
             </div>
             <div id="modal-error" class="hidden p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600 font-medium"></div>
             <div class="flex gap-3 pt-2">
@@ -285,25 +288,17 @@
 </div>
 
 <script>
-    // ════════════════════════════════════════════════
-    // TABS
-    // ════════════════════════════════════════════════
     function showTab(name) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
         document.getElementById('tab-' + name).classList.add('active');
         document.getElementById('nav-' + name).classList.add('active');
-
-        // Cargar datos según tab
         if (name === 'products') loadProducts();
         if (name === 'orders')   loadOrders();
         if (name === 'editions') renderEditions();
         return false;
     }
 
-    // ════════════════════════════════════════════════
-    // INIT
-    // ════════════════════════════════════════════════
     window.addEventListener('load', async () => {
         lucide.createIcons();
         const profile = await requireAdmin();
@@ -314,9 +309,6 @@
         await loadOverview();
     });
 
-    // ════════════════════════════════════════════════
-    // OVERVIEW
-    // ════════════════════════════════════════════════
     async function loadOverview() {
         const [
             { count: userCount },
@@ -337,7 +329,6 @@
         document.getElementById('stat-orders').textContent   = orderCount ?? '—';
         document.getElementById('stat-orders-pending').textContent = `${pendingOrders?.length ?? 0} pendientes`;
 
-        // Badge de pendientes en sidebar
         const pendingCount = pendingOrders?.length ?? 0;
         if (pendingCount > 0) {
             const badge = document.getElementById('pending-badge');
@@ -345,7 +336,6 @@
             badge.classList.remove('hidden');
         }
 
-        // Últimas órdenes en overview
         const container = document.getElementById('recent-orders-list');
         if (!recentOrders || recentOrders.length === 0) {
             container.innerHTML = '<p class="text-sm text-slate-400">No hay órdenes aún.</p>';
@@ -366,23 +356,17 @@
                 </div>
             </div>
         `).join('');
-
         lucide.createIcons();
     }
 
-    // ════════════════════════════════════════════════
-    // PRODUCTOS
-    // ════════════════════════════════════════════════
     async function loadProducts() {
         const { data, error } = await supabaseClient
             .from('products').select('*').order('created_at');
-
         const tbody = document.getElementById('products-table-body');
         if (error || !data || data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400 text-sm">No hay productos. Crea el primero.</td></tr>';
             return;
         }
-
         tbody.innerHTML = data.map(p => `
             <tr class="hover:bg-slate-50 transition">
                 <td class="px-6 py-4">
@@ -422,7 +406,6 @@
         lucide.createIcons();
     }
 
-    // ── Modal producto ──────────────────────────────
     let editingProductId = null;
 
     function openProductModal(product = null) {
@@ -471,8 +454,7 @@
         const payload = {
             name,
             description: document.getElementById('product-desc').value.trim() || null,
-            price,
-            stock,
+            price, stock,
             edition:   document.getElementById('product-edition').value,
             active:    document.getElementById('product-active').value === 'true',
             image_url: document.getElementById('product-image').value.trim() || null
@@ -496,14 +478,10 @@
         }
     }
 
-    // ════════════════════════════════════════════════
-    // ÓRDENES
-    // ════════════════════════════════════════════════
     async function loadOrders() {
         const filter = document.getElementById('orders-filter').value;
         let query = supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
         if (filter !== 'all') query = query.eq('status', filter);
-
         const { data, error } = await query;
         const tbody = document.getElementById('orders-table-body');
 
@@ -528,9 +506,7 @@
                 <td class="px-6 py-4">
                     <span class="font-bold text-slate-900">$${parseFloat(o.total).toFixed(2)}</span>
                 </td>
-                <td class="px-6 py-4">
-                    ${statusBadge(o.status)}
-                </td>
+                <td class="px-6 py-4">${statusBadge(o.status)}</td>
                 <td class="px-6 py-4 text-right" onclick="event.stopPropagation()">
                     <select onchange="updateOrderStatus('${o.id}', this.value)" class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:border-amber-500 outline-none" style="width:auto;">
                         <option value="pending"   ${o.status==='pending'   ? 'selected':''}>Pendiente</option>
@@ -547,13 +523,12 @@
 
     async function updateOrderStatus(orderId, newStatus) {
         await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
-        loadOverview(); // Actualiza el badge de pendientes
+        loadOverview();
     }
 
     async function viewOrder(orderId) {
         const { data: order } = await supabaseClient.from('orders').select('*').eq('id', orderId).single();
         const { data: items  } = await supabaseClient.from('order_items').select('*').eq('order_id', orderId);
-
         if (!order) return;
         const shortId = order.id.slice(0,8).toUpperCase();
 
@@ -601,7 +576,6 @@
 
     function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
 
-    // ── Helper badge de estado ──────────────────────
     function statusBadge(status) {
         const map = {
             pending:   ['bg-amber-100 text-amber-700',  'Pendiente'],
@@ -614,7 +588,6 @@
         return `<span class="status-badge ${cls}">${label}</span>`;
     }
 
-    // ── Ediciones (reutilizado del editions.html original) ──
     const initialEditions = [
         { id:'panama',    name:'Edición Panamá 🇵🇦',    description:'Colección con elementos culturales, flora y fauna panameña.', cardCount:24, active:true,  image:"assets/cartas/BANDERA PANAMÁ.png" },
         { id:'venezuela', name:'Edición Venezuela 🇻🇪', description:'Colección con monumentos, comida y símbolos venezolanos.',     cardCount:12, active:false, image:"assets/cartas/venezuela/salto_angel.png" }
