@@ -39,7 +39,10 @@
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2">
-              <img src="assets/brand-puntico.svg" class="h-10 w-auto">
+                <div class="bg-amber-600 p-1.5 rounded-lg">
+                    <i data-lucide="brain-circuit" class="h-4 w-4 text-white"></i>
+                </div>
+                <span class="syne text-base font-bold uppercase tracking-tight text-slate-900">TipoVisual</span>
             </a>
             <div class="flex items-center gap-3">
                 <a href="index.html" class="text-sm font-medium text-slate-500 hover:text-amber-600 transition">Jugar</a>
@@ -140,12 +143,7 @@
                 <p class="text-sm text-slate-500">Materiales educativos gratuitos para ti.</p>
             </div>
             <div id="descargables-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Placeholder — se activa en Fase 2 con Supabase Storage -->
-                <div class="bg-white rounded-2xl border border-dashed border-slate-200 p-6 text-center col-span-2 py-16">
-                    <div class="text-5xl mb-4">📥</div>
-                    <h3 class="syne text-lg font-bold text-slate-700 mb-2">Descargables próximamente</h3>
-                    <p class="text-sm text-slate-400 max-w-xs mx-auto">Fichas educativas y materiales de actividades estarán disponibles pronto.</p>
-                </div>
+                <!-- Se carga dinámicamente en loadDescargables() -->
             </div>
         </div>
 
@@ -227,6 +225,9 @@
 
             // Cargar historial de juegos
             await loadGameHistory(session.user.id);
+
+            // Cargar descargables
+            await loadDescargables(currentProfile);
 
             lucide.createIcons();
         }
@@ -391,6 +392,98 @@
             document.getElementById('tab-' + tab).classList.add('active');
             event.target.classList.add('active');
             event.target.classList.remove('text-slate-500');
+        }
+
+        // ─────────────────────────────
+        // DESCARGABLES
+        // ─────────────────────────────
+        async function loadDescargables(profile) {
+            const container = document.getElementById('descargables-list');
+
+            if (profile?.downloaded_guide) {
+                // Ya descargó — mostrar estado completado
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 flex items-center gap-4 col-span-2">
+                        <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-slate-800 text-sm">Guía de Actividades para Niños</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Ya descargaste este recurso</p>
+                        </div>
+                        <span class="bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">Descargado</span>
+                    </div>
+                `;
+                return;
+            }
+
+            // No ha descargado — mostrar card con botón
+            container.innerHTML = `
+                <div class="bg-white rounded-2xl border-2 border-amber-200 p-6 flex items-center gap-4 col-span-2 hover:border-amber-400 transition">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="12" y1="18" x2="12" y2="12"/>
+                            <line x1="9" y1="15" x2="15" y2="15"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-bold text-slate-800 text-sm">Guía de Actividades para Niños</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Descarga gratuita incluida con tu cuenta</p>
+                    </div>
+                    <button onclick="downloadGuideFromProfile()" id="btn-download-guide"
+                        class="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-xl transition syne">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Descargar
+                    </button>
+                </div>
+            `;
+        }
+
+        async function downloadGuideFromProfile() {
+            const btn = document.getElementById('btn-download-guide');
+            btn.disabled = true;
+            btn.textContent = 'Descargando...';
+
+            const { data: signedUrl, error } = await supabaseClient
+                .storage
+                .from('descargables')
+                .createSignedUrl('descargable-puntico.pdf', 60);
+
+            if (error || !signedUrl?.signedUrl) {
+                btn.disabled = false;
+                btn.textContent = 'Descargar';
+                alert('Error al generar la descarga. Intenta nuevamente.');
+                return;
+            }
+
+            // Marcar como descargado
+            const session = await getSession();
+            if (session) {
+                await supabaseClient
+                    .from('profiles')
+                    .update({ downloaded_guide: true })
+                    .eq('id', session.user.id);
+                currentProfile.downloaded_guide = true;
+            }
+
+            // Disparar descarga
+            const link = document.createElement('a');
+            link.href = signedUrl.signedUrl;
+            link.download = 'guia-puntico.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Actualizar UI sin recargar
+            await loadDescargables(currentProfile);
         }
 
         // ─────────────────────────────
