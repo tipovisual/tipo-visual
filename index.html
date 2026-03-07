@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memoria Latinoamericana</title>
+    <title>Puntico — ¡Jugar y aprender es posible!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -30,8 +30,6 @@
     <!-- HEADER -->
     <header class="p-6 flex justify-between items-center container mx-auto">
         <img src="assets/brand-puntico.svg" class="h-10 w-auto">
-            <span class="text-xl font-black tracking-tighter uppercase text-slate-800">Puntico</span>
-        </div>
         <div id="user-nav" class="flex items-center gap-3"></div>
     </header>
 
@@ -87,7 +85,6 @@
     ══════════════════════════════════════════════ -->
     <section id="store-section" class="container mx-auto px-6 py-16 hidden">
 
-        <!-- Separador visual -->
         <div class="flex items-center gap-4 mb-10">
             <div class="h-px flex-1 bg-gradient-to-r from-transparent to-amber-200"></div>
             <div class="text-center">
@@ -105,15 +102,12 @@
             </p>
         </div>
 
-        <!-- Grid de productos — se llena dinámicamente -->
         <div id="store-products-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
-            <!-- Skeletons mientras carga -->
             <div class="h-72 rounded-[3rem] bg-white/60 animate-pulse border-2 border-white shadow-xl"></div>
             <div class="h-72 rounded-[3rem] bg-white/60 animate-pulse border-2 border-white shadow-xl" style="animation-delay:0.1s;"></div>
             <div class="h-72 rounded-[3rem] bg-white/60 animate-pulse border-2 border-white shadow-xl" style="animation-delay:0.2s;"></div>
         </div>
 
-        <!-- CTA a tienda completa -->
         <div class="text-center">
             <a href="store.html" class="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-amber-600 transition-all shadow-xl">
                 Ver tienda completa
@@ -123,13 +117,63 @@
 
     </section>
 
+    <!-- ══════════════════════════════════════════════
+         SECCIÓN LEAD MAGNET — guía descargable
+    ══════════════════════════════════════════════ -->
+    <section id="lead-magnet-section" class="container mx-auto px-6 pb-16 hidden">
+        <div class="relative bg-slate-900 rounded-[3rem] overflow-hidden px-8 py-12 md:py-16 text-center shadow-2xl">
+
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-amber-500 opacity-10"></div>
+                <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-amber-500 opacity-5"></div>
+            </div>
+
+            <div class="relative z-10 max-w-xl mx-auto">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500 text-white mb-6 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="18" x2="12" y2="12"/>
+                        <line x1="9" y1="15" x2="15" y2="15"/>
+                    </svg>
+                </div>
+
+                <span class="bg-amber-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 inline-block">
+                    🎁 Gratis para nuevos usuarios
+                </span>
+
+                <h2 class="text-3xl md:text-4xl font-black text-white tracking-tighter leading-tight mb-4">
+                    GUÍA DE ACTIVIDADES<br><span class="text-amber-400">PARA NIÑOS</span>
+                </h2>
+
+                <p class="text-slate-400 font-medium mb-8 text-base max-w-md mx-auto">
+                    Descarga gratis nuestra guía educativa al crear tu cuenta. Actividades pensadas para aprender jugando.
+                </p>
+
+                <div id="lead-magnet-cta" class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="login.html?reason=guide&tab=register"
+                       class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-black px-8 py-4 rounded-full uppercase tracking-widest text-sm transition-all shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Crear cuenta y descargar
+                    </a>
+                    <a href="login.html" class="text-slate-400 hover:text-white text-sm font-medium transition-colors">
+                        Ya tengo cuenta →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER -->
     <footer class="p-8 text-center">
-        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">© 2026 TipoVisual • Raíces que conectan</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">© 2026 Puntico • ¡Jugar y aprender es posible!</p>
     </footer>
 
     <script>
-        // ── Inicializar Lucide al cargar ──
         window.addEventListener('load', () => {
             lucide.createIcons();
             initNav();
@@ -167,15 +211,37 @@
             window.location.href = 'game.html';
         }
 
-        // ── Nav dinámico ──────────────────────────────────────────────
+        // ── Nav + lógica lead magnet ──────────────────────────────────
         async function initNav() {
             const session = await getSession();
             const navEl   = document.getElementById('user-nav');
+            const lmSection = document.getElementById('lead-magnet-section');
+            const lmCta     = document.getElementById('lead-magnet-cta');
 
             if (session) {
                 const profile     = await getUserProfile();
                 const displayName = profile?.name || session.user.email;
                 const isAdmin     = profile?.role === 'admin';
+
+                if (profile?.downloaded_guide) {
+                    // Ya descargó — ocultar banner
+                    lmSection.classList.add('hidden');
+                } else {
+                    // Logueado pero no descargó — mostrar con botón directo
+                    lmSection.classList.remove('hidden');
+                    lmCta.innerHTML = `
+                        <button onclick="downloadGuide()"
+                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-black px-8 py-4 rounded-full uppercase tracking-widest text-sm transition-all shadow-lg hover:-translate-y-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Descargar mi guía gratis
+                        </button>
+                    `;
+                }
+
                 navEl.innerHTML = `
                     ${isAdmin ? `<a href="dashboard.html" class="text-xs font-black text-slate-400 hover:text-amber-600 uppercase tracking-widest transition flex items-center gap-1"><i data-lucide="settings" class="h-4 w-4"></i> Admin</a>` : ''}
                     <a href="profile.html" class="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm hover:border-amber-300 transition">
@@ -184,6 +250,9 @@
                     </a>
                 `;
             } else {
+                // No logueado — mostrar banner con CTA a registro
+                lmSection.classList.remove('hidden');
+
                 navEl.innerHTML = `
                     <a href="store.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition hidden md:block">Tienda</a>
                     <a href="login.html" class="bg-slate-900 text-white text-sm font-black px-4 py-2 rounded-full hover:bg-amber-600 transition uppercase tracking-widest">Ingresar</a>
@@ -193,6 +262,40 @@
                 `;
             }
             lucide.createIcons();
+        }
+
+        // Descarga directa para usuario ya logueado
+        async function downloadGuide() {
+            const btn = event.target.closest('button');
+            if (btn) { btn.disabled = true; btn.textContent = 'Descargando...'; }
+
+            const { data: signedUrl, error } = await supabaseClient
+                .storage
+                .from('descargables')
+                .createSignedUrl('descargable-puntico.pdf', 60);
+
+            if (error || !signedUrl?.signedUrl) {
+                alert('Error al generar la descarga. Intenta nuevamente.');
+                if (btn) { btn.disabled = false; btn.textContent = 'Descargar mi guía gratis'; }
+                return;
+            }
+
+            const session = await getSession();
+            if (session) {
+                await supabaseClient
+                    .from('profiles')
+                    .update({ downloaded_guide: true })
+                    .eq('id', session.user.id);
+            }
+
+            const link = document.createElement('a');
+            link.href = signedUrl.signedUrl;
+            link.download = 'guia-puntico.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            document.getElementById('lead-magnet-section').classList.add('hidden');
         }
 
         async function checkAdminAccess() {
@@ -207,18 +310,16 @@
                 .select('*')
                 .eq('active', true)
                 .order('created_at')
-                .limit(3); // Solo mostramos 3 en el index
+                .limit(3);
 
             const section = document.getElementById('store-section');
             const grid    = document.getElementById('store-products-grid');
 
             if (error || !data || data.length === 0) {
-                // Si no hay productos, ocultamos la sección completamente
                 section.classList.add('hidden');
                 return;
             }
 
-            // Mostrar sección
             section.classList.remove('hidden');
             grid.innerHTML = '';
 
@@ -235,28 +336,20 @@
                 card.innerHTML = `
                     ${isCombo ? `<span class="absolute top-5 left-5 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">⭐ Pack</span>` : ''}
                     ${outOfStock ? `<span class="absolute top-5 right-5 bg-slate-100 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">Agotado</span>` : ''}
-
-                    <!-- Imagen -->
                     <div class="flex items-center justify-center h-32 mb-5">
                         <img src="${product.image_url || ''}"
                              class="max-h-full max-w-full object-contain drop-shadow-lg float-animation group-hover:scale-110 transition-transform duration-500"
                              style="animation-delay:${delay + 0.3}s;"
                              onerror="this.outerHTML='<span class=\'text-5xl float-animation\'>📦</span>'">
                     </div>
-
-                    <!-- Info -->
                     <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter leading-tight mb-1">${product.name}</h3>
                     <p class="text-slate-500 font-medium text-sm flex-1 mb-4">${product.description ? product.description.slice(0, 80) + '...' : ''}</p>
-
-                    <!-- Precio + CTA -->
                     <div class="flex items-center justify-between mt-auto">
                         <span class="text-2xl font-black text-amber-600">$${parseFloat(product.price).toFixed(2)}</span>
                         <span class="flex items-center gap-1 text-xs font-black uppercase tracking-widest text-amber-600 group-hover:translate-x-1 transition-transform">
                             Comprar <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
                         </span>
                     </div>
-
-                    <!-- Fondo decorativo -->
                     <div class="absolute -bottom-8 -right-8 text-slate-50 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
                         <i data-lucide="package" class="h-32 w-32"></i>
                     </div>

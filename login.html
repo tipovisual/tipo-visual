@@ -163,7 +163,10 @@
 
         <!-- Logo -->
         <a href="index.html" class="flex items-center gap-2 mb-12">
-            <img src="assets/brand-puntico.svg" class="h-10 w-auto">
+            <div class="bg-amber-600 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2a10 10 0 0 0-10 10"/><path d="M12 22a10 10 0 0 0 10-10"/><path d="M12 22a10 10 0 0 1-10-10"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <span class="syne text-lg font-800 tracking-tight text-slate-900 font-bold uppercase">TipoVisual</span>
         </a>
 
         <!-- Reason notice (si viene de redirect) -->
@@ -367,13 +370,21 @@
         // ─────────────────────────────────────────
         const params = new URLSearchParams(window.location.search);
         const reason = params.get('reason');
+        const tab    = params.get('tab');
+
         if (reason === 'admin') {
             document.getElementById('reason-notice').classList.remove('hidden');
             document.getElementById('reason-notice').textContent = '🔒 Necesitas acceso de administrador para continuar.';
         } else if (reason === 'auth') {
             document.getElementById('reason-notice').classList.remove('hidden');
             document.getElementById('reason-notice').textContent = '👋 Inicia sesión para acceder a esta área.';
+        } else if (reason === 'guide') {
+            document.getElementById('reason-notice').classList.remove('hidden');
+            document.getElementById('reason-notice').textContent = '🎁 Crea tu cuenta gratis y descarga la guía de actividades al instante.';
         }
+
+        // Abrir tab de registro si viene del banner
+        if (tab === 'register') { switchTab('register'); }
 
         // ─────────────────────────────────────────
         // REDIRECT SI YA HAY SESIÓN ACTIVA
@@ -450,9 +461,7 @@
             const { data, error } = await supabaseClient.auth.signUp({
                 email,
                 password,
-                options: {
-                    data: { name }  // Se usará en el trigger para crear el perfil
-                }
+                options: { data: { name } }
             });
 
             if (error) {
@@ -463,8 +472,39 @@
                 return;
             }
 
-            showAlert('✅ ¡Cuenta creada! Revisa tu correo para confirmar tu registro.', 'success');
+            // ── Descarga automática del PDF para nuevos usuarios ──
+            try {
+                const { data: signedUrl, error: urlError } = await supabaseClient
+                    .storage
+                    .from('descargables')
+                    .createSignedUrl('descargable-puntico.pdf', 60); // expira en 60 segundos
+
+                if (!urlError && signedUrl?.signedUrl) {
+                    // Marcar en el perfil que ya descargó la guía
+                    await supabaseClient
+                        .from('profiles')
+                        .update({ downloaded_guide: true })
+                        .eq('id', data.user.id);
+
+                    // Disparar descarga automática
+                    const link = document.createElement('a');
+                    link.href = signedUrl.signedUrl;
+                    link.download = 'guia-puntico.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            } catch (err) {
+                console.error('Error al generar descarga:', err);
+            }
+
+            showAlert('✅ ¡Bienvenido a Puntico! Tu guía se está descargando...', 'success');
             setLoading('btn-register', 'spinner-register', false);
+
+            // Redirigir al perfil después de 2 segundos
+            setTimeout(() => {
+                window.location.href = 'profile.html';
+            }, 2000);
         }
 
         // ─────────────────────────────────────────
