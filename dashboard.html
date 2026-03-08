@@ -258,8 +258,27 @@
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">URL de imagen</label>
-                <input type="url" id="product-image" placeholder="https://punticomemoria.netlify.app/assets/mockups/edicion_panama.png">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Imagen del producto</label>
+                <!-- Preview -->
+                <div id="image-preview-wrap" class="hidden mb-2 relative w-20 h-20">
+                    <img id="image-preview" src="" class="w-20 h-20 rounded-xl object-contain border border-slate-200 bg-slate-50 p-1">
+                    <button type="button" onclick="clearImage()" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition">✕</button>
+                </div>
+                <!-- Upload zone -->
+                <div id="upload-zone" onclick="document.getElementById('product-image-file').click()"
+                    class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-amber-400 hover:bg-amber-50 transition">
+                    <i data-lucide="upload-cloud" class="h-6 w-6 text-slate-400 mx-auto mb-1"></i>
+                    <p class="text-xs text-slate-500 font-medium">Clic para subir imagen</p>
+                    <p class="text-[10px] text-slate-400">PNG, JPG, WEBP · Máx 2MB</p>
+                </div>
+                <input type="file" id="product-image-file" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+                <input type="hidden" id="product-image">
+                <div id="upload-progress" class="hidden mt-2">
+                    <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div id="upload-bar" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div>
+                    </div>
+                    <p id="upload-status" class="text-xs text-slate-400 mt-1">Subiendo...</p>
+                </div>
             </div>
             <div id="modal-error" class="hidden p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600 font-medium"></div>
             <div class="flex gap-3 pt-2">
@@ -418,7 +437,18 @@
         document.getElementById('product-stock').value      = product?.stock || '';
         document.getElementById('product-edition').value    = product?.edition || 'panama';
         document.getElementById('product-active').value     = product ? String(product.active) : 'true';
-        document.getElementById('product-image').value      = product?.image_url || '';
+        document.getElementById('product-image').value = product?.image_url || '';
+        // Reset uploader state
+        document.getElementById('product-image-file').value = '';
+        document.getElementById('upload-progress').classList.add('hidden');
+        if (product?.image_url) {
+            document.getElementById('image-preview').src = product.image_url;
+            document.getElementById('image-preview-wrap').classList.remove('hidden');
+            document.getElementById('upload-zone').classList.add('hidden');
+        } else {
+            document.getElementById('image-preview-wrap').classList.add('hidden');
+            document.getElementById('upload-zone').classList.remove('hidden');
+        }
         document.getElementById('modal-error').classList.add('hidden');
         document.getElementById('product-modal').classList.add('open');
         lucide.createIcons();
@@ -575,6 +605,69 @@
     }
 
     function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
+
+    // ── Image upload ──────────────────────────────
+    async function handleImageUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            document.getElementById('modal-error').textContent = 'La imagen no puede superar 2MB.';
+            document.getElementById('modal-error').classList.remove('hidden');
+            return;
+        }
+
+        const progress  = document.getElementById('upload-progress');
+        const bar       = document.getElementById('upload-bar');
+        const status    = document.getElementById('upload-status');
+        const errorEl   = document.getElementById('modal-error');
+
+        progress.classList.remove('hidden');
+        errorEl.classList.add('hidden');
+        bar.style.width = '30%';
+        status.textContent = 'Subiendo imagen...';
+
+        const ext      = file.name.split('.').pop();
+        const fileName = `product-${Date.now()}.${ext}`;
+
+        const { data, error } = await supabaseClient.storage
+            .from('productos')
+            .upload(fileName, file, { upsert: true });
+
+        if (error) {
+            bar.style.width = '0%';
+            status.textContent = '';
+            progress.classList.add('hidden');
+            errorEl.textContent = 'Error al subir la imagen. Intenta nuevamente.';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        bar.style.width = '100%';
+        status.textContent = '✅ Imagen subida';
+
+        // Get public URL
+        const { data: urlData } = supabaseClient.storage
+            .from('productos')
+            .getPublicUrl(fileName);
+
+        document.getElementById('product-image').value = urlData.publicUrl;
+
+        // Show preview
+        document.getElementById('image-preview').src = urlData.publicUrl;
+        document.getElementById('image-preview-wrap').classList.remove('hidden');
+        document.getElementById('upload-zone').classList.add('hidden');
+
+        setTimeout(() => progress.classList.add('hidden'), 1500);
+    }
+
+    function clearImage() {
+        document.getElementById('product-image').value = '';
+        document.getElementById('product-image-file').value = '';
+        document.getElementById('image-preview-wrap').classList.add('hidden');
+        document.getElementById('upload-zone').classList.remove('hidden');
+        document.getElementById('upload-progress').classList.add('hidden');
+    }
 
     function statusBadge(status) {
         const map = {
