@@ -2,28 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <!-- ═══ Google Analytics 4 ═══ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7WND12NQQQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-7WND12NQQQ');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso — Puntico</title>
-    <!-- ═══ SEO & Social Meta Tags ═══ -->
-    <meta name="description" content="Crea tu cuenta en Puntico y descarga gratis nuestra guía de actividades educativas para niños.">
-    <meta name="keywords" content="Puntico, juego de memoria, juego educativo, niños, adultos, Panamá, Venezuela, Latinoamérica, cultura, memoria, cartas coleccionables">
-    <meta name="author" content="Puntico">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://puntico.shop/login.html">
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Acceso — Puntico">
-    <meta property="og:description" content="Crea tu cuenta en Puntico y descarga gratis nuestra guía de actividades educativas para niños.">
-    <meta property="og:url" content="https://puntico.shop/login.html">
-    <meta property="og:image" content="https://puntico.shop/assets/brand-puntico.svg">
-    <meta property="og:site_name" content="Puntico">
-    <meta property="og:locale" content="es_PA">
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@punticopty">
-    <meta name="twitter:title" content="Acceso — Puntico">
-    <meta name="twitter:description" content="Crea tu cuenta en Puntico y descarga gratis nuestra guía de actividades educativas para niños.">
-    <meta name="twitter:image" content="https://puntico.shop/assets/brand-puntico.svg">
+    <title>Acceso — TipoVisual</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -182,11 +170,8 @@
     <div class="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 bg-white max-w-lg">
 
         <!-- Logo -->
-        <a href="index.html" class="flex items-center gap-2 mb-12">
-            <div class="bg-amber-600 p-2 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2a10 10 0 0 0-10 10"/><path d="M12 22a10 10 0 0 0 10-10"/><path d="M12 22a10 10 0 0 1-10-10"/><circle cx="12" cy="12" r="3"/></svg>
-            </div>
-            <span class="syne text-lg font-800 tracking-tight text-slate-900 font-bold uppercase">TipoVisual</span>
+        <a href="index.html" class="mb-12 inline-block">
+            <img src="assets/brand-puntico.svg" class="h-10 w-auto">
         </a>
 
         <!-- Reason notice (si viene de redirect) -->
@@ -286,28 +271,26 @@
 
         <!-- Cartas flotantes -->
         <div class="floating-card fc-1" style="aspect-ratio: 2/3; width:120px;">
-            <div class="fc-front" style="height:100%;">
-                <div class="fc-emoji">🇵🇦</div>
-                <div class="fc-name">La Pollera</div>
+            <div class="fc-front" style="height:100%; padding:0;">
+                <img src="assets/cartas/REVERSO.png" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">
             </div>
         </div>
         <div class="floating-card fc-2" style="aspect-ratio: 2/3; width:120px;">
-            <div class="fc-front" style="height:100%;">
-                <div class="fc-emoji">🦅</div>
-                <div class="fc-name">Águila Harpía</div>
+            <div class="fc-front" style="height:100%; padding:0;">
+                <img src="assets/cartas/PANAMEÑO.png" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">
             </div>
         </div>
         <div class="floating-card fc-3" style="aspect-ratio: 2/3; width:120px;">
-            <div class="fc-front" style="height:100%;">
-                <div class="fc-emoji">🇻🇪</div>
-                <div class="fc-name">Salto Ángel</div>
+            <div class="fc-front" style="height:100%; padding:0;">
+                <img src="assets/cartas/DIABLICO SUCIO.png" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">
             </div>
         </div>
+        
 
         <!-- Texto central -->
         <div class="absolute bottom-0 left-0 right-0 p-12 z-10">
             <div class="syne text-5xl font-extrabold text-white leading-none tracking-tighter mb-3">
-                DESCUBRE<br><span class="text-amber-500">TU RAÍZ</span>
+                DESCUBRE<br><span style="color:#FFED00;">TU RAÍZ</span>
             </div>
             <p class="text-slate-400 text-sm font-light max-w-xs leading-relaxed">
                 Juega, aprende y colecciona la cultura que nos hace únicos como latinoamericanos.
@@ -446,6 +429,8 @@
                 return;
             }
 
+            // GA4 — Login exitoso
+            gtag('event', 'login', { method: 'email' });
             // Obtenemos el rol para redirigir correctamente
             const profile = await getUserProfile();
             if (profile?.role === 'admin') {
@@ -519,6 +504,8 @@
             }
 
             showAlert('✅ ¡Bienvenido a Puntico! Tu guía se está descargando...', 'success');
+            // GA4 — Registro exitoso
+            gtag('event', 'sign_up', { method: 'email' });
             setLoading('btn-register', 'spinner-register', false);
 
             // Redirigir al perfil después de 2 segundos
