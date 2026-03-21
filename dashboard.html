@@ -81,6 +81,9 @@
                 <i data-lucide="shopping-bag" class="mr-3 h-4 w-4"></i> Órdenes
                 <span id="pending-badge" class="hidden ml-auto bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">0</span>
             </a>
+            <a href="#" onclick="showTab('traffic')" id="nav-traffic" class="nav-link flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
+                <i data-lucide="bar-chart-2" class="mr-3 h-4 w-4"></i> Tráfico
+            </a>
             <div class="pt-4 pb-2 border-t border-slate-800 mt-2">
                 <span class="px-4 text-[10px] font-semibold text-slate-500 uppercase">Vista Pública</span>
             </div>
@@ -235,6 +238,101 @@
             </div>
         </div>
 
+        <!-- ══ TAB: TRÁFICO ══════════════════════════════════════ -->
+        <div id="tab-traffic" class="tab-content">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Tráfico</h2>
+                    <p class="text-sm text-slate-400 mt-1">Métricas de visitas desde Google Analytics 4.</p>
+                </div>
+                <a href="https://analytics.google.com/analytics/web/#/p{GA4_PROPERTY}/reports/reportinghub" target="_blank"
+                   class="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-600 transition">
+                    <i data-lucide="external-link" class="h-4 w-4"></i> Abrir GA4
+                </a>
+            </div>
+
+            <!-- Métricas rápidas -->
+            <div class="grid gap-4 md:grid-cols-3 mb-8">
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Usuarios activos hoy</h3>
+                        <i data-lucide="users" class="h-4 w-4 text-[#211261]"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="traffic-realtime">—</div>
+                    <p class="text-xs text-slate-400 mt-1">Tiempo real</p>
+                </div>
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">ID de Propiedad</h3>
+                        <i data-lucide="key" class="h-4 w-4 text-[#211261]"></i>
+                    </div>
+                    <div class="text-lg font-bold text-slate-700">G-7WND12NQQQ</div>
+                    <p class="text-xs text-slate-400 mt-1">Google Analytics 4</p>
+                </div>
+                <div class="rounded-xl border bg-white shadow-sm p-6">
+                    <div class="flex items-center justify-between pb-2">
+                        <h3 class="text-sm font-medium text-slate-500">Dominio activo</h3>
+                        <i data-lucide="globe" class="h-4 w-4 text-[#211261]"></i>
+                    </div>
+                    <div class="text-lg font-bold text-slate-700">puntico.shop</div>
+                    <p class="text-xs text-slate-400 mt-1">Cloudflare Pages</p>
+                </div>
+            </div>
+
+            <!-- Reportes rápidos -->
+            <div class="grid gap-4 md:grid-cols-2 mb-8">
+                <a href="https://analytics.google.com" target="_blank"
+                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
+                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="trending-up" class="h-5 w-5 text-[#211261]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Audiencia y sesiones</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Usuarios nuevos vs recurrentes, sesiones por día</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
+                </a>
+                <a href="https://analytics.google.com" target="_blank"
+                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
+                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="mouse-pointer-click" class="h-5 w-5 text-[#211261]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Eventos y conversiones</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Registros, descargas, visitas a tienda</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
+                </a>
+                <a href="https://analytics.google.com" target="_blank"
+                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
+                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="layout" class="h-5 w-5 text-[#211261]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Páginas más visitadas</p>
+                        <p class="text-xs text-slate-400 mt-0.5">index, store, login, profile</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
+                </a>
+                <a href="https://analytics.google.com" target="_blank"
+                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
+                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="map-pin" class="h-5 w-5 text-[#211261]"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Ubicación geográfica</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Países y ciudades de tus visitantes</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
+                </a>
+            </div>
+
+            <div class="bg-[#F5F4FB] border border-[#E8E6F7] rounded-xl p-5 text-sm text-[#211261]">
+                <p class="font-bold mb-1">💡 Tip</p>
+                <p class="text-slate-600">Para ver datos en tiempo real dentro del dashboard sin salir a GA4, en el futuro podemos conectar la API de Google Analytics. Por ahora, todos los reportes abren directamente en GA4.</p>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -343,6 +441,7 @@
         if (name === 'products') loadProducts();
         if (name === 'orders')   loadOrders();
         if (name === 'editions') renderEditions();
+        if (name === 'traffic')  { lucide.createIcons(); }
         return false;
     }
 
@@ -736,14 +835,14 @@
                     <label class="flex items-center gap-2 cursor-pointer">
                         <div class="relative">
                             <input type="checkbox" class="sr-only" ${edition.active ? 'checked' : ''} onchange="toggleEdition('${edition.id}')">
-                            <div class="w-10 h-6 rounded-full transition ${edition.active ? 'bg-amber-500' : 'bg-slate-200'}">
+                            <div class="w-10 h-6 rounded-full transition ${edition.active ? 'bg-[#211261]' : 'bg-slate-200'}">
                                 <div class="w-4 h-4 bg-white rounded-full shadow absolute top-1 transition-transform ${edition.active ? 'translate-x-5' : 'translate-x-1'}"></div>
                             </div>
                         </div>
                         <span class="text-xs font-bold uppercase tracking-wider">${edition.active ? 'Visible' : 'Oculta'}</span>
                     </label>
-                    <a href="edit-edition.html?id=${edition.id}" class="p-2 bg-white border rounded-lg hover:text-amber-600 transition shadow-sm">
-                        <i data-lucide="edit-3" class="h-4 w-4"></i>
+                    <a href="edit-edition.html?id=${edition.id}" class="flex items-center gap-2 bg-[#211261] text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider hover:bg-[#E50072] transition shadow-sm">
+                        <i data-lucide="edit-3" class="h-3.5 w-3.5"></i> Editar
                     </a>
                 </div>
             </div>

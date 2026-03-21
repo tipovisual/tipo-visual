@@ -101,19 +101,60 @@
                                 <input type="text" id="edit-title" class="w-full p-3 bg-slate-50 border-2 border-transparent focus:border-[#211261] focus:bg-white rounded-xl outline-none transition-all font-bold text-sm">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Estado</label>
-                                <div class="flex items-center p-3 bg-slate-50 rounded-xl">
-                                    <div class="h-3 w-3 rounded-full bg-green-500 mr-3 animate-pulse"></div>
-                                    <span class="text-sm font-bold">Activa en el Juego</span>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase mb-1">Estado en el juego</label>
+                                <div id="estado-box" class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                    <div class="flex items-center gap-2">
+                                        <div id="estado-dot" class="h-3 w-3 rounded-full animate-pulse"></div>
+                                        <span id="estado-label" class="text-sm font-bold">Cargando...</span>
+                                    </div>
+                                    <button onclick="toggleEstado()" id="btn-estado"
+                                        class="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full transition">
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-[#F5F4FB] p-6 rounded-3xl border-2 border-[#E8E6F7] border-dashed text-center">
-                        <i data-lucide="info" class="h-6 w-6 text-[#211261] mx-auto mb-2"></i>
-                        <p class="text-xs font-bold text-[#211261] uppercase">Añadir cartas</p>
-                        <p class="text-[10px] text-slate-500 mt-1">Sube el archivo a tu carpeta assets/cartas/ y registra la ruta en data.js</p>
+                        <i data-lucide="plus-circle" class="h-7 w-7 text-[#211261] mx-auto mb-2"></i>
+                        <p class="text-xs font-bold text-[#211261] uppercase mb-1">Añadir carta</p>
+                        <p class="text-[10px] text-slate-500 mb-4">Sube el archivo a assets/cartas/ primero</p>
+                        <button onclick="showAddCardForm()"
+                            class="nunito w-full bg-[#211261] text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-full hover:bg-[#E50072] transition">
+                            + Agregar
+                        </button>
+                    </div>
+
+                    <!-- Add card form (hidden by default) -->
+                    <div id="add-card-form" class="hidden bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                        <p class="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Nueva carta</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Nombre</label>
+                                <input type="text" id="new-card-name" placeholder="Ej: Mola Kuna"
+                                    class="w-full bg-slate-50 border-2 border-transparent focus:border-[#211261] p-2 rounded-xl text-sm font-bold outline-none uppercase">
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Ruta de imagen</label>
+                                <input type="text" id="new-card-img" placeholder="assets/cartas/NOMBRE.png"
+                                    class="w-full bg-slate-50 border-2 border-transparent focus:border-[#211261] p-2 rounded-xl text-xs outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Descripción</label>
+                                <textarea id="new-card-desc" rows="2" placeholder="Descripción breve..."
+                                    class="w-full bg-slate-50 border-2 border-transparent focus:border-[#211261] p-2 rounded-xl text-xs outline-none resize-none"></textarea>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="addCard()"
+                                    class="nunito flex-1 bg-[#211261] text-white text-xs font-black uppercase py-2 rounded-full hover:bg-[#E50072] transition">
+                                    Agregar
+                                </button>
+                                <button onclick="document.getElementById('add-card-form').classList.add('hidden')"
+                                    class="flex-1 bg-slate-100 text-slate-600 text-xs font-black uppercase py-2 rounded-full hover:bg-slate-200 transition">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -173,6 +214,7 @@
         }
 
         renderEditor();
+        loadEstado();
     });
 
     // ── Render ──────────────────────────────────────────────
@@ -195,6 +237,13 @@
             cardDiv.innerHTML = `
                 <div class="aspect-[4/3] bg-slate-50 p-4 flex items-center justify-center relative overflow-hidden">
                     <img src="${card.img}" class="max-h-full max-w-full object-contain drop-shadow group-hover:scale-105 transition-transform duration-300" onerror="this.src=''">
+                    <button onclick="deleteCard(${index})"
+                        class="absolute top-3 right-3 bg-white border border-red-100 text-red-500 hover:bg-red-500 hover:text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm"
+                        title="Eliminar carta">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                        </svg>
+                    </button>
                 </div>
                 <div class="p-5 space-y-3">
                     <div>
@@ -227,6 +276,70 @@
 
     function changeVersion() {
         currentVersion = document.getElementById('version-selector').value;
+        renderEditor();
+        loadEstado();
+    }
+
+    // ── Estado dinámico ────────────────────────────────────
+    function loadEstado() {
+        const editions = JSON.parse(localStorage.getItem('tipoVisual_editions')) || [];
+        const edition = editions.find(e => e.id === currentVersion);
+        const active = edition ? edition.active : true;
+
+        const dot   = document.getElementById('estado-dot');
+        const label = document.getElementById('estado-label');
+        const btn   = document.getElementById('btn-estado');
+
+        if (active) {
+            dot.classList.add('bg-green-500');
+            dot.classList.remove('bg-slate-400');
+            label.textContent = 'Activa en el juego';
+            btn.textContent = 'Desactivar';
+            btn.className = 'text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full transition bg-red-100 text-red-600 hover:bg-red-500 hover:text-white';
+        } else {
+            dot.classList.add('bg-slate-400');
+            dot.classList.remove('bg-green-500');
+            label.textContent = 'Inactiva';
+            btn.textContent = 'Activar';
+            btn.className = 'text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full transition bg-green-100 text-green-700 hover:bg-green-500 hover:text-white';
+        }
+    }
+
+    function toggleEstado() {
+        let editions = JSON.parse(localStorage.getItem('tipoVisual_editions')) || [];
+        editions = editions.map(e => e.id === currentVersion ? {...e, active: !e.active} : e);
+        localStorage.setItem('tipoVisual_editions', JSON.stringify(editions));
+        loadEstado();
+    }
+
+    // ── Agregar carta ───────────────────────────────────────
+    function showAddCardForm() {
+        document.getElementById('add-card-form').classList.remove('hidden');
+        document.getElementById('new-card-name').focus();
+    }
+
+    function addCard() {
+        const name = document.getElementById('new-card-name').value.trim();
+        const img  = document.getElementById('new-card-img').value.trim();
+        const desc = document.getElementById('new-card-desc').value.trim();
+
+        if (!name || !img) {
+            alert('El nombre y la ruta de imagen son obligatorios.');
+            return;
+        }
+
+        editionData[currentVersion].cards.push({ name, img, desc });
+        document.getElementById('add-card-form').classList.add('hidden');
+        document.getElementById('new-card-name').value = '';
+        document.getElementById('new-card-img').value = '';
+        document.getElementById('new-card-desc').value = '';
+        renderEditor();
+    }
+
+    function deleteCard(index) {
+        const card = editionData[currentVersion].cards[index];
+        if (!confirm(`¿Eliminar la carta "${card.name}"? Esta acción no se puede deshacer.`)) return;
+        editionData[currentVersion].cards.splice(index, 1);
         renderEditor();
     }
 
