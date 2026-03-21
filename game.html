@@ -121,6 +121,7 @@
     <script>
         let currentEdition = localStorage.getItem('selectedEdition') || 'panama';
         let cardData = [];
+        let currentBackImg = 'assets/cartas/REVERSO.png'; // updated in prepareCards
         let cards = [];
         let flippedCards = [];
         let matchedPairs = 0;
@@ -169,7 +170,7 @@
                     if (parsed.back) gameData[currentEdition].back = parsed.back;
                 } catch(e) {}
             }
-            const currentBackImg = gameData[currentEdition].back || 'assets/cartas/REVERSO.png';
+            currentBackImg = gameData[currentEdition].back || 'assets/cartas/REVERSO.png';
 
             if (typeof gameData === 'undefined') {
                 console.error("Error: No se encontró data.js");
