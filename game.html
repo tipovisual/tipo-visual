@@ -156,6 +156,24 @@
         // PREPARAR CARTAS
         // ─────────────────────────────────────────
         function prepareCards() {
+            // Prioridad: localStorage (editor) → data.js (fallback)
+            const savedEdition = localStorage.getItem('puntico_editions_' + currentEdition);
+            if (savedEdition) {
+                try {
+                    const parsed = JSON.parse(savedEdition);
+                    if (parsed.cards && parsed.cards.length > 0) {
+                        gameData[currentEdition].cards = parsed.cards.map((c, i) => ({
+                            id: i + 1,
+                            name: c.name,
+                            img: c.img,
+                            desc: c.desc
+                        }));
+                    }
+                } catch(e) {
+                    console.warn('Error leyendo datos del editor, usando data.js');
+                }
+            }
+
             if (typeof gameData === 'undefined') {
                 console.error("Error: No se encontró data.js");
                 return;
