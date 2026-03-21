@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <div id="game-grid" class="grid grid-cols-3 gap-2 md:grid-cols-6 md:gap-4 lg:max-w-5xl mx-auto">
+            <div id="game-grid" class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-4 lg:max-w-5xl mx-auto">
             </div>
 
             <div id="win-message" class="hidden mt-12 flex flex-col items-center space-y-4 pb-12">
@@ -163,16 +163,13 @@
                     const parsed = JSON.parse(savedEdition);
                     if (parsed.cards && parsed.cards.length > 0) {
                         gameData[currentEdition].cards = parsed.cards.map((c, i) => ({
-                            id: i + 1,
-                            name: c.name,
-                            img: c.img,
-                            desc: c.desc
+                            id: i + 1, name: c.name, img: c.img, desc: c.desc
                         }));
                     }
-                } catch(e) {
-                    console.warn('Error leyendo datos del editor, usando data.js');
-                }
+                    if (parsed.back) gameData[currentEdition].back = parsed.back;
+                } catch(e) {}
             }
+            const currentBackImg = gameData[currentEdition].back || 'assets/cartas/REVERSO.png';
 
             if (typeof gameData === 'undefined') {
                 console.error("Error: No se encontró data.js");
@@ -264,8 +261,8 @@
 
                 cardEl.innerHTML = `
                     <div class="card-inner w-full h-full relative">
-                        <div class="back w-full h-full bg-amber-600 rounded-xl shadow-lg border-2 border-white overflow-hidden">
-                            <img src="assets/cartas/REVERSO.png" class="w-full h-full object-cover">
+                        <div class="back w-full h-full rounded-xl shadow-lg border-2 border-white overflow-hidden" style="background:#211261;">
+                            <img src="${currentBackImg}" class="w-full h-full object-cover">
                         </div>
                         <div class="front w-full h-full ${card.matched ? 'bg-green-50 opacity-60' : 'bg-white'} rounded-xl shadow-md border-2 border-amber-200 flex flex-col overflow-hidden">
                             <div class="flex-[3] w-full flex items-center justify-center p-2">

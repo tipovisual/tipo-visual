@@ -116,6 +116,22 @@
                         </div>
                     </div>
 
+                    <!-- Reverso de carta -->
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Reverso de la carta</p>
+                        <div class="relative group mb-3">
+                            <img id="back-preview" src=""
+                                class="w-full aspect-[2/3] object-cover rounded-2xl border border-slate-100 bg-slate-50"
+                                onerror="this.style.opacity='0.3'">
+                            <button onclick="document.getElementById('back-file-input').click()"
+                                class="absolute inset-0 flex items-center justify-center bg-[#211261]/0 group-hover:bg-[#211261]/60 rounded-2xl transition-all">
+                                <span class="opacity-0 group-hover:opacity-100 text-white text-xs font-black uppercase tracking-wider">Cambiar</span>
+                            </button>
+                        </div>
+                        <input type="file" id="back-file-input" accept="image/*" class="hidden" onchange="changeBackImage(this)">
+                        <p class="text-[10px] text-slate-400 text-center">Esta imagen se muestra cuando la carta está boca abajo</p>
+                    </div>
+
                     <div class="bg-[#F5F4FB] p-6 rounded-3xl border-2 border-[#E8E6F7] border-dashed text-center">
                         <i data-lucide="plus-circle" class="h-7 w-7 text-[#211261] mx-auto mb-2"></i>
                         <p class="text-xs font-bold text-[#211261] uppercase mb-1">Añadir carta</p>
@@ -193,6 +209,7 @@
             result[key] = {
                 title: gameData[key].title,
                 name: gameData[key].title.replace(/ 🇵🇦| 🇻🇪/g, ''),
+                back: (saved && JSON.parse(saved).back) || gameData[key].back || 'assets/cartas/REVERSO.png',
                 cards: cards.map(c => ({
                     name: c.name,
                     img: c.img,
@@ -232,6 +249,12 @@
         const version = editionData[currentVersion];
         document.getElementById('edition-display-name').textContent = 'Editando: ' + version.title;
         document.getElementById('edit-title').value = version.name;
+        // Load back image preview
+        const backPreview = document.getElementById('back-preview');
+        if (backPreview) {
+            backPreview.src = version.back || 'assets/cartas/REVERSO.png';
+            backPreview.style.opacity = '1';
+        }
 
         const grid = document.getElementById('cards-editor-grid');
         grid.innerHTML = '';
@@ -356,6 +379,29 @@
         renderEditor();
     }
 
+    // ── Cambiar reverso ────────────────────────────────────
+    async function changeBackImage(input) {
+        const file = input.files[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) { alert('La imagen no puede superar 2MB.'); return; }
+
+        const preview = document.getElementById('back-preview');
+        preview.style.opacity = '0.5';
+
+        const ext = file.name.split('.').pop();
+        const fileName = 'reverso-' + currentVersion + '-' + Date.now() + '.' + ext;
+
+        const { data, error } = await supabaseClient.storage
+            .from('productos').upload(fileName, file, { upsert: true });
+
+        if (error) { preview.style.opacity = '1'; alert('Error al subir la imagen.'); return; }
+
+        const { data: urlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
+        editionData[currentVersion].back = urlData.publicUrl;
+        preview.src = urlData.publicUrl;
+        preview.style.opacity = '1';
+    }
+
     // ── Cambiar imagen de carta ────────────────────────────
     async function changeCardImage(input, index) {
         const file = input.files[0];
@@ -402,7 +448,12 @@
 
     function saveChanges() {
         // Save to localStorage (future: migrate to Supabase)
-        localStorage.setItem('puntico_editions_' + currentVersion, JSON.stringify(editionData[currentVersion]));
+        const toSave = {
+            title: editionData[currentVersion].title,
+            back:  editionData[currentVersion].back,
+            cards: editionData[currentVersion].cards
+        };
+        localStorage.setItem('puntico_editions_' + currentVersion, JSON.stringify(toSave));
         const msg = document.getElementById('save-msg');
         msg.classList.remove('hidden');
         setTimeout(() => msg.classList.add('hidden'), 3000);
