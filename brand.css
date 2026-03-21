@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════════
+   Puntico — Brand Styles Global
+   #211261 Navy · #FFED00 Yellow · #E50072 Magenta
+   Font: Nunito 900 headings · DM Sans body
+═══════════════════════════════════════════ */
+
+:root {
+  --navy:    #211261;
+  --navy-mid:#312b6d;
+  --yellow:  #FFED00;
+  --magenta: #E50072;
+  --cyan:    #009CC0;
+  --orange:  #F49600;
+}
+
+/* ── Botones primarios ── */
+.bg-\[\#211261\] {
+  background-color: #211261 !important;
+  transition: background-color 0.2s ease !important;
+}
+.bg-\[\#211261\]:hover {
+  background-color: #E50072 !important;
+}
+
+/* ── Botones slate-900 que no fueron reemplazados ── */
+.bg-slate-900 {
+  background-color: #211261 !important;
+  transition: background-color 0.2s ease !important;
+}
+.bg-slate-900:hover {
+  background-color: #E50072 !important;
+}
+
+/* ── Hover text → magenta ── */
+.hover\:text-\[\#E50072\]:hover {
+  color: #E50072 !important;
+}
+
+/* ── Tab activo en perfil ── */
+.profile-tab-btn.active {
+  background-color: #211261 !important;
+  color: white !important;
+  border-radius: 8px;
+}
+
+/* ── Links hover ── */
+a:hover .hover\:text-\[\#E50072\] {
+  color: #E50072 !important;
+}
+
+/* ── Focus inputs → navy ── */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #211261 !important;
+  outline: none;
+}
+
+/* ── Botón activo tab underline ── */
+.tab-underline {
+  background: #211261 !important;
+}
+
+/* ── Badges navy ── */
+.bg-\[\#EAE8F7\] {
+  background-color: #EAE8F7 !important;
+}
+.text-\[\#211261\] {
+  color: #211261 !important;
+}
+
+/* ── Hover general sobre elementos interactivos ── */
+button:not([disabled]):hover,
+a[href]:hover {
+  transition: all 0.2s ease;
+}
+
+/* ── Cart button hover ── */
+.hover\:bg-\[\#E50072\]:hover {
+  background-color: #E50072 !important;
+}
+
+/* ── Yellow accent text ── */
+.text-\[\#FFED00\] {
+  color: #FFED00 !important;
+}
+
+/* ── Orange accent ── */
+.text-\[\#F49600\] {
+  color: #F49600 !important;
+}
