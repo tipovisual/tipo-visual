@@ -9,7 +9,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "TipoVisual <onboarding@resend.dev>",
+      from: "Puntico <pedidos@puntico.shop>",
       to,
       subject,
       html,
@@ -32,13 +32,13 @@ Deno.serve(async (req) => {
     // ── Email al CLIENTE ──
     await sendEmail(
       order.customer_email,
-      `✅ Recibimos tu pedido #${shortId} — TipoVisual`,
+      `✅ Recibimos tu pedido #${shortId} — Puntico`,
       `<!DOCTYPE html>
 <html lang="es">
 <body style="margin:0;padding:0;background:#FFFBEB;font-family:Arial,sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
     <div style="background:#1E293B;border-radius:24px;padding:32px;text-align:center;margin-bottom:24px;">
-      <p style="color:#FCD34D;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 8px;">TipoVisual</p>
+      <p style="color:#FCD34D;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 8px;">Puntico</p>
       <h1 style="color:white;font-size:28px;font-weight:800;margin:0;">¡Pedido recibido!</h1>
       <p style="color:rgba(255,255,255,0.6);font-size:14px;margin:8px 0 0;">Gracias por tu compra, ${order.customer_name.split(" ")[0]}.</p>
     </div>
@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
         En los próximos minutos te escribiremos por WhatsApp al <strong>${order.customer_phone}</strong> para coordinar el pago y la entrega.
       </p>
     </div>
-    <p style="font-size:12px;color:#94A3B8;text-align:center;margin:0;">© 2026 TipoVisual · punticomemoria.netlify.app</p>
+    <p style="font-size:12px;color:#94A3B8;text-align:center;margin:0;">© 2026 Puntico · puntico.shop</p>
   </div>
 </body>
 </html>`
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
         <span style="font-size:24px;font-weight:800;color:#D97706;">$${parseFloat(order.total).toFixed(2)}</span>
       </div>
     </div>
-    <a href="https://punticomemoria.netlify.app/dashboard.html"
+    <a href="https://puntico.shop/dashboard.html"
        style="display:block;background:#1E293B;color:white;text-align:center;padding:16px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none;">
       Ver en Dashboard →
     </a>
