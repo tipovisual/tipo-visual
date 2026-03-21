@@ -32,6 +32,7 @@
     <meta name="twitter:title" content="Puntico — Juego de memoria educativo | Panamá y Venezuela">
     <meta name="twitter:description" content="Puntico es un juego de memoria educativo para niños y adultos basado en la cultura de Panamá y Venezuela. ¡Jugar y aprender es posible!">
     <meta name="twitter:image" content="https://puntico.shop/assets/brand-puntico.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -53,7 +54,7 @@
         .fade-up-3 { animation: fadeUp 0.5s ease-out 0.2s both; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50 via-white to-orange-50 min-h-screen flex flex-col font-sans">
+<body class="bg-white min-h-screen flex flex-col font-sans">
 
     <!-- HEADER -->
     <header class="p-6 flex justify-between items-center container mx-auto">
@@ -65,9 +66,9 @@
     <main class="flex-1 container mx-auto px-6 flex flex-col items-center justify-center text-center pt-8 pb-4">
 
         <div class="mb-12">
-            <span class="bg-amber-100 text-amber-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Edición Coleccionable</span>
+            <span class="bg-[#EAE8F7] text-[#211261] px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Edición Coleccionable</span>
             <h1 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-6">
-                DESCUBRE TU <br><span class="text-amber-600">IDENTIDAD</span>
+                DESCUBRE TU <br><span class="text-[#211261]">IDENTIDAD</span>
             </h1>
             <p class="text-slate-600 text-lg md:text-xl max-w-xl mx-auto font-medium">
                 Un juego de memoria para aprender sobre los personajes y símbolos que nos hacen únicos.
@@ -77,12 +78,12 @@
         <!-- EDICIONES DEL JUEGO -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl px-4">
 
-            <button onclick="play('panama')" id="btn-panama" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
+            <button onclick="play('panama')" id="btn-panama" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-[#E8E6F7] transition-all border-2 border-transparent hover:border-[#211261] text-left overflow-hidden">
                 <div class="relative z-10">
                     <span class="text-6xl mb-6 block float-animation">🇵🇦</span>
                     <h3 class="text-3xl font-black text-slate-900 uppercase">Panamá</h3>
                     <p class="text-slate-500 font-medium">12 Cartas Coleccionables</p>
-                    <div class="mt-8 flex items-center text-amber-600 font-bold uppercase text-sm tracking-widest">
+                    <div class="mt-8 flex items-center text-[#211261] font-bold uppercase text-sm tracking-widest">
                         Explorar ahora <i data-lucide="arrow-right" class="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform"></i>
                     </div>
                 </div>
@@ -91,12 +92,12 @@
                 </div>
             </button>
 
-            <button onclick="play('venezuela')" id="btn-venezuela" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 text-left overflow-hidden">
+            <button onclick="play('venezuela')" id="btn-venezuela" class="group relative bg-white p-10 rounded-[3rem] shadow-xl hover:shadow-[#E8E6F7] transition-all border-2 border-transparent hover:border-[#211261] text-left overflow-hidden">
                 <div class="relative z-10">
                     <span class="text-6xl mb-6 block float-animation" style="animation-delay:0.5s;">🇻🇪</span>
                     <h3 class="text-3xl font-black text-slate-900 uppercase">Venezuela</h3>
                     <p class="text-slate-500 font-medium">Próximamente más cartas</p>
-                    <div class="mt-8 flex items-center text-amber-600 font-bold uppercase text-sm tracking-widest">
+                    <div class="mt-8 flex items-center text-[#211261] font-bold uppercase text-sm tracking-widest">
                         Explorar ahora <i data-lucide="arrow-right" class="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform"></i>
                     </div>
                 </div>
@@ -116,14 +117,14 @@
         <div class="flex items-center gap-4 mb-10">
             <div class="h-px flex-1 bg-gradient-to-r from-transparent to-amber-200"></div>
             <div class="text-center">
-                <span class="bg-slate-900 text-white px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">Tienda oficial</span>
+                <span class="bg-[#211261] text-white px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">Tienda oficial</span>
             </div>
             <div class="h-px flex-1 bg-gradient-to-l from-transparent to-amber-200"></div>
         </div>
 
         <div class="text-center mb-10">
             <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter leading-none mb-3">
-                LLÉVALO A <br><span class="text-amber-600">TU MESA</span>
+                LLÉVALO A <br><span class="text-[#211261]">TU MESA</span>
             </h2>
             <p class="text-slate-500 font-medium max-w-md mx-auto">
                 Versiones físicas para compartir, regalar y coleccionar.
@@ -137,7 +138,7 @@
         </div>
 
         <div class="text-center">
-            <a href="store.html" class="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-amber-600 transition-all shadow-xl">
+            <a href="store.html" class="inline-flex items-center gap-2 bg-[#211261] text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-[#211261] transition-all shadow-xl">
                 Ver tienda completa
                 <i data-lucide="arrow-right" class="h-4 w-4"></i>
             </a>
@@ -152,12 +153,12 @@
         <div class="relative bg-slate-900 rounded-[3rem] overflow-hidden px-8 py-12 md:py-16 text-center shadow-2xl">
 
             <div class="absolute inset-0 pointer-events-none">
-                <div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-amber-500 opacity-10"></div>
-                <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-amber-500 opacity-5"></div>
+                <div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-[#211261] opacity-10"></div>
+                <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-[#211261] opacity-5"></div>
             </div>
 
             <div class="relative z-10 max-w-xl mx-auto">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500 text-white mb-6 shadow-lg">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#211261] text-white mb-6 shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
@@ -166,12 +167,12 @@
                     </svg>
                 </div>
 
-                <span class="bg-amber-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 inline-block">
+                <span class="bg-[#211261] text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 inline-block">
                     🎁 Gratis para nuevos usuarios
                 </span>
 
                 <h2 class="text-3xl md:text-4xl font-black text-white tracking-tighter leading-tight mb-4">
-                    GUÍA DE ACTIVIDADES<br><span class="text-amber-400">PARA NIÑOS</span>
+                    GUÍA DE ACTIVIDADES<br><span class="text-[#FFED00]">PARA NIÑOS</span>
                 </h2>
 
                 <p class="text-slate-400 font-medium mb-8 text-base max-w-md mx-auto">
@@ -180,7 +181,7 @@
 
                 <div id="lead-magnet-cta" class="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <a href="login.html?reason=guide&tab=register" onclick="gtag('event', 'generate_lead', { event_category: 'guia_descargable' })"
-                       class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-black px-8 py-4 rounded-full uppercase tracking-widest text-sm transition-all shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5">
+                       class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#211261] hover:bg-[#E50072] text-white font-black px-8 py-4 rounded-full uppercase tracking-widest text-sm transition-all shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                             <polyline points="7 10 12 15 17 10"/>
@@ -259,7 +260,7 @@
                     lmSection.classList.remove('hidden');
                     lmCta.innerHTML = `
                         <button onclick="downloadGuide()"
-                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-black px-8 py-4 rounded-full uppercase tracking-widest text-sm transition-all shadow-lg hover:-translate-y-0.5">
+                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#211261] hover:bg-[#E50072] text-white font-black px-8 py-4 rounded-full uppercase tracking-widest text-sm transition-all shadow-lg hover:-translate-y-0.5">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
@@ -271,9 +272,9 @@
                 }
 
                 navEl.innerHTML = `
-                    ${isAdmin ? `<a href="dashboard.html" class="text-xs font-black text-slate-400 hover:text-amber-600 uppercase tracking-widest transition flex items-center gap-1"><i data-lucide="settings" class="h-4 w-4"></i> Admin</a>` : ''}
-                    <a href="profile.html" class="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm hover:border-amber-300 transition">
-                        <div class="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center text-white text-[10px] font-black">${displayName.slice(0,1).toUpperCase()}</div>
+                    ${isAdmin ? `<a href="dashboard.html" class="text-xs font-black text-slate-400 hover:text-[#211261] uppercase tracking-widest transition flex items-center gap-1"><i data-lucide="settings" class="h-4 w-4"></i> Admin</a>` : ''}
+                    <a href="profile.html" class="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm hover:border-[#211261] transition">
+                        <div class="w-6 h-6 rounded-full bg-[#211261] flex items-center justify-center text-white text-[10px] font-black">${displayName.slice(0,1).toUpperCase()}</div>
                         <span class="text-sm font-medium text-slate-700">${displayName.split(' ')[0]}</span>
                     </a>
                 `;
@@ -282,9 +283,9 @@
                 lmSection.classList.remove('hidden');
 
                 navEl.innerHTML = `
-                    <a href="store.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition hidden md:block">Tienda</a>
-                    <a href="login.html" class="bg-slate-900 text-white text-sm font-black px-4 py-2 rounded-full hover:bg-amber-600 transition uppercase tracking-widest">Ingresar</a>
-                    <button onclick="checkAdminAccess()" class="text-slate-400 hover:text-amber-600 transition" title="Acceso admin">
+                    <a href="store.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-[#211261] transition hidden md:block">Tienda</a>
+                    <a href="login.html" class="bg-[#211261] text-white text-sm font-black px-4 py-2 rounded-full hover:bg-[#211261] transition uppercase tracking-widest">Ingresar</a>
+                    <button onclick="checkAdminAccess()" class="text-slate-400 hover:text-[#211261] transition" title="Acceso admin">
                         <i data-lucide="settings" class="h-5 w-5"></i>
                     </button>
                 `;
@@ -358,11 +359,11 @@
 
                 const card = document.createElement('a');
                 card.href      = 'store.html';
-                card.className = `group relative bg-white p-8 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 overflow-hidden flex flex-col fade-up`;
+                card.className = `group relative bg-white p-8 rounded-[3rem] shadow-xl hover:shadow-[#E8E6F7] transition-all border-2 border-transparent hover:border-[#211261] overflow-hidden flex flex-col fade-up`;
                 card.style.animationDelay = `${delay}s`;
 
                 card.innerHTML = `
-                    ${isCombo ? `<span class="absolute top-5 left-5 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">⭐ Pack</span>` : ''}
+                    ${isCombo ? `<span class="absolute top-5 left-5 bg-[#EAE8F7] text-[#211261] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">⭐ Pack</span>` : ''}
                     ${outOfStock ? `<span class="absolute top-5 right-5 bg-slate-100 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">Agotado</span>` : ''}
                     <div class="flex items-center justify-center h-32 mb-5">
                         <img src="${product.image_url || ''}"
@@ -373,8 +374,8 @@
                     <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter leading-tight mb-1">${product.name}</h3>
                     <p class="text-slate-500 font-medium text-sm flex-1 mb-4">${product.description ? product.description.slice(0, 80) + '...' : ''}</p>
                     <div class="flex items-center justify-between mt-auto">
-                        <span class="text-2xl font-black text-amber-600">$${parseFloat(product.price).toFixed(2)}</span>
-                        <span class="flex items-center gap-1 text-xs font-black uppercase tracking-widest text-amber-600 group-hover:translate-x-1 transition-transform">
+                        <span class="text-2xl font-black text-[#211261]">$${parseFloat(product.price).toFixed(2)}</span>
+                        <span class="flex items-center gap-1 text-xs font-black uppercase tracking-widest text-[#211261] group-hover:translate-x-1 transition-transform">
                             Comprar <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
                         </span>
                     </div>

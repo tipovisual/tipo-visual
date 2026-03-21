@@ -15,10 +15,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'DM Sans', sans-serif; }
-        .syne { font-family: 'Syne', sans-serif; }
+        .nunito { font-family: 'Nunito', sans-serif; }
+        .syne { font-family: 'Nunito', sans-serif; } /* brand update */
 
         /* Panel derecho — imagen decorativa */
         .deco-panel {
@@ -63,7 +64,7 @@
         }
         .fc-emoji { font-size: 36px; }
         .fc-name {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Nunito', sans-serif;
             font-size: 8px; font-weight: 700;
             color: #F59E0B;
             text-transform: uppercase;
@@ -75,7 +76,7 @@
             display: flex; align-items: center; justify-content: center;
         }
         .fc-back-text {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Nunito', sans-serif;
             font-size: 20px; font-weight: 800;
             color: rgba(255,255,255,0.15);
             letter-spacing: -0.05em;
@@ -112,7 +113,7 @@
             color: white;
             border: none;
             border-radius: 12px;
-            font-family: 'Syne', sans-serif;
+            font-family: 'Nunito', sans-serif;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 0.05em;
@@ -175,7 +176,7 @@
         </a>
 
         <!-- Reason notice (si viene de redirect) -->
-        <div id="reason-notice" class="hidden mb-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 font-medium"></div>
+        <div id="reason-notice" class="hidden mb-6 p-3 bg-[#F5F4FB] border border-[#E8E6F7] rounded-xl text-sm text-[#211261] font-medium"></div>
 
         <!-- Tabs -->
         <div class="relative border-b border-slate-200 mb-8 flex">
@@ -200,7 +201,7 @@
             <div>
                 <div class="flex justify-between items-center mb-2">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Contraseña</label>
-                    <button type="button" onclick="showForgotPassword()" class="text-xs text-amber-600 hover:underline font-medium">¿Olvidaste tu clave?</button>
+                    <button type="button" onclick="showForgotPassword()" class="text-xs text-[#211261] hover:underline font-medium">¿Olvidaste tu clave?</button>
                 </div>
                 <div class="relative">
                     <input id="login-password" type="password" placeholder="••••••••" class="field-input pr-10" required>
@@ -257,7 +258,7 @@
                 <span>Enviar link</span>
                 <div class="spinner" id="spinner-forgot"></div>
             </button>
-            <button onclick="switchTab('login')" class="w-full text-sm text-slate-400 hover:text-amber-600 transition-colors mt-2">← Volver al login</button>
+            <button onclick="switchTab('login')" class="w-full text-sm text-slate-400 hover:text-[#211261] transition-colors mt-2">← Volver al login</button>
         </div>
 
         <!-- Footer del form -->

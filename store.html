@@ -32,6 +32,7 @@
     <meta name="twitter:title" content="Tienda — Puntico | Juego de memoria latinoamericano">
     <meta name="twitter:description" content="Compra el juego de memoria educativo Puntico. Ediciones coleccionables de Panamá y Venezuela. Envíos disponibles.">
     <meta name="twitter:image" content="https://puntico.shop/assets/brand-puntico.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -61,7 +62,7 @@
         .cart-overlay.open { opacity: 1; pointer-events: all; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50 via-white to-orange-50 min-h-screen flex flex-col font-sans">
+<body class="bg-white min-h-screen flex flex-col font-sans">
 
     <!-- HEADER -->
     <header class="p-6 flex justify-between items-center container mx-auto">
@@ -69,28 +70,28 @@
             <img src="assets/brand-puntico.svg" class="h-10 w-auto">
         </a>
         <div class="flex items-center gap-4">
-            <a href="index.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition hidden md:block">Jugar</a>
-            <a href="profile.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition hidden md:block">Mi perfil</a>
-            <button onclick="toggleCart()" class="relative flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-amber-600 transition-all font-black text-xs uppercase tracking-widest">
+            <a href="index.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-[#211261] transition hidden md:block">Jugar</a>
+            <a href="profile.html" class="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-[#211261] transition hidden md:block">Mi perfil</a>
+            <button onclick="toggleCart()" class="relative flex items-center gap-2 bg-[#211261] text-white px-4 py-2 rounded-full hover:bg-[#211261] transition-all font-black text-xs uppercase tracking-widest">
                 <i data-lucide="shopping-bag" class="h-4 w-4"></i>
                 Carrito
-                <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center">0</span>
+                <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-[#211261] text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center">0</span>
             </button>
         </div>
     </header>
 
     <!-- HERO -->
     <div class="container mx-auto px-6 pt-8 pb-12 text-center">
-        <span class="bg-amber-100 text-amber-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Tienda Oficial</span>
+        <span class="bg-[#EAE8F7] text-[#211261] px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Tienda Oficial</span>
         <h1 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-6">
-            LLEVA LA CULTURA <br><span class="text-amber-600">A TU MESA</span>
+            LLEVA LA CULTURA <br><span class="text-[#211261]">A TU MESA</span>
         </h1>
         <p class="text-slate-600 text-lg max-w-xl mx-auto font-medium">
             Versiones físicas de nuestros juegos de memoria. Hechos para compartir, aprender y coleccionar.
         </p>
         <div class="flex items-center justify-center gap-6 mt-6 text-sm font-black uppercase tracking-widest text-slate-400">
-            <span class="flex items-center gap-2"><i data-lucide="package" class="h-4 w-4 text-amber-500"></i> Envío en Panamá</span>
-            <span class="flex items-center gap-2"><i data-lucide="store" class="h-4 w-4 text-amber-500"></i> Retiro en local</span>
+            <span class="flex items-center gap-2"><i data-lucide="package" class="h-4 w-4 text-[#F49600]"></i> Envío en Panamá</span>
+            <span class="flex items-center gap-2"><i data-lucide="store" class="h-4 w-4 text-[#F49600]"></i> Retiro en local</span>
         </div>
     </div>
 
@@ -120,7 +121,7 @@
                 <h3 class="text-xl font-black uppercase tracking-tighter text-slate-900">Tu carrito</h3>
                 <p id="cart-subtitle" class="text-xs font-black uppercase tracking-widest text-slate-400 mt-0.5">0 productos</p>
             </div>
-            <button onclick="toggleCart()" class="p-2 rounded-xl hover:bg-amber-50 hover:text-amber-600 transition">
+            <button onclick="toggleCart()" class="p-2 rounded-xl hover:bg-[#F5F4FB] hover:text-[#211261] transition">
                 <i data-lucide="x" class="h-5 w-5"></i>
             </button>
         </div>
@@ -138,18 +139,18 @@
                 </div>
                 <div class="flex justify-between text-sm font-medium text-slate-500">
                     <span>Envío</span>
-                    <span class="text-amber-600 font-black text-xs uppercase">Se coordina</span>
+                    <span class="text-[#211261] font-black text-xs uppercase">Se coordina</span>
                 </div>
                 <div class="flex justify-between pt-3 border-t border-slate-100">
                     <span class="font-black uppercase tracking-tighter text-slate-900 text-lg">Total</span>
-                    <span id="cart-total" class="font-black text-amber-600 text-xl">$0.00</span>
+                    <span id="cart-total" class="font-black text-[#211261] text-xl">$0.00</span>
                 </div>
             </div>
             <a href="checkout.html" onclick="saveCartToStorage()"
-                class="block w-full bg-slate-900 text-white text-center py-4 rounded-[1.5rem] font-black uppercase tracking-widest text-sm hover:bg-amber-600 transition-all shadow-xl">
+                class="block w-full bg-[#211261] text-white text-center py-4 rounded-[1.5rem] font-black uppercase tracking-widest text-sm hover:bg-[#211261] transition-all shadow-xl">
                 Proceder al pago →
             </a>
-            <button onclick="toggleCart()" class="w-full text-xs font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition">
+            <button onclick="toggleCart()" class="w-full text-xs font-black uppercase tracking-widest text-slate-400 hover:text-[#211261] transition">
                 Seguir comprando
             </button>
         </div>
@@ -190,9 +191,9 @@
             const isCombo    = product.edition === 'combo';
             const outOfStock = product.stock === 0;
             const card = document.createElement('div');
-            card.className = 'group relative bg-white p-8 rounded-[3rem] shadow-xl hover:shadow-amber-200 transition-all border-2 border-transparent hover:border-amber-500 overflow-hidden flex flex-col';
+            card.className = 'group relative bg-white p-8 rounded-[3rem] shadow-xl hover:shadow-[#E8E6F7] transition-all border-2 border-transparent hover:border-[#211261] overflow-hidden flex flex-col';
             card.innerHTML = `
-                ${isCombo ? `<span class="absolute top-6 left-6 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">⭐ Pack especial</span>` : ''}
+                ${isCombo ? `<span class="absolute top-6 left-6 bg-[#EAE8F7] text-[#211261] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">⭐ Pack especial</span>` : ''}
                 ${outOfStock ? `<span class="absolute top-6 right-6 bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-10">Agotado</span>` : ''}
                 <div class="flex items-center justify-center h-40 mb-6">
                     <img src="${product.image_url || ''}"
@@ -204,13 +205,13 @@
                     <p class="text-slate-500 font-medium text-sm leading-relaxed mb-6 flex-1">${product.description || ''}</p>
                     <div class="flex items-center justify-between mt-auto">
                         <div>
-                            <div class="text-3xl font-black text-amber-600">$${parseFloat(product.price).toFixed(2)}</div>
+                            <div class="text-3xl font-black text-[#211261]">$${parseFloat(product.price).toFixed(2)}</div>
                             <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">
                                 ${outOfStock ? '❌ Sin stock' : `✅ ${product.stock} disponibles`}
                             </div>
                         </div>
                         <button onclick="addToCart('${product.id}', this)" ${outOfStock ? 'disabled' : ''}
-                            class="flex items-center gap-2 ${outOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-amber-600'} px-5 py-3 rounded-full font-black uppercase tracking-widest text-xs transition-all">
+                            class="flex items-center gap-2 ${outOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-[#211261] text-white hover:bg-[#211261]'} px-5 py-3 rounded-full font-black uppercase tracking-widest text-xs transition-all">
                             <i data-lucide="shopping-bag" class="h-3.5 w-3.5"></i>
                             ${outOfStock ? 'Agotado' : 'Agregar'}
                         </button>
@@ -235,8 +236,8 @@
             if (btn) {
                 const orig = btn.innerHTML;
                 btn.textContent = '✓ Agregado';
-                btn.classList.add('bg-green-600'); btn.classList.remove('bg-slate-900','hover:bg-amber-600');
-                setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('bg-green-600'); btn.classList.add('bg-slate-900','hover:bg-amber-600'); lucide.createIcons(); }, 1500);
+                btn.classList.add('bg-green-600'); btn.classList.remove('bg-slate-900','hover:bg-[#211261]');
+                setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('bg-green-600'); btn.classList.add('bg-slate-900','hover:bg-[#211261]'); lucide.createIcons(); }, 1500);
             }
         }
 
@@ -275,19 +276,19 @@
             itemsEl.innerHTML = '';
             cart.forEach(item => {
                 const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 bg-amber-50/50 rounded-2xl border border-amber-100';
+                div.className = 'flex items-center gap-3 p-3 bg-[#F5F4FB]/50 rounded-2xl border border-[#E8E6F7]';
                 div.innerHTML = `
-                    <div class="w-12 h-12 bg-white rounded-xl border border-amber-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div class="w-12 h-12 bg-white rounded-xl border border-[#E8E6F7] flex items-center justify-center flex-shrink-0 overflow-hidden">
                         <img src="${item.image || ''}" class="max-h-full max-w-full object-contain p-1" onerror="this.style.display='none'">
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-black uppercase tracking-tight text-slate-800 leading-tight truncate">${item.name}</p>
-                        <p class="text-sm text-amber-600 font-black mt-0.5">$${item.price.toFixed(2)}</p>
+                        <p class="text-sm text-[#211261] font-black mt-0.5">$${item.price.toFixed(2)}</p>
                     </div>
                     <div class="flex items-center gap-1.5 flex-shrink-0">
-                        <button onclick="updateQuantity('${item.id}',-1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 hover:border-amber-400 flex items-center justify-center font-black text-sm transition">−</button>
+                        <button onclick="updateQuantity('${item.id}',-1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 hover:border-[#211261] flex items-center justify-center font-black text-sm transition">−</button>
                         <span class="text-sm font-black w-5 text-center">${item.quantity}</span>
-                        <button onclick="updateQuantity('${item.id}',1)"  class="w-7 h-7 rounded-lg bg-white border border-slate-200 hover:border-amber-400 flex items-center justify-center font-black text-sm transition">+</button>
+                        <button onclick="updateQuantity('${item.id}',1)"  class="w-7 h-7 rounded-lg bg-white border border-slate-200 hover:border-[#211261] flex items-center justify-center font-black text-sm transition">+</button>
                         <button onclick="removeFromCart('${item.id}')" class="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-300 hover:text-red-400 transition ml-1">
                             <i data-lucide="x" class="h-3.5 w-3.5"></i>
                         </button>
