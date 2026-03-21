@@ -3,6 +3,7 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
+    <script src="data.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor de Ediciones — Puntico Admin</title>
@@ -171,29 +172,38 @@
 
 <script>
     // ── Datos de ediciones ──────────────────────────────────
-    const editionData = {
-        panama: {
-            title: "Edición Panamá 🇵🇦",
-            name: "Cultura Panamá",
-            cards: [
-                { name: "Afroantillana",  img: "assets/cartas/AFROANTILLANA.png",    desc: "Representa el legado de los trabajadores antillanos que llegaron a Panamá." },
-                { name: "Águila Harpía", img: "assets/cartas/AGUILA HARPIA.png",    desc: "Es el Ave Nacional de Panamá, una de las rapaces más poderosas del mundo." },
-                { name: "Bandera",        img: "assets/cartas/BANDERA PANAMÁ.png",   desc: "Símbolo patrio de Panamá. Sus colores representan la paz y la unión." },
-                { name: "Diablico Sucio",img: "assets/cartas/DIABLICO SUCIO.png",  desc: "Personaje icónico del Corpus Christi panameño con su tradicional máscara." },
-                { name: "La Pollera",     img: "assets/cartas/POLLERA.png",          desc: "Considerado uno de los trajes típicos más bellos del mundo, hecho a mano." },
-                { name: "Panameño",       img: "assets/cartas/PANAMEÑO.png",         desc: "Carta especial que representa al pueblo panameño." },
-                { name: "Reverso",        img: "assets/cartas/REVERSO.png",          desc: "Reverso de las cartas de la edición Panamá." }
-            ]
-        },
-        venezuela: {
-            title: "Edición Venezuela 🇻🇪",
-            name: "Cultura Venezuela",
-            cards: [
-                { name: "Salto Ángel", img: "assets/cartas/venezuela/salto_angel.png", desc: "La caída de agua más alta del mundo, ubicada en el estado Bolívar." },
-                { name: "Arepa",       img: "assets/cartas/venezuela/arepa.png",        desc: "El pan de cada día del venezolano, hecho a base de maíz precocido." }
-            ]
+    // Fuente de verdad: data.js → localStorage (si el admin guardó cambios)
+    function buildEditionData() {
+        const result = {};
+        for (const key of Object.keys(gameData)) {
+            // Check if admin saved changes in localStorage
+            const saved = localStorage.getItem('puntico_editions_' + key);
+            let cards;
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    cards = parsed.cards || gameData[key].cards;
+                } catch(e) {
+                    cards = gameData[key].cards;
+                }
+            } else {
+                cards = gameData[key].cards;
+            }
+
+            result[key] = {
+                title: gameData[key].title,
+                name: gameData[key].title.replace(/ 🇵🇦| 🇻🇪/g, ''),
+                cards: cards.map(c => ({
+                    name: c.name,
+                    img: c.img,
+                    desc: c.desc
+                }))
+            };
         }
-    };
+        return result;
+    }
+
+    const editionData = buildEditionData();
 
     let currentVersion = 'panama';
 
