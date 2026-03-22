@@ -15,8 +15,8 @@
         MESSAGE_MIN_INTERVAL: 12000,  // ms mínimo entre mensajes
         MAX_REJECTIONS:       3,      // cierres antes de reducir frecuencia
         REDUCED_INTERVAL:     60000,  // ms entre mensajes si el usuario rechaza mucho
-        DESKTOP_SIZE:         90,     // px ancho del avatar en desktop
-        MOBILE_SIZE:          64,     // px ancho del avatar en móvil
+        DESKTOP_SIZE:         130,     // px ancho del avatar en desktop
+        MOBILE_SIZE:          90,     // px ancho del avatar en móvil
         MOBILE_BREAKPOINT:    768,    // px
         STORAGE_KEY:          'puntico_avatar',
     };
