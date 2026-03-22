@@ -207,34 +207,52 @@
             lucide.createIcons();
             initNav();
             loadStoreProducts();
-            applyEditionStates();
+            await loadEditionStates();
         });
 
-        // ── Ediciones activas ──────────────────────────────────────────
-        const savedEditions = JSON.parse(localStorage.getItem('tipoVisual_editions'));
+        // ── Ediciones activas desde Supabase ──────────────────────────
+        let editionStates = {};
+
+        async function loadEditionStates() {
+            const { data, error } = await supabaseClient
+                .from('edition_config')
+                .select('edition_key, active');
+
+            if (error || !data) return;
+
+            data.forEach(edition => {
+                editionStates[edition.edition_key] = edition.active;
+            });
+
+            applyEditionStates();
+        }
 
         function applyEditionStates() {
-            if (!savedEditions) return;
-            savedEditions.forEach(edition => {
-                if (!edition.active) {
-                    const btn = document.getElementById(`btn-${edition.id}`);
+            Object.entries(editionStates).forEach(([key, active]) => {
+                if (!active) {
+                    const btn = document.getElementById(`btn-${key}`);
                     if (btn) {
-                        btn.style.opacity = '0.5';
+                        btn.style.opacity = '0.4';
                         btn.style.cursor  = 'not-allowed';
+                        btn.style.pointerEvents = 'none';
                         const p = btn.querySelector('p');
                         if (p) p.innerText = 'Edición no disponible';
+                    }
+                } else {
+                    const btn = document.getElementById(`btn-${key}`);
+                    if (btn) {
+                        btn.style.opacity = '1';
+                        btn.style.cursor  = 'pointer';
+                        btn.style.pointerEvents = 'auto';
                     }
                 }
             });
         }
 
         function play(editionId) {
-            if (savedEditions) {
-                const edition = savedEditions.find(e => e.id === editionId);
-                if (edition && !edition.active) {
-                    alert('Esta edición está temporalmente fuera de servicio.');
-                    return;
-                }
+            if (editionStates[editionId] === false) {
+                alert('Esta edición está temporalmente fuera de servicio.');
+                return;
             }
             localStorage.setItem('selectedEdition', editionId);
             window.location.href = 'game.html';
