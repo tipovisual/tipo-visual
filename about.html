@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestra Historia — Puntico | Jugar y aprender es posible</title>
+    <!-- ═══ SEO & Social Meta Tags ═══ -->
+    <meta name="description" content="Conoce la historia de Puntico®, el juego de memoria cultural latinoamericano fundado por Viviana Falcón. Más de 2.500 familias, Panamá, Venezuela y más.">
+    <meta name="keywords" content="Puntico, historia, Viviana Falcón, juego educativo, cultura latinoamericana, Bridge for Billions, impacto social">
+    <meta name="author" content="Puntico">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://puntico.shop/about.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Nuestra Historia — Puntico">
+    <meta property="og:description" content="Más que un juego, una conexión con tu cultura. Conoce el origen de Puntico® y el impacto que hemos generado.">
+    <meta property="og:url" content="https://puntico.shop/about.html">
+    <meta property="og:image" content="https://puntico.shop/assets/brand-puntico.svg">
+    <meta property="og:site_name" content="Puntico">
+    <meta property="og:locale" content="es_PA">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@punticopty">
+    <meta name="twitter:title" content="Nuestra Historia — Puntico">
+    <meta name="twitter:description" content="Más que un juego, una conexión con tu cultura.">
+    <meta name="twitter:image" content="https://puntico.shop/assets/brand-puntico.svg">
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7WND12NQQQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-7WND12NQQQ');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="brand.css">
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        .nunito { font-family: 'Nunito', sans-serif; }
+
+        /* Dot accent row */
+        .dots-row { display: flex; gap: 6px; align-items: center; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+        /* Timeline */
+        .timeline-item { position: relative; padding-left: 2rem; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 6px;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #211261;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 4px; top: 20px;
+            width: 2px;
+            height: calc(100% + 16px);
+            background: #E8E6F7;
+        }
+        .timeline-item:last-child::after { display: none; }
+
+        /* Gallery placeholder */
+        .gallery-placeholder {
+            background: linear-gradient(135deg, #EAE8F7 0%, #F5F4FB 100%);
+            border: 2px dashed #C8C4E8;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Pilar card hover */
+        .pilar-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .pilar-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(33,18,97,0.12); }
+
+        /* Stat counter */
+        .stat-number {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1;
+            color: #FFED00;
+        }
+
+        /* Quote */
+        blockquote { position: relative; }
+        blockquote::before {
+            content: '"';
+            font-family: 'Nunito', sans-serif;
+            font-size: 8rem;
+            font-weight: 900;
+            color: rgba(255,237,0,0.15);
+            position: absolute;
+            top: -2rem;
+            left: -1rem;
+            line-height: 1;
+        }
+
+        /* Expansion map */
+        .country-card { transition: all 0.2s; }
+        .country-card:hover { transform: translateY(-2px); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.6s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-white text-slate-900">
+
+    <!-- ═══ HEADER ══════════════════════════════════════════════ -->
+    <header class="p-6 flex justify-between items-center container mx-auto">
+        <a href="index.html">
+            <img src="assets/brand-puntico.svg" class="h-10 w-auto">
+        </a>
+        <div id="user-nav" class="flex items-center gap-3"></div>
+    </header>
+
+    <!-- ═══ HERO ════════════════════════════════════════════════ -->
+    <section style="background:#211261;" class="relative overflow-hidden">
+        <!-- Decorative gradients -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div style="position:absolute;top:-100px;right:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(229,0,114,0.15) 0%,transparent 65%);"></div>
+            <div style="position:absolute;bottom:-80px;left:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,156,192,0.12) 0%,transparent 65%);"></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-6 py-24 md:py-32 relative z-10">
+            <div class="dots-row mb-8">
+                <span class="dot" style="background:#FFED00;"></span>
+                <span class="dot" style="background:#F49600;"></span>
+                <span class="dot" style="background:#E50072;"></span>
+                <span class="dot" style="background:#742576;"></span>
+                <span class="dot" style="background:#009CC0;"></span>
+            </div>
+            <p class="text-[#FFED00] text-xs font-bold uppercase tracking-widest mb-4">Nuestra historia</p>
+            <h1 class="nunito text-5xl md:text-7xl font-black text-white leading-none tracking-tight mb-6">
+                Más que un juego,<br>
+                <span style="color:#FFED00;">una conexión</span><br>
+                con tu cultura.
+            </h1>
+            <p class="text-slate-300 text-lg md:text-xl max-w-2xl leading-relaxed font-light">
+                Nació en Panamá con alma venezolana. Hoy llega a miles de familias latinoamericanas en todo el mundo. Esta es la historia de puntico®.
+            </p>
+        </div>
+    </section>
+
+    <!-- ═══ HISTORIA DE VIVIANA ══════════════════════════════════ -->
+    <section class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+
+            <!-- Foto placeholder -->
+            <div class="gallery-placeholder aspect-[3/4] rounded-3xl min-h-[400px]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-30" viewBox="0 0 24 24" fill="none" stroke="#211261" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="4"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span style="color:#211261;opacity:0.5;">Foto de Viviana Falcón</span>
+            </div>
+
+            <!-- Texto -->
+            <div>
+                <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">La fundadora</p>
+                <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900 leading-tight mb-6">
+                    Viviana Falcón
+                </h2>
+                <p class="text-slate-600 text-base leading-relaxed mb-4">
+                    Ilustradora, madre y emprendedora venezolana radicada en Panamá. En 2022 identificó en su propio hogar una necesidad concreta: sus hijos crecían desconectados de la cultura e identidad latinoamericana.
+                </p>
+                <p class="text-slate-600 text-base leading-relaxed mb-4">
+                    Los contenidos que consumían los niños pocas veces reflejaban sus raíces, sus tradiciones ni los personajes que forman parte de la historia cultural de sus países. Eso tenía que cambiar.
+                </p>
+                <p class="text-slate-600 text-base leading-relaxed mb-8">
+                    Diseñó el primer prototipo de MEMORiA como un regalo para sus hijos. Lo que comenzó en casa se convirtió en un proyecto de impacto social, educativo y cultural que hoy llega a miles de familias.
+                </p>
+
+                <!-- Quote -->
+                <blockquote class="relative bg-[#F5F4FB] border-l-4 border-[#211261] rounded-2xl p-6 pl-8">
+                    <p class="text-slate-700 text-base italic leading-relaxed font-medium">
+                        "Lo que realmente nos une es mucho más fuerte que lo que nos separa. Nuestra cultura, nuestras tradiciones y nuestras historias compartidas construyen el futuro. Hagamos el cambio y... que inicie el juego."
+                    </p>
+                    <footer class="mt-3 text-[#211261] text-xs font-black uppercase tracking-widest">— Viviana Falcón, Fundadora</footer>
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ CRONOLOGÍA ═══════════════════════════════════════════ -->
+    <section class="bg-slate-50 py-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Cronología</p>
+            <h2 class="nunito text-4xl font-black text-slate-900 mb-12">De una idea a miles de familias</h2>
+            <div class="grid md:grid-cols-2 gap-x-16 gap-y-8 max-w-3xl">
+                <div class="timeline-item pb-8">
+                    <p class="nunito font-black text-[#211261] text-sm mb-1">2022</p>
+                    <p class="text-slate-700 text-sm leading-relaxed">Primer prototipo de MEMORiA. Inicio de ventas directas en ferias y bazares culturales.</p>
+                </div>
+                <div class="timeline-item pb-8">
+                    <p class="nunito font-black text-[#211261] text-sm mb-1">2023</p>
+                    <p class="text-slate-700 text-sm leading-relaxed">Participación en la Feria Internacional del Libro. Primeras ventas institucionales. 100 juegos vendidos.</p>
+                </div>
+                <div class="timeline-item pb-8">
+                    <p class="nunito font-black text-[#211261] text-sm mb-1">2024</p>
+                    <p class="text-slate-700 text-sm leading-relaxed">Formalización empresarial en Panamá. Alianza con proveedores en Colombia. Ingreso al programa Bridge for Billions.</p>
+                </div>
+                <div class="timeline-item pb-8">
+                    <p class="nunito font-black text-[#211261] text-sm mb-1">2025</p>
+                    <p class="text-slate-700 text-sm leading-relaxed">+2.500 juegos vendidos orgánicamente. Desarrollo del ecommerce y búsqueda de capital semilla.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LOS 3 PILARES ════════════════════════════════════════ -->
+    <section class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+        <div class="text-center mb-16">
+            <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Propuesta de valor</p>
+            <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900 mb-4">Los 3 pilares de puntico®</h2>
+            <p class="text-slate-500 max-w-xl mx-auto">Una herramienta educativa, cultural y de bienestar que responde a una necesidad real de las familias latinoamericanas.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Cultura -->
+            <div class="pilar-card bg-white rounded-3xl border border-slate-100 shadow-sm p-8 text-center">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:#EAE8F7;">
+                    <span class="text-3xl">🌎</span>
+                </div>
+                <h3 class="nunito text-xl font-black text-slate-900 mb-3">Cultura</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">
+                    Cada producto está diseñado alrededor de una identidad cultural específica. No es una representación genérica de "lo latino" sino una celebración específica y orgullosa de cada país.
+                </p>
+                <div class="mt-6 pt-6 border-t border-slate-100">
+                    <div class="dots-row justify-center gap-2">
+                        <span class="dot" style="background:#FFED00;width:8px;height:8px;"></span>
+                        <span class="dot" style="background:#F49600;width:8px;height:8px;"></span>
+                        <span class="dot" style="background:#E50072;width:8px;height:8px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educación -->
+            <div class="pilar-card bg-[#211261] rounded-3xl p-8 text-center" style="transform:translateY(-8px);">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:rgba(255,237,0,0.15);">
+                    <span class="text-3xl">📚</span>
+                </div>
+                <h3 class="nunito text-xl font-black text-white mb-3">Educación</h3>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Respaldado por evidencia científica: el juego mejora el rendimiento académico en <strong class="text-[#FFED00]">+30%</strong> (UNESCO) y aumenta la retención de información en <strong class="text-[#FFED00]">+40%</strong> (Journal of Educational Psychology).
+                </p>
+                <div class="mt-6 pt-6 border-t border-white/10">
+                    <p class="text-[#FFED00] text-xs font-black uppercase tracking-widest">Aprender jugando</p>
+                </div>
+            </div>
+
+            <!-- Bienestar -->
+            <div class="pilar-card bg-white rounded-3xl border border-slate-100 shadow-sm p-8 text-center">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:#FCE4F1;">
+                    <span class="text-3xl">❤️</span>
+                </div>
+                <h3 class="nunito text-xl font-black text-slate-900 mb-3">Bienestar</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">
+                    El juego intergeneracional fortalece vínculos familiares y reduce el aislamiento. puntico® une generaciones alrededor de la cultura compartida, desde los 4 hasta los 99 años.
+                </p>
+                <div class="mt-6 pt-6 border-t border-slate-100">
+                    <p class="text-[#E50072] text-xs font-black uppercase tracking-widest">De 4 a 99 años</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ IMPACTO EN NÚMEROS ════════════════════════════════════ -->
+    <section style="background:#211261;" class="py-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <p style="color:#FFED00;" class="text-xs font-bold uppercase tracking-widest mb-3">Tracción real</p>
+                <h2 class="nunito text-4xl md:text-5xl font-black text-white">Impacto que habla por sí solo</h2>
+                <p class="text-slate-400 mt-4 text-sm">Crecimiento 100% orgánico. Sin publicidad pagada. Sin inversión externa.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center mb-16">
+                <div>
+                    <div class="stat-number">Top 10</div>
+                    <p class="text-slate-400 text-xs uppercase tracking-widest mt-2 font-bold">Bridge for Billions 2025</p>
+                </div>
+                <div>
+                    <div class="stat-number">1.950</div>
+                    <p class="text-slate-400 text-xs uppercase tracking-widest mt-2 font-bold">Familias impactadas</p>
+                </div>
+                <div>
+                    <div class="stat-number">2</div>
+                    <p class="text-slate-400 text-xs uppercase tracking-widest mt-2 font-bold">Ferias internacionales</p>
+                </div>
+                <div>
+                    <div class="stat-number">3</div>
+                    <p class="text-slate-400 text-xs uppercase tracking-widest mt-2 font-bold">Años de operación</p>
+                </div>
+            </div>
+
+            <!-- Badges de validación -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="flex items-center gap-3 bg-white/10 border border-white/20 rounded-full px-5 py-3">
+                    <span class="text-lg">🏆</span>
+                    <span class="text-white text-xs font-bold uppercase tracking-wider">Bridge for Billions</span>
+                </div>
+                <div class="flex items-center gap-3 bg-white/10 border border-white/20 rounded-full px-5 py-3">
+                    <span class="text-lg">📺</span>
+                    <span class="text-white text-xs font-bold uppercase tracking-wider">Cobertura en medios nacionales</span>
+                </div>
+                <div class="flex items-center gap-3 bg-white/10 border border-white/20 rounded-full px-5 py-3">
+                    <span class="text-lg">🏫</span>
+                    <span class="text-white text-xs font-bold uppercase tracking-wider">Fundaciones y centros educativos</span>
+                </div>
+                <div class="flex items-center gap-3 bg-white/10 border border-white/20 rounded-full px-5 py-3">
+                    <span class="text-lg">📚</span>
+                    <span class="text-white text-xs font-bold uppercase tracking-wider">Feria Internacional del Libro 2023 y 2024</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ TESTIMONIOS SLIDER ══════════════════════════════════ -->
+    <section class="py-20 md:py-28 overflow-hidden">
+        <div class="max-w-6xl mx-auto px-6 mb-12 text-center">
+            <div class="dots-row justify-center mb-6">
+                <span class="dot" style="background:#FFED00;"></span>
+                <span class="dot" style="background:#F49600;"></span>
+                <span class="dot" style="background:#E50072;"></span>
+                <span class="dot" style="background:#742576;"></span>
+                <span class="dot" style="background:#009CC0;"></span>
+            </div>
+            <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Lo que dicen las familias</p>
+            <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900">Testimonios reales</h2>
+        </div>
+
+        <!-- Slider -->
+        <div class="relative max-w-4xl mx-auto px-6">
+            <div id="testimonial-track" class="transition-all duration-500">
+
+                <!-- Testimonio 1 -->
+                <div class="testimonial-slide bg-[#211261] rounded-3xl p-10 md:p-14 text-center">
+                    <p class="nunito text-2xl md:text-3xl font-black text-white leading-tight mb-8">
+                        "Jugamos todos los días, no es exagerando. Es que les gustan tanto que antes de dormir obligatoriamente jugamos una partida."
+                    </p>
+                    <div class="flex items-center justify-center gap-3">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(255,237,0,0.15);">
+                            <span class="text-xl">👨‍👩‍👧</span>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-black text-white text-sm">Familia González</p>
+                            <p style="color:#FFED00;" class="text-xs font-bold uppercase tracking-wider">Ciudad de Panamá</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonio 2 -->
+                <div class="testimonial-slide hidden bg-[#F5F4FB] rounded-3xl p-10 md:p-14 text-center border-2 border-[#E8E6F7]">
+                    <p class="nunito text-2xl md:text-3xl font-black text-[#211261] leading-tight mb-8">
+                        "Es increíble cómo mis hijos aprendieron sobre la cultura panameña jugando. Ahora me hacen preguntas que yo mismo no sabía responder."
+                    </p>
+                    <div class="flex items-center justify-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-[#EAE8F7] flex items-center justify-center">
+                            <span class="text-xl">👨‍👧‍👦</span>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-black text-slate-900 text-sm">Familia Martínez</p>
+                            <p class="text-[#E50072] text-xs font-bold uppercase tracking-wider">Panamá</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonio 3 -->
+                <div class="testimonial-slide hidden bg-[#211261] rounded-3xl p-10 md:p-14 text-center">
+                    <p class="nunito text-2xl md:text-3xl font-black text-white leading-tight mb-8">
+                        "Lo compramos en la feria y fue el mejor regalo. Mi hija de 6 años ya sabe quién es el Diablito Sucio y el Águila Harpía. ¡Impresionante!"
+                    </p>
+                    <div class="flex items-center justify-center gap-3">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(255,237,0,0.15);">
+                            <span class="text-xl">👩‍👧</span>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-black text-white text-sm">Familia Rodríguez</p>
+                            <p style="color:#FFED00;" class="text-xs font-bold uppercase tracking-wider">Diáspora venezolana</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center justify-center gap-6 mt-8">
+                <button onclick="prevTestimonial()" class="w-10 h-10 rounded-full border-2 border-[#211261] text-[#211261] flex items-center justify-center hover:bg-[#211261] hover:text-white transition font-black">‹</button>
+                <div class="flex gap-2" id="testimonial-dots">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#211261] transition-all cursor-pointer" onclick="goToTestimonial(0)"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-200 transition-all cursor-pointer" onclick="goToTestimonial(1)"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-200 transition-all cursor-pointer" onclick="goToTestimonial(2)"></span>
+                </div>
+                <button onclick="nextTestimonial()" class="w-10 h-10 rounded-full border-2 border-[#211261] text-[#211261] flex items-center justify-center hover:bg-[#211261] hover:text-white transition font-black">›</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let currentTestimonial = 0;
+        const slides = document.querySelectorAll('.testimonial-slide');
+        const dots = document.querySelectorAll('#testimonial-dots span');
+
+        function goToTestimonial(index) {
+            slides[currentTestimonial].classList.add('hidden');
+            dots[currentTestimonial].classList.remove('bg-[#211261]');
+            dots[currentTestimonial].classList.add('bg-slate-200');
+            currentTestimonial = index;
+            slides[currentTestimonial].classList.remove('hidden');
+            dots[currentTestimonial].classList.add('bg-[#211261]');
+            dots[currentTestimonial].classList.remove('bg-slate-200');
+        }
+
+        function nextTestimonial() {
+            goToTestimonial((currentTestimonial + 1) % slides.length);
+        }
+
+        function prevTestimonial() {
+            goToTestimonial((currentTestimonial - 1 + slides.length) % slides.length);
+        }
+
+        // Auto-advance every 5 seconds
+        setInterval(nextTestimonial, 5000);
+    </script>
+
+    <!-- ═══ GALERÍA ════════════════════════════════════════════ -->
+    <section class="bg-slate-50 py-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Momentos</p>
+            <h2 class="nunito text-4xl font-black text-slate-900 mb-12">En ferias, eventos y comunidades</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- 6 placeholders para fotos -->
+                <div class="gallery-placeholder aspect-square">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-30" viewBox="0 0 24 24" fill="none" stroke="#211261" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span style="color:#211261;opacity:0.4;font-size:10px;">Feria Internacional del Libro 2023</span>
+                </div>
+                <div class="gallery-placeholder aspect-square md:col-span-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-30" viewBox="0 0 24 24" fill="none" stroke="#211261" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span style="color:#211261;opacity:0.4;font-size:10px;">Familias jugando puntico®</span>
+                </div>
+                <div class="gallery-placeholder aspect-square md:col-span-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-30" viewBox="0 0 24 24" fill="none" stroke="#211261" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span style="color:#211261;opacity:0.4;font-size:10px;">Feria Internacional del Libro 2024</span>
+                </div>
+                <div class="gallery-placeholder aspect-square">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-30" viewBox="0 0 24 24" fill="none" stroke="#211261" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span style="color:#211261;opacity:0.4;font-size:10px;">Centros educativos</span>
+                </div>
+                <div class="gallery-placeholder aspect-square">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-30" viewBox="0 0 24 24" fill="none" stroke="#211261" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span style="color:#211261;opacity:0.4;font-size:10px;">Producto en acción</span>
+                </div>
+                <div class="gallery-placeholder aspect-square">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-30" viewBox="0 0 24 24" fill="none" stroke="#211261" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span style="color:#211261;opacity:0.4;font-size:10px;">Cobertura en medios</span>
+                </div>
+            </div>
+            <p class="text-center text-slate-400 text-xs mt-6 font-medium">📸 Galería de imágenes — próximamente con fotos reales de eventos</p>
+        </div>
+    </section>
+
+    <!-- ═══ EXPANSIÓN ════════════════════════════════════════════ -->
+    <section class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+        <div class="text-center mb-16">
+            <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Expansión</p>
+            <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900 mb-4">Un país a la vez</h2>
+            <p class="text-slate-500 max-w-xl mx-auto text-sm leading-relaxed">Cada nueva edición abre un nuevo mercado, activa la diáspora de ese país y genera nuevas alianzas institucionales.</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <!-- Panamá — activo -->
+            <div class="country-card bg-[#211261] rounded-2xl p-6 text-center">
+                <div class="text-4xl mb-3">🇵🇦</div>
+                <p class="nunito font-black text-white text-sm mb-1">Panamá</p>
+                <span class="bg-[#FFED00] text-[#211261] text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">Disponible</span>
+            </div>
+            <!-- Venezuela — disponible -->
+            <div class="country-card bg-[#211261] rounded-2xl p-6 text-center">
+                <div class="text-4xl mb-3">🇻🇪</div>
+                <p class="nunito font-black text-white text-sm mb-1">Venezuela</p>
+                <span class="bg-[#FFED00] text-[#211261] text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">Disponible</span>
+            </div>
+            <!-- Más -->
+            <div class="country-card bg-white border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center opacity-50">
+                <div class="text-4xl mb-3">🌎</div>
+                <p class="nunito font-black text-slate-600 text-sm mb-1">Y más...</p>
+                <span class="bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">Próximamente</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ CTA FINAL ══════════════════════════════════════════ -->
+    <section class="bg-slate-50 py-20">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="dots-row justify-center mb-6">
+                <span class="dot" style="background:#FFED00;"></span>
+                <span class="dot" style="background:#F49600;"></span>
+                <span class="dot" style="background:#E50072;"></span>
+            </div>
+            <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900 mb-4">
+                ¿Eres una institución<br>o medio de comunicación?
+            </h2>
+            <p class="text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed">
+                Trabajamos con colegios, fundaciones y empresas que quieren impactar a sus comunidades a través de la cultura y el juego. También atendemos solicitudes de prensa.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/cdn-cgi/l/email-protection#631306070a070c102313160d170a000c4d100b0c135c101601090600175e200c0d10160f1702430a0d10170a1716000a0c0d020f" class="nunito bg-[#211261] text-white px-8 py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#E50072] transition text-sm">
+                    Contacto institucional →
+                </a>
+                <a href="store.html"
+                    class="nunito bg-white border-2 border-[#211261] text-[#211261] px-8 py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#EAE8F7] transition text-sm">
+                    Ver la tienda
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══════════════════════════════════════════════ -->
+    <footer style="background:#211261;" class="py-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-12 mb-12">
+                <div>
+                    <img src="assets/brand-puntico.svg" class="h-10 w-auto mb-4 brightness-0 invert">
+                    <p class="text-slate-400 text-sm leading-relaxed">¡Jugar y aprender es posible! Nació en Panamá con alma venezolana.</p>
+                    <div class="dots-row mt-4">
+                        <span class="dot" style="background:#FFED00;"></span>
+                        <span class="dot" style="background:#F49600;"></span>
+                        <span class="dot" style="background:#E50072;"></span>
+                        <span class="dot" style="background:#742576;"></span>
+                        <span class="dot" style="background:#009CC0;"></span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-white font-black text-xs uppercase tracking-widest mb-4">Navegación</p>
+                    <div class="space-y-2">
+                        <a href="index.html" class="block text-slate-400 text-sm hover:text-white transition">Inicio</a>
+                        <a href="about.html" class="block text-slate-400 text-sm hover:text-white transition">Nuestra historia</a>
+                        <a href="store.html" class="block text-slate-400 text-sm hover:text-white transition">Tienda</a>
+                        <a href="login.html" class="block text-slate-400 text-sm hover:text-white transition">Mi cuenta</a>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-white font-black text-xs uppercase tracking-widest mb-4">Contacto</p>
+                    <div class="space-y-2">
+                        <a href="/cdn-cgi/l/email-protection#423227262b262d310232372c362b212d6c312a2d32" class="block text-slate-400 text-sm hover:text-white transition"><span class="__cf_email__" data-cfemail="e79782838e838894a7979289938e8488c9948f8897">[email&#160;protected]</span></a>
+                        <a href="https://instagram.com/punticopty" target="_blank" class="block text-slate-400 text-sm hover:text-white transition">@punticopty</a>
+                        <p class="text-slate-500 text-xs mt-4">#JuegosConPropósito</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-slate-500 text-xs">© 2025 puntico® · Viviana Falcón · Todos lo
