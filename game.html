@@ -7,7 +7,6 @@
     <!-- ✅ FASE 1: Supabase para guardar partidas -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
-    <script src="data.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -158,44 +157,38 @@
         // ─────────────────────────────────────────
         // PREPARAR CARTAS
         // ─────────────────────────────────────────
-        function prepareCards() {
-            // Prioridad: localStorage (editor) → data.js (fallback)
-            const savedEdition = localStorage.getItem('puntico_editions_' + currentEdition);
-            if (savedEdition) {
-                try {
-                    const parsed = JSON.parse(savedEdition);
-                    if (parsed.cards && parsed.cards.length > 0) {
-                        gameData[currentEdition].cards = parsed.cards.map((c, i) => ({
-                            id: i + 1, name: c.name, img: c.img, desc: c.desc
-                        }));
-                    }
-                    if (parsed.back) gameData[currentEdition].back = parsed.back;
-                } catch(e) {}
-            }
-            currentBackImg = gameData[currentEdition].back || 'assets/cartas/REVERSO.png';
+        async function prepareCards() {
+            // Cargar desde Supabase — fuente de verdad única
+            const { data, error } = await supabaseClient
+                .from('edition_config')
+                .select('*')
+                .eq('edition_key', currentEdition)
+                .single();
 
-            if (typeof gameData === 'undefined') {
-                console.error("Error: No se encontró data.js");
+            if (error || !data) {
+                console.error('Error cargando edición desde Supabase:', error);
                 return;
             }
 
+            // Actualizar título y reverso
+            currentBackImg = data.back_url || 'assets/cartas/REVERSO.png';
             const titleElement = document.querySelector('header h1');
-            if (titleElement && gameData[currentEdition]) {
-                titleElement.innerText = "Edición " + (currentEdition === 'panama' ? 'Panamá' : 'Venezuela');
-            }
+            if (titleElement) titleElement.innerText = data.title;
 
-            const rawData = gameData[currentEdition].cards;
+            // Construir pares de cartas
             cardData = [];
-
-            rawData.forEach(item => {
+            data.cards.forEach((item, index) => {
                 const cardPair = {
                     content: item.img,
                     title: item.name,
                     description: item.desc
                 };
-                cardData.push({...cardPair, uniqueId: item.id + "_a"});
-                cardData.push({...cardPair, uniqueId: item.id + "_b"});
+                cardData.push({...cardPair, uniqueId: (index + 1) + '_a'});
+                cardData.push({...cardPair, uniqueId: (index + 1) + '_b'});
             });
+
+            // Guardar title para pantalla de victoria
+            window._currentEditionTitle = data.title;
         }
 
         // ─────────────────────────────────────────
@@ -215,14 +208,12 @@
                 badgeName.textContent = profile?.name || currentSession.user.email.split('@')[0];
             }
 
-            prepareCards();
+            await prepareCards();
             lucide.createIcons();
 
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('game-container').classList.remove('hidden');
-                resetGame();
-            }, 1000);
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            resetGame();
         }
 
         // ─────────────────────────────────────────
@@ -343,7 +334,7 @@
             document.getElementById('game-grid').classList.add('hidden');
             document.getElementById('win-message').classList.remove('hidden');
             document.getElementById('final-stats').innerText =
-                `Completaste la edición ${gameData[currentEdition].title} en ${moves} movimientos.`;
+                `Completaste ${window._currentEditionTitle || 'la edición'} en ${moves} movimientos.`;
             lucide.createIcons();
 
             // ✅ Guardar en Supabase si hay sesión

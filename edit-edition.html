@@ -3,7 +3,6 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
-    <script src="data.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor de Ediciones — Puntico Admin</title>
@@ -187,40 +186,34 @@
 </div>
 
 <script>
-    // ── Datos de ediciones ──────────────────────────────────
-    // Fuente de verdad: data.js → localStorage (si el admin guardó cambios)
-    function buildEditionData() {
-        const result = {};
-        for (const key of Object.keys(gameData)) {
-            // Check if admin saved changes in localStorage
-            const saved = localStorage.getItem('puntico_editions_' + key);
-            let cards;
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    cards = parsed.cards || gameData[key].cards;
-                } catch(e) {
-                    cards = gameData[key].cards;
-                }
-            } else {
-                cards = gameData[key].cards;
-            }
+    // ── Datos de ediciones desde Supabase ─────────────────
+    let editionData = {}; // se llena en loadEditionFromSupabase()
 
-            result[key] = {
-                title: gameData[key].title,
-                name: gameData[key].title.replace(/ 🇵🇦| 🇻🇪/g, ''),
-                back: (saved && JSON.parse(saved).back) || gameData[key].back || 'assets/cartas/REVERSO.png',
-                cards: cards.map(c => ({
-                    name: c.name,
-                    img: c.img,
-                    desc: c.desc
-                }))
-            };
+    async function loadEditionFromSupabase(key) {
+        const { data, error } = await supabaseClient
+            .from('edition_config')
+            .select('*')
+            .eq('edition_key', key)
+            .single();
+
+        if (error || !data) {
+            console.error('Error cargando edición:', error);
+            return null;
         }
-        return result;
-    }
 
-    const editionData = buildEditionData();
+        editionData[key] = {
+            title: data.title,
+            name: data.title.replace(/ 🇵🇦| 🇻🇪/g, ''),
+            back: data.back_url || 'assets/cartas/REVERSO.png',
+            active: data.active,
+            cards: data.cards.map(c => ({
+                name: c.name,
+                img: c.img,
+                desc: c.desc
+            }))
+        };
+        return editionData[key];
+    }
 
     let currentVersion = 'panama';
 
@@ -240,6 +233,12 @@
             document.getElementById('version-selector').value = id;
         }
 
+        // Cargar edición desde Supabase
+        const loaded = await loadEditionFromSupabase(currentVersion);
+        if (!loaded) {
+            document.getElementById('edition-display-name').textContent = 'Error al cargar edición';
+            return;
+        }
         renderEditor();
         loadEstado();
     });
@@ -317,17 +316,17 @@
         lucide.createIcons();
     }
 
-    function changeVersion() {
+    async function changeVersion() {
         currentVersion = document.getElementById('version-selector').value;
+        const loaded = await loadEditionFromSupabase(currentVersion);
+        if (!loaded) return;
         renderEditor();
         loadEstado();
     }
 
     // ── Estado dinámico ────────────────────────────────────
     function loadEstado() {
-        const editions = JSON.parse(localStorage.getItem('tipoVisual_editions')) || [];
-        const edition = editions.find(e => e.id === currentVersion);
-        const active = edition ? edition.active : true;
+        const active = editionData[currentVersion]?.active ?? true;
 
         const dot   = document.getElementById('estado-dot');
         const label = document.getElementById('estado-label');
@@ -348,10 +347,15 @@
         }
     }
 
-    function toggleEstado() {
-        let editions = JSON.parse(localStorage.getItem('tipoVisual_editions')) || [];
-        editions = editions.map(e => e.id === currentVersion ? {...e, active: !e.active} : e);
-        localStorage.setItem('tipoVisual_editions', JSON.stringify(editions));
+    async function toggleEstado() {
+        const newActive = !editionData[currentVersion].active;
+        editionData[currentVersion].active = newActive;
+
+        await supabaseClient
+            .from('edition_config')
+            .update({ active: newActive, updated_at: new Date().toISOString() })
+            .eq('edition_key', currentVersion);
+
         loadEstado();
     }
 
@@ -446,15 +450,33 @@
         renderEditor();
     }
 
-    function saveChanges() {
-        // Save to localStorage (future: migrate to Supabase)
-        const toSave = {
-            title: editionData[currentVersion].title,
-            back:  editionData[currentVersion].back,
-            cards: editionData[currentVersion].cards
-        };
-        localStorage.setItem('puntico_editions_' + currentVersion, JSON.stringify(toSave));
+    async function saveChanges() {
+        const btn = document.getElementById('btn-save');
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+
+        const { error } = await supabaseClient
+            .from('edition_config')
+            .update({
+                title:    editionData[currentVersion].title,
+                back_url: editionData[currentVersion].back,
+                cards:    editionData[currentVersion].cards,
+                active:   editionData[currentVersion].active,
+                updated_at: new Date().toISOString()
+            })
+            .eq('edition_key', currentVersion);
+
+        btn.disabled = false;
+        btn.textContent = 'Guardar cambios';
+
         const msg = document.getElementById('save-msg');
+        if (error) {
+            msg.textContent = '❌ Error al guardar. Intenta nuevamente.';
+            msg.className = 'mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-medium';
+        } else {
+            msg.textContent = '✅ Cambios guardados correctamente en Supabase.';
+            msg.className = 'mb-4 p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700 font-medium';
+        }
         msg.classList.remove('hidden');
         setTimeout(() => msg.classList.add('hidden'), 3000);
     }
