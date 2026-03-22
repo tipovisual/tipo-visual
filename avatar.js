@@ -253,7 +253,7 @@
         panel.innerHTML = `
             <div style="background:#211261;padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <img src="assets/puntico_personaje.svg" style="width:32px;height:32px;object-fit:contain;">
+                    <img src="assets/pesonaje/puntico_personaje.svg" style="width:32px;height:32px;object-fit:contain;">
                     <div>
                         <p style="color:#FFED00;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;margin:0;">puntico®</p>
                         <p style="color:white;font-size:12px;font-weight:800;margin:0;">¡Hola! Estoy aquí para ayudarte</p>
@@ -297,7 +297,7 @@
             position: relative;
         `;
 
-        avatarBtn.innerHTML = `<img src="assets/puntico_personaje.svg" style="width:100%;height:100%;object-fit:contain;" alt="Puntico mascota">`;
+        avatarBtn.innerHTML = `<img src="assets/pesonaje/puntico_personaje.svg" style="width:100%;height:100%;object-fit:contain;" alt="Puntico mascota">`;
 
         avatarBtn.onmouseenter = () => {
             avatarBtn.style.transform = 'scale(1.08) translateY(-2px)';
