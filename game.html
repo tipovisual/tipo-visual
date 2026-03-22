@@ -195,8 +195,12 @@
         // INIT
         // ─────────────────────────────────────────
         async function init() {
-            // Verificar sesión de Supabase (no bloquea el juego si no hay)
+            // Verificar sesión — redirigir si no está autenticado
             currentSession = await getSession();
+            if (!currentSession) {
+                window.location.href = 'login.html?reason=auth&tab=register';
+                return;
+            }
 
             // Mostrar badge de usuario si hay sesión
             if (currentSession) {
