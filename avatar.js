@@ -147,7 +147,7 @@
         root.id = 'puntico-avatar-root';
         root.style.cssText = `
             position: fixed;
-            bottom: ${isMobile ? '16px' : '24px'};
+            bottom: ${isMobile ? '0px' : '0px'};
             right: ${isMobile ? '12px' : '24px'};
             z-index: 9999;
             display: flex;
