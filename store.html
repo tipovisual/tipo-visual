@@ -12,6 +12,22 @@
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda — Puntico | Juego de memoria latinoamericano</title>
+    <!-- ═══ Meta Pixel ═══ -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '263055378239429');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=263055378239429&ev=PageView&noscript=1"
+    /></noscript>
     <!-- ═══ SEO & Social Meta Tags ═══ -->
     <meta name="description" content="Compra el juego de memoria educativo Puntico. Ediciones coleccionables de Panamá y Venezuela. Envíos disponibles.">
     <meta name="keywords" content="Puntico, juego de memoria, juego educativo, niños, adultos, Panamá, Venezuela, Latinoamérica, cultura, memoria, cartas coleccionables">
@@ -147,7 +163,7 @@
                     <span id="cart-total" class="font-black text-[#211261] text-xl">$0.00</span>
                 </div>
             </div>
-            <a href="checkout.html" onclick="saveCartToStorage()"
+            <a href="checkout.html" onclick="saveCartToStorage(); fbq('track', 'InitiateCheckout');"
                 class="block w-full bg-[#211261] text-white text-center py-4 rounded-[1.5rem] font-black uppercase tracking-widest text-sm hover:bg-[#211261] transition-all shadow-xl">
                 Proceder al pago →
             </a>
@@ -162,6 +178,7 @@
         let products = [];
 
         // ── Lucide se inicializa al cargar la página ──
+        window.addEventListener('load', () => { fbq('track', 'ViewContent', {{ content_name: 'Tienda Puntico' }}); });
         window.addEventListener('load', () => {
             lucide.createIcons();
             loadProducts();
@@ -226,6 +243,7 @@
         }
 
         function addToCart(productId, btn) {
+            fbq('track', 'AddToCart');
             const product = products.find(p => p.id === productId);
             if (!product) return;
             const existing = cart.find(i => i.id === productId);
