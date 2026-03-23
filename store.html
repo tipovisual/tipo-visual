@@ -178,11 +178,11 @@
         let products = [];
 
         // ── Lucide se inicializa al cargar la página ──
-        window.addEventListener('load', () => { fbq('track', 'ViewContent', {{ content_name: 'Tienda Puntico' }}); });
         window.addEventListener('load', () => {
             lucide.createIcons();
             loadProducts();
             updateCartUI();
+            fbq('track', 'ViewContent', { content_name: 'Tienda Puntico' });
         });
 
         function saveCartToStorage() { localStorage.setItem('tv_cart', JSON.stringify(cart)); }
