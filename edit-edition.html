@@ -151,9 +151,32 @@
                                     class="w-full bg-slate-50 border-2 border-transparent focus:border-[#211261] p-2 rounded-xl text-sm font-bold outline-none uppercase">
                             </div>
                             <div>
-                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Ruta de imagen</label>
-                                <input type="text" id="new-card-img" placeholder="assets/cartas/NOMBRE.png"
-                                    class="w-full bg-slate-50 border-2 border-transparent focus:border-[#211261] p-2 rounded-xl text-xs outline-none font-mono">
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Imagen de la carta</label>
+                                <!-- Preview -->
+                                <div id="new-card-preview-wrap" class="hidden mb-2 relative">
+                                    <img id="new-card-preview" src="" class="w-full aspect-[2/3] object-cover rounded-xl border border-slate-200 bg-slate-50">
+                                    <button type="button" onclick="clearNewCardImage()"
+                                        class="absolute top-1.5 right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition">✕</button>
+                                </div>
+                                <!-- Upload zone -->
+                                <div id="new-card-upload-zone" onclick="document.getElementById('new-card-file').click()"
+                                    class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-[#211261] hover:bg-[#F5F4FB] transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 mx-auto mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    <p class="text-xs text-slate-500 font-medium">Clic para subir imagen</p>
+                                    <p class="text-[10px] text-slate-400">PNG, JPG, WEBP · Máx 2MB</p>
+                                </div>
+                                <input type="file" id="new-card-file" accept="image/*" class="hidden" onchange="handleNewCardImage(this)">
+                                <input type="hidden" id="new-card-img">
+                                <!-- Progress -->
+                                <div id="new-card-progress" class="hidden mt-2">
+                                    <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                        <div id="new-card-bar" class="h-full bg-[#211261] rounded-full transition-all" style="width:0%"></div>
+                                    </div>
+                                    <p id="new-card-status" class="text-[10px] text-slate-400 mt-1">Subiendo...</p>
+                                </div>
                             </div>
                             <div>
                                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Descripción</label>
@@ -165,7 +188,7 @@
                                     class="nunito flex-1 bg-[#211261] text-white text-xs font-black uppercase py-2 rounded-full hover:bg-[#E50072] transition">
                                     Agregar
                                 </button>
-                                <button onclick="document.getElementById('add-card-form').classList.add('hidden')"
+                                <button onclick="cancelAddCard()"
                                     class="flex-1 bg-slate-100 text-slate-600 text-xs font-black uppercase py-2 rounded-full hover:bg-slate-200 transition">
                                     Cancelar
                                 </button>
@@ -365,21 +388,84 @@
         document.getElementById('new-card-name').focus();
     }
 
+    function cancelAddCard() {
+        clearNewCardImage();
+        document.getElementById('new-card-name').value = '';
+        document.getElementById('new-card-desc').value = '';
+        document.getElementById('add-card-form').classList.add('hidden');
+    }
+
+    function clearNewCardImage() {
+        document.getElementById('new-card-img').value = '';
+        document.getElementById('new-card-file').value = '';
+        document.getElementById('new-card-preview-wrap').classList.add('hidden');
+        document.getElementById('new-card-upload-zone').classList.remove('hidden');
+        document.getElementById('new-card-progress').classList.add('hidden');
+    }
+
+    async function handleNewCardImage(input) {
+        const file = input.files[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+            alert('La imagen no puede superar 2MB.');
+            return;
+        }
+
+        const progress  = document.getElementById('new-card-progress');
+        const bar       = document.getElementById('new-card-bar');
+        const status    = document.getElementById('new-card-status');
+
+        progress.classList.remove('hidden');
+        bar.style.width = '30%';
+        status.textContent = 'Subiendo imagen...';
+
+        const ext      = file.name.split('.').pop();
+        const fileName = 'carta-' + currentVersion + '-' + Date.now() + '.' + ext;
+
+        const { data, error } = await supabaseClient.storage
+            .from('productos')
+            .upload(fileName, file, { upsert: true });
+
+        if (error) {
+            bar.style.width = '0%';
+            progress.classList.add('hidden');
+            alert('Error al subir la imagen. Intenta nuevamente.');
+            return;
+        }
+
+        bar.style.width = '100%';
+        status.textContent = '✅ Imagen subida';
+
+        const { data: urlData } = supabaseClient.storage
+            .from('productos')
+            .getPublicUrl(fileName);
+
+        document.getElementById('new-card-img').value = urlData.publicUrl;
+
+        // Show preview
+        document.getElementById('new-card-preview').src = urlData.publicUrl;
+        document.getElementById('new-card-preview-wrap').classList.remove('hidden');
+        document.getElementById('new-card-upload-zone').classList.add('hidden');
+
+        setTimeout(() => progress.classList.add('hidden'), 1500);
+    }
+
     function addCard() {
         const name = document.getElementById('new-card-name').value.trim();
         const img  = document.getElementById('new-card-img').value.trim();
         const desc = document.getElementById('new-card-desc').value.trim();
 
-        if (!name || !img) {
-            alert('El nombre y la ruta de imagen son obligatorios.');
+        if (!name) {
+            alert('El nombre de la carta es obligatorio.');
+            return;
+        }
+        if (!img) {
+            alert('Debes subir una imagen para la carta.');
             return;
         }
 
         editionData[currentVersion].cards.push({ name, img, desc });
-        document.getElementById('add-card-form').classList.add('hidden');
-        document.getElementById('new-card-name').value = '';
-        document.getElementById('new-card-img').value = '';
-        document.getElementById('new-card-desc').value = '';
+        cancelAddCard();
         renderEditor();
     }
 
