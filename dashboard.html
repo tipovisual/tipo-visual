@@ -81,9 +81,6 @@
                 <i data-lucide="shopping-bag" class="mr-3 h-4 w-4"></i> Órdenes
                 <span id="pending-badge" class="hidden ml-auto bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">0</span>
             </a>
-            <a href="#" onclick="showTab('traffic')" id="nav-traffic" class="nav-link flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition text-sm">
-                <i data-lucide="bar-chart-2" class="mr-3 h-4 w-4"></i> Tráfico
-            </a>
             <div class="pt-4 pb-2 border-t border-slate-800 mt-2">
                 <span class="px-4 text-[10px] font-semibold text-slate-500 uppercase">Vista Pública</span>
             </div>
@@ -238,101 +235,6 @@
             </div>
         </div>
 
-        <!-- ══ TAB: TRÁFICO ══════════════════════════════════════ -->
-        <div id="tab-traffic" class="tab-content">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h2 class="text-3xl font-bold tracking-tight">Tráfico</h2>
-                    <p class="text-sm text-slate-400 mt-1">Métricas de visitas desde Google Analytics 4.</p>
-                </div>
-                <a href="https://analytics.google.com/analytics/web/#/p{GA4_PROPERTY}/reports/reportinghub" target="_blank"
-                   class="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-600 transition">
-                    <i data-lucide="external-link" class="h-4 w-4"></i> Abrir GA4
-                </a>
-            </div>
-
-            <!-- Métricas rápidas -->
-            <div class="grid gap-4 md:grid-cols-3 mb-8">
-                <div class="rounded-xl border bg-white shadow-sm p-6">
-                    <div class="flex items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">Usuarios activos hoy</h3>
-                        <i data-lucide="users" class="h-4 w-4 text-[#211261]"></i>
-                    </div>
-                    <div class="text-2xl font-bold" id="traffic-realtime">—</div>
-                    <p class="text-xs text-slate-400 mt-1">Tiempo real</p>
-                </div>
-                <div class="rounded-xl border bg-white shadow-sm p-6">
-                    <div class="flex items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">ID de Propiedad</h3>
-                        <i data-lucide="key" class="h-4 w-4 text-[#211261]"></i>
-                    </div>
-                    <div class="text-lg font-bold text-slate-700">G-7WND12NQQQ</div>
-                    <p class="text-xs text-slate-400 mt-1">Google Analytics 4</p>
-                </div>
-                <div class="rounded-xl border bg-white shadow-sm p-6">
-                    <div class="flex items-center justify-between pb-2">
-                        <h3 class="text-sm font-medium text-slate-500">Dominio activo</h3>
-                        <i data-lucide="globe" class="h-4 w-4 text-[#211261]"></i>
-                    </div>
-                    <div class="text-lg font-bold text-slate-700">puntico.shop</div>
-                    <p class="text-xs text-slate-400 mt-1">Cloudflare Pages</p>
-                </div>
-            </div>
-
-            <!-- Reportes rápidos -->
-            <div class="grid gap-4 md:grid-cols-2 mb-8">
-                <a href="https://analytics.google.com" target="_blank"
-                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
-                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="trending-up" class="h-5 w-5 text-[#211261]"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">Audiencia y sesiones</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Usuarios nuevos vs recurrentes, sesiones por día</p>
-                    </div>
-                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
-                </a>
-                <a href="https://analytics.google.com" target="_blank"
-                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
-                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="mouse-pointer-click" class="h-5 w-5 text-[#211261]"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">Eventos y conversiones</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Registros, descargas, visitas a tienda</p>
-                    </div>
-                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
-                </a>
-                <a href="https://analytics.google.com" target="_blank"
-                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
-                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="layout" class="h-5 w-5 text-[#211261]"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">Páginas más visitadas</p>
-                        <p class="text-xs text-slate-400 mt-0.5">index, store, login, profile</p>
-                    </div>
-                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
-                </a>
-                <a href="https://analytics.google.com" target="_blank"
-                   class="bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:border-[#211261] transition group">
-                    <div class="w-12 h-12 rounded-xl bg-[#F5F4FB] flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="map-pin" class="h-5 w-5 text-[#211261]"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">Ubicación geográfica</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Países y ciudades de tus visitantes</p>
-                    </div>
-                    <i data-lucide="arrow-right" class="h-4 w-4 text-slate-300 group-hover:text-[#211261] ml-auto transition"></i>
-                </a>
-            </div>
-
-            <div class="bg-[#F5F4FB] border border-[#E8E6F7] rounded-xl p-5 text-sm text-[#211261]">
-                <p class="font-bold mb-1">💡 Tip</p>
-                <p class="text-slate-600">Para ver datos en tiempo real dentro del dashboard sin salir a GA4, en el futuro podemos conectar la API de Google Analytics. Por ahora, todos los reportes abren directamente en GA4.</p>
-            </div>
-        </div>
-
     </main>
 </div>
 
@@ -384,24 +286,21 @@
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Imagen del producto</label>
-                <!-- Preview -->
-                <div id="image-preview-wrap" class="hidden mb-2 relative w-20 h-20">
-                    <img id="image-preview" src="" class="w-20 h-20 rounded-xl object-contain border border-slate-200 bg-slate-50 p-1">
-                    <button type="button" onclick="clearImage()" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition">✕</button>
-                </div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Imágenes del producto <span class="font-normal text-slate-400">(hasta 3)</span></label>
+                <!-- Previews row -->
+                <div id="images-preview-row" class="flex gap-2 mb-2"></div>
                 <!-- Upload zone -->
                 <div id="upload-zone" onclick="document.getElementById('product-image-file').click()"
-                    class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-amber-400 hover:bg-amber-50 transition">
+                    class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-[#211261] hover:bg-[#F5F4FB] transition">
                     <i data-lucide="upload-cloud" class="h-6 w-6 text-slate-400 mx-auto mb-1"></i>
                     <p class="text-xs text-slate-500 font-medium">Clic para subir imagen</p>
-                    <p class="text-[10px] text-slate-400">PNG, JPG, WEBP · Máx 2MB</p>
+                    <p class="text-[10px] text-slate-400">PNG, JPG, WEBP · Máx 2MB · Hasta 3 imágenes</p>
                 </div>
                 <input type="file" id="product-image-file" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
                 <input type="hidden" id="product-image">
                 <div id="upload-progress" class="hidden mt-2">
                     <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div id="upload-bar" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div>
+                        <div id="upload-bar" class="h-full bg-[#211261] rounded-full transition-all" style="width:0%"></div>
                     </div>
                     <p id="upload-status" class="text-xs text-slate-400 mt-1">Subiendo...</p>
                 </div>
@@ -441,7 +340,6 @@
         if (name === 'products') loadProducts();
         if (name === 'orders')   loadOrders();
         if (name === 'editions') renderEditions();
-        if (name === 'traffic')  { lucide.createIcons(); }
         return false;
     }
 
@@ -566,14 +464,14 @@
         document.getElementById('product-active').value     = product ? String(product.active) : 'true';
         document.getElementById('product-image').value = product?.image_url || '';
         // Reset uploader state
+        uploadedImages = product?.images || (product?.image_url ? [product.image_url] : []);
         document.getElementById('product-image-file').value = '';
         document.getElementById('upload-progress').classList.add('hidden');
-        if (product?.image_url) {
-            document.getElementById('image-preview').src = product.image_url;
-            document.getElementById('image-preview-wrap').classList.remove('hidden');
+        // Render existing images
+        renderImagePreviews();
+        if (uploadedImages.length >= 3) {
             document.getElementById('upload-zone').classList.add('hidden');
         } else {
-            document.getElementById('image-preview-wrap').classList.add('hidden');
             document.getElementById('upload-zone').classList.remove('hidden');
         }
         document.getElementById('modal-error').classList.add('hidden');
@@ -614,7 +512,8 @@
             price, stock,
             edition:   document.getElementById('product-edition').value,
             active:    document.getElementById('product-active').value === 'true',
-            image_url: document.getElementById('product-image').value.trim() || null
+            image_url: uploadedImages[0] || document.getElementById('product-image').value.trim() || null,
+            images:    uploadedImages.length > 0 ? uploadedImages : null
         };
 
         const btn = document.getElementById('btn-save-product');
@@ -733,10 +632,18 @@
 
     function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
 
-    // ── Image upload ──────────────────────────────
+    // ── Image upload (multi — hasta 3) ───────────────
+    let uploadedImages = []; // array of public URLs
+
     async function handleImageUpload(input) {
         const file = input.files[0];
         if (!file) return;
+
+        if (uploadedImages.length >= 3) {
+            document.getElementById('modal-error').textContent = 'Máximo 3 imágenes por producto.';
+            document.getElementById('modal-error').classList.remove('hidden');
+            return;
+        }
 
         if (file.size > 2 * 1024 * 1024) {
             document.getElementById('modal-error').textContent = 'La imagen no puede superar 2MB.';
@@ -744,10 +651,11 @@
             return;
         }
 
-        const progress  = document.getElementById('upload-progress');
-        const bar       = document.getElementById('upload-bar');
-        const status    = document.getElementById('upload-status');
-        const errorEl   = document.getElementById('modal-error');
+        const progress = document.getElementById('upload-progress');
+        const bar      = document.getElementById('upload-bar');
+        const status   = document.getElementById('upload-status');
+        const errorEl  = document.getElementById('modal-error');
+        const zone     = document.getElementById('upload-zone');
 
         progress.classList.remove('hidden');
         errorEl.classList.add('hidden');
@@ -758,14 +666,12 @@
         const fileName = `product-${Date.now()}.${ext}`;
 
         const { data, error } = await supabaseClient.storage
-            .from('productos')
-            .upload(fileName, file, { upsert: true });
+            .from('productos').upload(fileName, file, { upsert: true });
 
         if (error) {
             bar.style.width = '0%';
-            status.textContent = '';
             progress.classList.add('hidden');
-            errorEl.textContent = 'Error al subir la imagen. Intenta nuevamente.';
+            errorEl.textContent = 'Error al subir la imagen.';
             errorEl.classList.remove('hidden');
             return;
         }
@@ -773,25 +679,50 @@
         bar.style.width = '100%';
         status.textContent = '✅ Imagen subida';
 
-        // Get public URL
         const { data: urlData } = supabaseClient.storage
-            .from('productos')
-            .getPublicUrl(fileName);
+            .from('productos').getPublicUrl(fileName);
 
-        document.getElementById('product-image').value = urlData.publicUrl;
+        const url = urlData.publicUrl;
+        uploadedImages.push(url);
 
-        // Show preview
-        document.getElementById('image-preview').src = urlData.publicUrl;
-        document.getElementById('image-preview-wrap').classList.remove('hidden');
-        document.getElementById('upload-zone').classList.add('hidden');
+        // First image → also set as image_url (primary)
+        if (uploadedImages.length === 1) {
+            document.getElementById('product-image').value = url;
+        }
 
-        setTimeout(() => progress.classList.add('hidden'), 1500);
+        renderImagePreviews();
+
+        // Hide zone if 3 images reached
+        if (uploadedImages.length >= 3) zone.classList.add('hidden');
+        setTimeout(() => progress.classList.add('hidden'), 1200);
+        input.value = '';
+    }
+
+    function renderImagePreviews() {
+        const row = document.getElementById('images-preview-row');
+        row.innerHTML = uploadedImages.map((url, i) => `
+            <div class="relative w-20 h-20 flex-shrink-0">
+                <img src="${url}" class="w-20 h-20 rounded-xl object-contain border border-slate-200 bg-slate-50 p-1">
+                ${i === 0 ? '<span class="absolute -top-1 -left-1 bg-[#211261] text-white text-[8px] font-black rounded-full px-1.5 py-0.5">Principal</span>' : ''}
+                <button type="button" onclick="removeImage(${i})" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition">✕</button>
+            </div>
+        `).join('');
+    }
+
+    function removeImage(index) {
+        uploadedImages.splice(index, 1);
+        document.getElementById('product-image').value = uploadedImages[0] || '';
+        renderImagePreviews();
+        if (uploadedImages.length < 3) {
+            document.getElementById('upload-zone').classList.remove('hidden');
+        }
     }
 
     function clearImage() {
+        uploadedImages = [];
         document.getElementById('product-image').value = '';
         document.getElementById('product-image-file').value = '';
-        document.getElementById('image-preview-wrap').classList.add('hidden');
+        document.getElementById('images-preview-row').innerHTML = '';
         document.getElementById('upload-zone').classList.remove('hidden');
         document.getElementById('upload-progress').classList.add('hidden');
     }
@@ -835,14 +766,14 @@
                     <label class="flex items-center gap-2 cursor-pointer">
                         <div class="relative">
                             <input type="checkbox" class="sr-only" ${edition.active ? 'checked' : ''} onchange="toggleEdition('${edition.id}')">
-                            <div class="w-10 h-6 rounded-full transition ${edition.active ? 'bg-[#211261]' : 'bg-slate-200'}">
+                            <div class="w-10 h-6 rounded-full transition ${edition.active ? 'bg-amber-500' : 'bg-slate-200'}">
                                 <div class="w-4 h-4 bg-white rounded-full shadow absolute top-1 transition-transform ${edition.active ? 'translate-x-5' : 'translate-x-1'}"></div>
                             </div>
                         </div>
                         <span class="text-xs font-bold uppercase tracking-wider">${edition.active ? 'Visible' : 'Oculta'}</span>
                     </label>
-                    <a href="edit-edition.html?id=${edition.id}" class="flex items-center gap-2 bg-[#211261] text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider hover:bg-[#E50072] transition shadow-sm">
-                        <i data-lucide="edit-3" class="h-3.5 w-3.5"></i> Editar
+                    <a href="edit-edition.html?id=${edition.id}" class="p-2 bg-white border rounded-lg hover:text-amber-600 transition shadow-sm">
+                        <i data-lucide="edit-3" class="h-4 w-4"></i>
                     </a>
                 </div>
             </div>
