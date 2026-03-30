@@ -286,21 +286,24 @@
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Imágenes del producto <span class="font-normal text-slate-400">(hasta 3)</span></label>
-                <!-- Previews row -->
-                <div id="images-preview-row" class="flex gap-2 mb-2"></div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Imagen del producto</label>
+                <!-- Preview -->
+                <div id="image-preview-wrap" class="hidden mb-2 relative w-20 h-20">
+                    <img id="image-preview" src="" class="w-20 h-20 rounded-xl object-contain border border-slate-200 bg-slate-50 p-1">
+                    <button type="button" onclick="clearImage()" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition">✕</button>
+                </div>
                 <!-- Upload zone -->
                 <div id="upload-zone" onclick="document.getElementById('product-image-file').click()"
-                    class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-[#211261] hover:bg-[#F5F4FB] transition">
+                    class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-amber-400 hover:bg-amber-50 transition">
                     <i data-lucide="upload-cloud" class="h-6 w-6 text-slate-400 mx-auto mb-1"></i>
                     <p class="text-xs text-slate-500 font-medium">Clic para subir imagen</p>
-                    <p class="text-[10px] text-slate-400">PNG, JPG, WEBP · Máx 2MB · Hasta 3 imágenes</p>
+                    <p class="text-[10px] text-slate-400">PNG, JPG, WEBP · Máx 2MB</p>
                 </div>
                 <input type="file" id="product-image-file" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
                 <input type="hidden" id="product-image">
                 <div id="upload-progress" class="hidden mt-2">
                     <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div id="upload-bar" class="h-full bg-[#211261] rounded-full transition-all" style="width:0%"></div>
+                        <div id="upload-bar" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div>
                     </div>
                     <p id="upload-status" class="text-xs text-slate-400 mt-1">Subiendo...</p>
                 </div>
@@ -339,7 +342,7 @@
         document.getElementById('nav-' + name).classList.add('active');
         if (name === 'products') loadProducts();
         if (name === 'orders')   loadOrders();
-        if (name === 'editions') renderEditions();
+        if (name === 'editions') syncEditionStates().then(() => renderEditions());
         return false;
     }
 
@@ -464,14 +467,14 @@
         document.getElementById('product-active').value     = product ? String(product.active) : 'true';
         document.getElementById('product-image').value = product?.image_url || '';
         // Reset uploader state
-        uploadedImages = product?.images || (product?.image_url ? [product.image_url] : []);
         document.getElementById('product-image-file').value = '';
         document.getElementById('upload-progress').classList.add('hidden');
-        // Render existing images
-        renderImagePreviews();
-        if (uploadedImages.length >= 3) {
+        if (product?.image_url) {
+            document.getElementById('image-preview').src = product.image_url;
+            document.getElementById('image-preview-wrap').classList.remove('hidden');
             document.getElementById('upload-zone').classList.add('hidden');
         } else {
+            document.getElementById('image-preview-wrap').classList.add('hidden');
             document.getElementById('upload-zone').classList.remove('hidden');
         }
         document.getElementById('modal-error').classList.add('hidden');
@@ -512,8 +515,7 @@
             price, stock,
             edition:   document.getElementById('product-edition').value,
             active:    document.getElementById('product-active').value === 'true',
-            image_url: uploadedImages[0] || document.getElementById('product-image').value.trim() || null,
-            images:    uploadedImages.length > 0 ? uploadedImages : null
+            image_url: document.getElementById('product-image').value.trim() || null
         };
 
         const btn = document.getElementById('btn-save-product');
@@ -632,18 +634,10 @@
 
     function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
 
-    // ── Image upload (multi — hasta 3) ───────────────
-    let uploadedImages = []; // array of public URLs
-
+    // ── Image upload ──────────────────────────────
     async function handleImageUpload(input) {
         const file = input.files[0];
         if (!file) return;
-
-        if (uploadedImages.length >= 3) {
-            document.getElementById('modal-error').textContent = 'Máximo 3 imágenes por producto.';
-            document.getElementById('modal-error').classList.remove('hidden');
-            return;
-        }
 
         if (file.size > 2 * 1024 * 1024) {
             document.getElementById('modal-error').textContent = 'La imagen no puede superar 2MB.';
@@ -651,11 +645,10 @@
             return;
         }
 
-        const progress = document.getElementById('upload-progress');
-        const bar      = document.getElementById('upload-bar');
-        const status   = document.getElementById('upload-status');
-        const errorEl  = document.getElementById('modal-error');
-        const zone     = document.getElementById('upload-zone');
+        const progress  = document.getElementById('upload-progress');
+        const bar       = document.getElementById('upload-bar');
+        const status    = document.getElementById('upload-status');
+        const errorEl   = document.getElementById('modal-error');
 
         progress.classList.remove('hidden');
         errorEl.classList.add('hidden');
@@ -666,12 +659,14 @@
         const fileName = `product-${Date.now()}.${ext}`;
 
         const { data, error } = await supabaseClient.storage
-            .from('productos').upload(fileName, file, { upsert: true });
+            .from('productos')
+            .upload(fileName, file, { upsert: true });
 
         if (error) {
             bar.style.width = '0%';
+            status.textContent = '';
             progress.classList.add('hidden');
-            errorEl.textContent = 'Error al subir la imagen.';
+            errorEl.textContent = 'Error al subir la imagen. Intenta nuevamente.';
             errorEl.classList.remove('hidden');
             return;
         }
@@ -679,50 +674,25 @@
         bar.style.width = '100%';
         status.textContent = '✅ Imagen subida';
 
+        // Get public URL
         const { data: urlData } = supabaseClient.storage
-            .from('productos').getPublicUrl(fileName);
+            .from('productos')
+            .getPublicUrl(fileName);
 
-        const url = urlData.publicUrl;
-        uploadedImages.push(url);
+        document.getElementById('product-image').value = urlData.publicUrl;
 
-        // First image → also set as image_url (primary)
-        if (uploadedImages.length === 1) {
-            document.getElementById('product-image').value = url;
-        }
+        // Show preview
+        document.getElementById('image-preview').src = urlData.publicUrl;
+        document.getElementById('image-preview-wrap').classList.remove('hidden');
+        document.getElementById('upload-zone').classList.add('hidden');
 
-        renderImagePreviews();
-
-        // Hide zone if 3 images reached
-        if (uploadedImages.length >= 3) zone.classList.add('hidden');
-        setTimeout(() => progress.classList.add('hidden'), 1200);
-        input.value = '';
-    }
-
-    function renderImagePreviews() {
-        const row = document.getElementById('images-preview-row');
-        row.innerHTML = uploadedImages.map((url, i) => `
-            <div class="relative w-20 h-20 flex-shrink-0">
-                <img src="${url}" class="w-20 h-20 rounded-xl object-contain border border-slate-200 bg-slate-50 p-1">
-                ${i === 0 ? '<span class="absolute -top-1 -left-1 bg-[#211261] text-white text-[8px] font-black rounded-full px-1.5 py-0.5">Principal</span>' : ''}
-                <button type="button" onclick="removeImage(${i})" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition">✕</button>
-            </div>
-        `).join('');
-    }
-
-    function removeImage(index) {
-        uploadedImages.splice(index, 1);
-        document.getElementById('product-image').value = uploadedImages[0] || '';
-        renderImagePreviews();
-        if (uploadedImages.length < 3) {
-            document.getElementById('upload-zone').classList.remove('hidden');
-        }
+        setTimeout(() => progress.classList.add('hidden'), 1500);
     }
 
     function clearImage() {
-        uploadedImages = [];
         document.getElementById('product-image').value = '';
         document.getElementById('product-image-file').value = '';
-        document.getElementById('images-preview-row').innerHTML = '';
+        document.getElementById('image-preview-wrap').classList.add('hidden');
         document.getElementById('upload-zone').classList.remove('hidden');
         document.getElementById('upload-progress').classList.add('hidden');
     }
@@ -743,7 +713,19 @@
         { id:'panama',    name:'Edición Panamá 🇵🇦',    description:'Colección con elementos culturales, flora y fauna panameña.', cardCount:24, active:true,  image:"assets/cartas/BANDERA PANAMÁ.png" },
         { id:'venezuela', name:'Edición Venezuela 🇻🇪', description:'Colección con monumentos, comida y símbolos venezolanos.',     cardCount:12, active:false, image:"assets/cartas/venezuela/salto_angel.png" }
     ];
-    let editions = JSON.parse(localStorage.getItem('tipoVisual_editions')) || initialEditions;
+    let editions = [...initialEditions]; // initialized, then synced from Supabase
+
+    // Load active states from Supabase on render
+    async function syncEditionStates() {
+        const { data, error } = await supabaseClient
+            .from('edition_config')
+            .select('edition_key, active');
+        if (error || !data) return;
+        data.forEach(row => {
+            const ed = editions.find(e => e.id === row.edition_key);
+            if (ed) ed.active = row.active;
+        });
+    }
 
     function renderEditions() {
         const grid = document.getElementById('editions-grid');
@@ -781,9 +763,16 @@
         lucide.createIcons();
     }
 
-    function toggleEdition(id) {
+    async function toggleEdition(id) {
         editions = editions.map(e => e.id === id ? {...e, active: !e.active} : e);
-        localStorage.setItem('tipoVisual_editions', JSON.stringify(editions));
+        const edition = editions.find(e => e.id === id);
+
+        // Sync to Supabase — fuente de verdad
+        await supabaseClient
+            .from('edition_config')
+            .update({ active: edition.active, updated_at: new Date().toISOString() })
+            .eq('edition_key', id);
+
         renderEditions();
     }
 </script>
