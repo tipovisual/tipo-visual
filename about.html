@@ -594,43 +594,120 @@
         </div>
     </section>
 
+    <!-- Formulario Institucional -->
+
     <section id="contacto-institucional" class="bg-white py-20 border-t border-slate-100">
-    <div class="max-w-3xl mx-auto px-6">
-        <div class="text-center mb-10">
-            <span class="text-[#009CC0] text-xs font-bold uppercase tracking-widest">Alianzas</span>
-            <h3 class="nunito text-3xl font-black text-slate-900 mt-2">Formulario Institucional</h3>
-        </div>
-        
-        <form action="https://formsubmit.co/fredevelper@gmail.com" method="POST" class="grid grid-cols-1 gap-6">
-            <input type="text" name="_honey" style="display:none">
+        <div class="max-w-3xl mx-auto px-6">
             
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-slate-700 uppercase">Nombre del contacto</label>
-                    <input type="text" name="name" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+            <div id="contact-container">
+                <div class="text-center mb-10">
+                    <span class="text-[#009CC0] text-xs font-bold uppercase tracking-widest">Alianzas</span>
+                    <h3 class="nunito text-3xl font-black text-slate-900 mt-2">Formulario Institucional</h3>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-slate-700 uppercase">Institución / Empresa</label>
-                    <input type="text" name="company" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+                
+                <form id="institutional-form" class="grid grid-cols-1 gap-6">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="text" name="_honey" style="display:none">
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-slate-700 uppercase">Nombre del contacto</label>
+                            <input type="text" name="name" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-slate-700 uppercase">Institución / Empresa</label>
+                            <input type="text" name="company" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Correo electrónico</label>
+                        <input type="email" name="email" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">¿En qué podemos colaborar?</label>
+                        <textarea name="message" rows="4" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition" placeholder="Cuéntanos sobre tu proyecto..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="nunito bg-[#E50072] text-white py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#211261] transition shadow-lg">
+                        <span>Enviar solicitud</span>
+                    </button>
+                </form>
+            </div>
+
+            <div id="success-message" class="hidden text-center py-16 px-6 bg-[#F5F4FB] rounded-3xl border-2 border-[#E8E6F7] animate-fade-up">
+                <div class="dots-row justify-center mb-8">
+                    <span class="dot" style="background:#FFED00;"></span>
+                    <span class="dot" style="background:#F49600;"></span>
+                    <span class="dot" style="background:#E50072;"></span>
+                    <span class="dot" style="background:#742576;"></span>
+                    <span class="dot" style="background:#009CC0;"></span>
                 </div>
-            </div>
 
-            <div class="flex flex-col gap-2">
-                <label class="text-xs font-bold text-slate-700 uppercase">Correo electrónico</label>
-                <input type="email" name="email" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
-            </div>
+                <h4 class="nunito text-3xl md:text-4xl font-black text-[#211261] mb-4">
+                    ¡Recibido con éxito!
+                </h4>
+                
+                <p class="text-slate-600 max-w-md mx-auto mb-10 leading-relaxed">
+                    Gracias por el interés en conectar con nuestra cultura. Hemos recibido tu solicitud institucional y te contactaremos a la brevedad posible.
+                </p>
 
-            <div class="flex flex-col gap-2">
-                <label class="text-xs font-bold text-slate-700 uppercase">¿En qué podemos colaborar?</label>
-                <textarea name="message" rows="4" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition" placeholder="Cuéntanos sobre tu proyecto, colegio o fundación..."></textarea>
+                <button onclick="resetForm()" class="nunito bg-white border-2 border-[#211261] text-[#211261] px-8 py-3 rounded-full font-black uppercase tracking-wider hover:bg-[#211261] hover:text-white transition text-xs">
+                    Enviar otro mensaje
+                </button>
             </div>
+        </div>
+    </section>
 
-            <button type="submit" class="nunito bg-[#E50072] text-white py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#211261] transition shadow-lg">
-                Enviar solicitud
-            </button>
-        </form>
-    </div>
-</section>
+    <script>
+    function resetForm() {
+        const form = document.getElementById('institutional-form');
+        const container = document.getElementById('contact-container');
+        const successMsg = document.getElementById('success-message');
+        
+        form.reset();
+        successMsg.classList.add('hidden');
+        container.classList.remove('hidden');
+    }
+
+    document.getElementById('institutional-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const btn = document.getElementById('submit-btn');
+        const container = document.getElementById('contact-container');
+        const successMsg = document.getElementById('success-message');
+
+        // Feedback visual en el botón
+        btn.disabled = true;
+        btn.innerHTML = '<span class="animate-pulse">Enviando...</span>';
+
+        // Envío AJAX a la URL correcta (con /ajax/)
+        fetch("https://formsubmit.co/ajax/fredevelper@gmail.com", {
+            method: "POST",
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json' 
+            },
+            body: JSON.stringify(Object.fromEntries(new FormData(form)))
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Ocultar formulario y mostrar éxito
+            container.classList.add('hidden');
+            successMsg.classList.remove('hidden');
+            // Scroll suave hacia el mensaje de éxito
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ups, algo salió mal. Por favor intenta de nuevo.');
+            btn.disabled = false;
+            btn.innerHTML = '<span>Enviar solicitud</span>';
+        });
+    });
+    </script>
 
     <!-- ═══ FOOTER ═══════════════════════════════════════════════ -->
     <footer style="background:#211261;" class="py-16">
