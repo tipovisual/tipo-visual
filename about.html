@@ -582,9 +582,10 @@
                 Trabajamos con colegios, fundaciones y empresas que quieren impactar a sus comunidades a través de la cultura y el juego. También atendemos solicitudes de prensa.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/cdn-cgi/l/email-protection#631306070a070c102313160d170a000c4d100b0c135c101601090600175e200c0d10160f1702430a0d10170a1716000a0c0d020f" class="nunito bg-[#211261] text-white px-8 py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#E50072] transition text-sm">
-                    Contacto institucional →
-                </a>
+<a href="#contacto-institucional" 
+   class="nunito bg-[#211261] text-white px-8 py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#E50072] transition text-sm">
+    Contacto institucional →
+            </a>
                 <a href="store.html"
                     class="nunito bg-white border-2 border-[#211261] text-[#211261] px-8 py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#EAE8F7] transition text-sm">
                     Ver la tienda
@@ -592,6 +593,44 @@
             </div>
         </div>
     </section>
+
+    <section id="contacto-institucional" class="bg-white py-20 border-t border-slate-100">
+    <div class="max-w-3xl mx-auto px-6">
+        <div class="text-center mb-10">
+            <span class="text-[#009CC0] text-xs font-bold uppercase tracking-widest">Alianzas</span>
+            <h3 class="nunito text-3xl font-black text-slate-900 mt-2">Formulario Institucional</h3>
+        </div>
+        
+        <form action="https://formsubmit.co/fredevelper@gmail.com" method="POST" class="grid grid-cols-1 gap-6">
+            <input type="text" name="_honey" style="display:none">
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Nombre del contacto</label>
+                    <input type="text" name="name" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Institución / Empresa</label>
+                    <input type="text" name="company" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-bold text-slate-700 uppercase">Correo electrónico</label>
+                <input type="email" name="email" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition">
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-bold text-slate-700 uppercase">¿En qué podemos colaborar?</label>
+                <textarea name="message" rows="4" required class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#211261] transition" placeholder="Cuéntanos sobre tu proyecto, colegio o fundación..."></textarea>
+            </div>
+
+            <button type="submit" class="nunito bg-[#E50072] text-white py-4 rounded-full font-black uppercase tracking-wider hover:bg-[#211261] transition shadow-lg">
+                Enviar solicitud
+            </button>
+        </form>
+    </div>
+</section>
 
     <!-- ═══ FOOTER ═══════════════════════════════════════════════ -->
     <footer style="background:#211261;" class="py-16">
