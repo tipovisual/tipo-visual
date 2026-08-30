@@ -110,9 +110,9 @@
             color: #FFED00;
         }
 
-        /* Quote — only applies to named quote blockquotes, not Instagram embeds */
-        blockquote.puntico-quote { position: relative; }
-        blockquote.puntico-quote::before {
+        /* Quote */
+        blockquote { position: relative; }
+        blockquote::before {
             content: '"';
             font-family: 'Nunito', sans-serif;
             font-size: 8rem;
@@ -188,22 +188,27 @@
 
             <!-- Texto -->
             <div>
-                <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">La fundadora</p>
-                <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900 leading-tight mb-6">
-                    Viviana Falcón
+                <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Nuestra historia</p>
+                <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900 leading-tight mb-2">
+                    La cultura se aprende.<br>Las raíces se heredan.
                 </h2>
+                <p class="text-[#211261] text-sm font-black uppercase tracking-widest mb-6">Viviana Falcón — Fundadora</p>
+
                 <p class="text-slate-600 text-base leading-relaxed mb-4">
-                    Ilustradora, madre y emprendedora venezolana radicada en Panamá. En 2022 identificó en su propio hogar una necesidad concreta: sus hijos crecían desconectados de su cultura e identidad.
+                    Puntico nació en Panamá, durante la etapa final de la pandemia, a partir de la curiosidad de mi hija por conocer más sobre el país donde estaba creciendo. Como ilustradora, decidí transformar esa curiosidad en una experiencia de aprendizaje: reuní en un juego lugares, personajes, animales, símbolos y elementos que forman parte de la identidad panameña.
                 </p>
                 <p class="text-slate-600 text-base leading-relaxed mb-4">
-                    Los contenidos que consumían los niños pocas veces reflejaban sus raíces, sus tradiciones ni los personajes que forman parte de la historia cultural de sus países. Eso tenía que cambiar.
+                    Así nació el <strong class="text-slate-800">Juego de Memoria Edición Panamá</strong>, una herramienta lúdica para aprender, descubrir y conversar en familia.
                 </p>
-                <p class="text-slate-600 text-base leading-relaxed mb-8">
-                    Diseñó el primer prototipo de MEMORiA y parte del material didáctico, como un regalo para sus hijos. Lo que comenzó en casa se convirtió en un proyecto de impacto social, educativo y cultural que hoy llega a miles de familias.
+                <p class="text-slate-600 text-base leading-relaxed mb-4">
+                    Cuando el juego comenzó a llegar a otras familias, descubrimos que las cartas eran apenas el comienzo. Detrás de cada imagen surgían preguntas, recuerdos e historias que pasaban de una generación a otra.
+                </p>
+                <p class="text-slate-700 text-base leading-relaxed font-medium mb-6 italic">
+                    Entonces entendí que no estábamos creando solamente un juego. Estábamos creando una forma de acercarnos a la cultura.
                 </p>
 
                 <!-- Quote -->
-                <blockquote class="puntico-quote relative bg-[#F5F4FB] border-l-4 border-[#211261] rounded-2xl p-6 pl-8">
+                <blockquote class="puntico-quote relative bg-[#F5F4FB] border-l-4 border-[#211261] rounded-2xl p-6 pl-8 mb-0">
                     <p class="text-slate-700 text-base italic leading-relaxed font-medium">
                         "Lo que realmente nos une es mucho más fuerte que lo que nos separa. Nuestra cultura, nuestras tradiciones y nuestras historias compartidas construyen el futuro. Hagamos el cambio y... que inicie el juego."
                     </p>
@@ -213,12 +218,78 @@
         </div>
     </section>
 
+    <!-- ═══ HISTORIA EXTENDIDA ══════════════════════════════════ -->
+    <section class="max-w-4xl mx-auto px-6 py-16">
+
+        <!-- Una colección que conecta generaciones -->
+        <div class="mb-12">
+            <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Una colección que conecta generaciones</p>
+            <p class="text-slate-600 text-base leading-relaxed mb-4">
+                Ese descubrimiento se convirtió en el corazón de Puntico: crear una colección de Juegos de Memoria culturales para reconocer, celebrar y preservar las culturas y raíces entre generaciones.
+            </p>
+            <p class="text-slate-600 text-base leading-relaxed mb-4">
+                Panamá fue el comienzo. Su diversidad cultural y étnica nos mostró el valor de acercar a los niños a las historias y expresiones que forman parte del lugar donde crecen.
+            </p>
+            <p class="text-slate-600 text-base leading-relaxed mb-4">
+                Y como las raíces también viajan, nuestra experiencia como familia multicultural y como padres venezolanos viviendo fuera de nuestro país nos llevó a crear el <strong class="text-slate-800">Juego de Memoria Edición Venezuela</strong>.
+            </p>
+            <p class="text-slate-600 text-base leading-relaxed">
+                Cuando una familia construye su vida lejos del lugar de donde viene, también encuentra nuevas formas de acercar ese origen a sus hijos: una historia, un paisaje, una tradición, una imagen. Así entendimos que la cultura puede viajar con las familias.
+            </p>
+        </div>
+
+        <!-- Stat highlight -->
+        <div class="bg-[#211261] rounded-3xl p-8 md:p-10 mb-12 text-center">
+            <div class="nunito font-black text-white leading-none mb-2" style="font-size:clamp(3rem,6vw,5rem);color:#FFED00;">+2.000</div>
+            <p class="text-slate-300 text-sm font-medium mb-4">familias en diferentes partes del mundo han tenido contacto con nuestros productos.</p>
+            <p class="text-slate-400 text-sm leading-relaxed max-w-xl mx-auto">Nuestros juegos viajan, se regalan, se juegan una y otra vez y, sobre todo, generan conversaciones que conectan generaciones.</p>
+        </div>
+
+        <!-- Crecimiento -->
+        <div class="mb-12">
+            <p class="text-slate-600 text-base leading-relaxed mb-4">
+                Por eso Puntico ha seguido creciendo más allá de los juegos de memoria. Hoy desarrollamos también <strong class="text-slate-800">libros de actividades, cuentos ilustrados y nuevas experiencias lúdicas de aprendizaje</strong>, siempre con una misma intención: acercar la cultura y el conocimiento de una manera accesible, significativa y divertida.
+            </p>
+        </div>
+
+        <!-- Lo que queremos construir -->
+        <div class="bg-[#F5F4FB] border-2 border-[#E8E6F7] rounded-3xl p-8 md:p-10 mb-12">
+            <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-4">Lo que queremos construir</p>
+            <p class="text-slate-700 text-base leading-relaxed mb-4">
+                Creemos que todos los niños deberían tener la oportunidad de descubrir su cultura y aprender a través de experiencias que despierten su curiosidad, sin importar dónde crezcan ni las posibilidades de su familia.
+            </p>
+            <p class="text-slate-700 text-base leading-relaxed">
+                Por eso queremos que Puntico pueda estar no solo en los hogares, sino también en <strong>escuelas públicas, bibliotecas y espacios educativos</strong>, contribuyendo al acceso a la cultura y a una educación más igualitaria.
+            </p>
+        </div>
+
+        <!-- Cierre -->
+        <div class="text-center">
+            <div class="dots-row justify-center mb-6">
+                <span class="dot" style="background:#FFED00;"></span>
+                <span class="dot" style="background:#F49600;"></span>
+                <span class="dot" style="background:#E50072;"></span>
+                <span class="dot" style="background:#742576;"></span>
+                <span class="dot" style="background:#009CC0;"></span>
+            </div>
+            <p class="nunito text-2xl md:text-3xl font-black text-slate-900 leading-snug mb-4">
+                Porque Puntico no nació para crear recuerdos.<br>
+                <span class="text-[#211261]">Nació para ayudar a preservarlos.</span>
+            </p>
+            <p class="text-slate-500 text-base leading-relaxed max-w-xl mx-auto mb-6">
+                Para que aquello que somos pueda ser reconocido por quienes vienen después.
+            </p>
+            <p class="nunito font-black text-[#211261] text-sm uppercase tracking-widest">Cultura que se juega, se comparte y se transmite.</p>
+        </div>
+
+    </section>
+
     <!-- ═══ CRONOLOGÍA ═══════════════════════════════════════════ -->
     <section class="bg-slate-50 py-20">
         <div class="max-w-6xl mx-auto px-6">
             <p class="text-[#E50072] text-xs font-bold uppercase tracking-widest mb-3">Cronología</p>
             <h2 class="nunito text-4xl font-black text-slate-900 mb-12">De una idea a miles de familias</h2>
-            <div class="grid md:grid-cols-2 gap-x-16 gap-y-8 max-w-3xl">
+            <div class="grid md:grid-cols-3 gap-x-16 gap-y-8 max-w-3xl">
                 <div class="timeline-item pb-8">
                     <p class="nunito font-black text-[#211261] text-sm mb-1">2022</p>
                     <p class="text-slate-700 text-sm leading-relaxed">Primer prototipo de MEMORiA. Inicio de pruebas directas en ferias y bazares culturales.</p>
@@ -234,6 +305,10 @@
                 <div class="timeline-item pb-8">
                     <p class="nunito font-black text-[#211261] text-sm mb-1">2025</p>
                     <p class="text-slate-700 text-sm leading-relaxed">+1.950 familias impactadas orgánicamente. Desarrollo del ecommerce y búsqueda de producción a gran escala con proveedores industriales.</p>
+                </div>
+                 <div class="timeline-item pb-8">
+                    <p class="nunito font-black text-[#211261] text-sm mb-1">2026</p>
+                    <p class="text-slate-700 text-sm leading-relaxed">Lanzamiento de la primera historia escrita e ilustrada por Puntico, "La fuente de la miel". Y colaboración con escritores locales como ilustradora infantil.</p>
                 </div>
             </div>
         </div>
@@ -315,7 +390,7 @@
                     <p class="text-slate-400 text-xs uppercase tracking-widest mt-2 font-bold">Familias impactadas</p>
                 </div>
                 <div>
-                    <div class="stat-number">3</div>
+                    <div class="stat-number">4</div>
                     <p class="text-slate-400 text-xs uppercase tracking-widest mt-2 font-bold">Ferias internacionales del libro</p>
                 </div>
                 <div>
@@ -340,7 +415,7 @@
                 </div>
                 <div class="flex items-center gap-3 bg-white/10 border border-white/20 rounded-full px-5 py-3">
                     <span class="text-lg">📚</span>
-                    <span class="text-white text-xs font-bold uppercase tracking-wider">Feria Internacional del Libro 2023, 2024 y 2025</span>
+                    <span class="text-white text-xs font-bold uppercase tracking-wider">Feria Internacional del Libro 2023, 2024, 2025 y 2026</span>
                 </div>
             </div>
         </div>
@@ -609,7 +684,7 @@
         </div>
     </section>
 
-    <script async src="https://www.instagram.com/embed.js" crossorigin="anonymous"></script>
+    <script async src="//www.instagram.com/embed.js"></script>
 
     <!-- ═══ CTA FINAL ══════════════════════════════════════════ -->
     <section class="bg-slate-50 py-20">
