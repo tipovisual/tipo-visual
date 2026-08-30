@@ -110,9 +110,9 @@
             color: #FFED00;
         }
 
-        /* Quote */
-        blockquote { position: relative; }
-        blockquote::before {
+        /* Quote — only applies to named quote blockquotes, not Instagram embeds */
+        blockquote.puntico-quote { position: relative; }
+        blockquote.puntico-quote::before {
             content: '"';
             font-family: 'Nunito', sans-serif;
             font-size: 8rem;
@@ -203,7 +203,7 @@
                 </p>
 
                 <!-- Quote -->
-                <blockquote class="relative bg-[#F5F4FB] border-l-4 border-[#211261] rounded-2xl p-6 pl-8">
+                <blockquote class="puntico-quote relative bg-[#F5F4FB] border-l-4 border-[#211261] rounded-2xl p-6 pl-8">
                     <p class="text-slate-700 text-base italic leading-relaxed font-medium">
                         "Lo que realmente nos une es mucho más fuerte que lo que nos separa. Nuestra cultura, nuestras tradiciones y nuestras historias compartidas construyen el futuro. Hagamos el cambio y... que inicie el juego."
                     </p>
@@ -574,32 +574,32 @@
             <h2 class="nunito text-4xl md:text-5xl font-black text-slate-900 mb-4">puntico® en acción</h2>
             <p class="text-slate-500 max-w-xl mx-auto text-sm leading-relaxed">Mira cómo las familias viven la experiencia puntico® en ferias, eventos y en casa.</p>
         </div>
- 
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
- 
+
             <div class="flex flex-col items-center">
                 <div class="w-full rounded-3xl overflow-hidden shadow-sm" style="max-width:340px;margin:0 auto;">
                     <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/Dcg22sCOiXO/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:24px;margin:0;padding:0;width:100%;"></blockquote>
                 </div>
                 <p class="mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Experiencia en la feria del libro</p>
             </div>
- 
+
             <div class="flex flex-col items-center">
                 <div class="w-full rounded-3xl overflow-hidden shadow-sm" style="max-width:340px;margin:0 auto;">
                     <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DYz7suskWd8/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:24px;margin:0;padding:0;width:100%;"></blockquote>
                 </div>
                 <p class="mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Familias jugando</p>
             </div>
- 
+
             <div class="flex flex-col items-center">
                 <div class="w-full rounded-3xl overflow-hidden shadow-sm" style="max-width:340px;margin:0 auto;">
                     <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DLYauc3xjqs/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:24px;margin:0;padding:0;width:100%;"></blockquote>
                 </div>
                 <p class="mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Comunidad puntico®</p>
             </div>
- 
+
         </div>
- 
+
         <div class="text-center mt-12">
             <a href="https://instagram.com/punticopty" target="_blank" rel="noopener noreferrer"
                 class="nunito inline-flex items-center gap-2 bg-[#211261] text-white px-8 py-4 rounded-full font-black uppercase tracking-wider text-sm hover:bg-[#E50072] transition-all">
@@ -608,8 +608,8 @@
             </a>
         </div>
     </section>
- 
-    <script async defer src="https://www.instagram.com/embed.js" crossorigin="anonymous"></script>
+
+    <script async src="https://www.instagram.com/embed.js" crossorigin="anonymous"></script>
 
     <!-- ═══ CTA FINAL ══════════════════════════════════════════ -->
     <section class="bg-slate-50 py-20">
